@@ -1,7 +1,7 @@
 export const ShopLayouts = () => {
     return (
         <div>
-            <h2>Shop Layouts</h2>
+            <h2>LuneBy Kelin</h2>
         </div>
     )
 }
