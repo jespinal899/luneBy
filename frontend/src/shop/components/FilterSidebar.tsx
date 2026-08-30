@@ -3,11 +3,26 @@ import { Separator } from "@/components/ui/separator";
 
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import { useSearchParams } from "react-router";
 
 
 
 export const FilterSidebar = () => {
 
+
+    const [searchParams, setSearchParams] = useSearchParams();
+
+    const currentSizes = searchParams.get('categoria')?.split(',') || [];
+
+    const handleFilterChange = (categoria: string) => {
+        const newCategoria = currentSizes.includes(categoria)
+            ? currentSizes.filter(s => s !== categoria)
+            : [...currentSizes, categoria];
+
+
+        searchParams.set('categoria', newCategoria.join(','));
+        setSearchParams(searchParams);
+    };
 
     const sizes = [
         { id: "esmaltado", label: "Esmaltado" },
@@ -26,18 +41,19 @@ export const FilterSidebar = () => {
                 <h3 className="font-semibold text-lg mb-4">Filtros</h3>
             </div>
 
-            {/* Sizes */}
+            {/* Categorias */}
             <div className="space-y-4">
                 <h4 className="font-medium">Categorias</h4>
                 <div className="grid grid-cols-2 gap-3">
-                    {sizes.map((size) => (
+                    {sizes.map((categoria) => (
                         <Button
-                            key={size.id}
-                            variant="outline"
+                            key={categoria.id}
+                            variant={currentSizes.includes(categoria.id) ? "default" : "outline"}
                             size="sm"
                             className="h-8"
+                            onClick={() => handleFilterChange(categoria.id)}
                         >
-                            {size.label}
+                            {categoria.label}
                         </Button>
                     ))}
                 </div>
