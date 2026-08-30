@@ -1,5 +1,6 @@
 import { Outlet } from "react-router"
 import CustomHeader from "../components/CustomHeader"
+import { CustomFooter } from "../components/CustomFooter"
 
 export const ShopLayouts = () => {
     return (
@@ -7,6 +8,7 @@ export const ShopLayouts = () => {
 
             <CustomHeader />
             <Outlet />
+            <CustomFooter />
         </div>
     )
 }
