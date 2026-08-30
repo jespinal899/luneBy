@@ -1,6 +1,6 @@
 import type { Product } from "@/mocks/products.mock";
-import { Button } from "@base-ui/react";
-import { ChevronLeft, ChevronRight, Filter, Grid, List } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Filter, Grid, List } from "lucide-react";
 import { ProductCard } from "./ProductCard";
 import { FilterSidebar } from "./FilterSidebar";
 
