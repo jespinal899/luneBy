@@ -22,6 +22,9 @@ export const CustomJumbotron = ({ title, subtitle }: Props) => {
                     {subtitle || defaultSubtitle}
                 </p>
 
+
+
+
             </div>
         </section>
     )
