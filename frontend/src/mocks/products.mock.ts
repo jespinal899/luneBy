@@ -9,7 +9,19 @@ export interface Product {
     image: string;
     category: string;
     description: string;
+    /** Duración estimada del servicio en minutos */
+    durationMin: number;
+    /** Si el servicio está disponible para agendar */
+    isActive: boolean;
 }
+
+export const CATEGORIES = [
+    "Manicura",
+    "Pedicura",
+    "Acrilico",
+    "Semipermanente",
+    "Nail Art",
+] as const;
 
 export const products: Product[] = [
     {
@@ -18,7 +30,9 @@ export const products: Product[] = [
         price: 35,
         image: serviceGel,
         category: "Manicura",
-        description: "Técnica de precisión milimétrica que limpia profundamente la cutícula para permitir un esmaltado debajo del pliegue ungueal con duración de 3 semanas."
+        description: "Técnica de precisión milimétrica que limpia profundamente la cutícula para permitir un esmaltado debajo del pliegue ungueal con duración de 3 semanas.",
+        durationMin: 75,
+        isActive: true,
     },
     {
         id: "2",
@@ -26,7 +40,9 @@ export const products: Product[] = [
         price: 65,
         image: serviceAcrylic,
         category: "Acrilico",
-        description: "Extensión y modelado de uñas acrílicas a mano alzada para un acabado natural, resistente y elegante."
+        description: "Extensión y modelado de uñas acrílicas a mano alzada para un acabado natural, resistente y elegante.",
+        durationMin: 120,
+        isActive: true,
     },
     {
         id: "3",
@@ -34,7 +50,9 @@ export const products: Product[] = [
         price: 45,
         image: serviceNailart,
         category: "Nail Art",
-        description: "Diseños creativos personalizados y pintados a mano alzada por nuestras artistas especialistas."
+        description: "Diseños creativos personalizados y pintados a mano alzada por nuestras artistas especialistas.",
+        durationMin: 90,
+        isActive: true,
     },
     {
         id: "4",
@@ -42,7 +60,9 @@ export const products: Product[] = [
         price: 25,
         image: serviceGel,
         category: "Semipermanente",
-        description: "Esmaltado de larga duración con brillo extremo, curado bajo cabina LED para uñas impecables."
+        description: "Esmaltado de larga duración con brillo extremo, curado bajo cabina LED para uñas impecables.",
+        durationMin: 45,
+        isActive: true,
     },
     {
         id: "5",
@@ -50,7 +70,9 @@ export const products: Product[] = [
         price: 50,
         image: serviceAcrylic,
         category: "Pedicura",
-        description: "Tratamiento completo para pies que incluye exfoliación profunda, masaje de hidratación y esmaltado."
+        description: "Tratamiento completo para pies que incluye exfoliación profunda, masaje de hidratación y esmaltado.",
+        durationMin: 60,
+        isActive: true,
     },
     {
         id: "6",
@@ -58,7 +80,9 @@ export const products: Product[] = [
         price: 40,
         image: serviceAcrylic,
         category: "Acrilico",
-        description: "Capa de acrílico protectora sobre tu uña natural para fortalecerla y evitar rupturas."
+        description: "Capa de acrílico protectora sobre tu uña natural para fortalecerla y evitar rupturas.",
+        durationMin: 80,
+        isActive: true,
     },
     {
         id: "7",
@@ -66,7 +90,9 @@ export const products: Product[] = [
         price: 15,
         image: serviceGel,
         category: "Manicura",
-        description: "Retiro cuidadoso de sistemas sin dañar tu uña natural, finalizando con aceite nutritivo."
+        description: "Retiro cuidadoso de sistemas sin dañar tu uña natural, finalizando con aceite nutritivo.",
+        durationMin: 30,
+        isActive: true,
     },
     {
         id: "8",
@@ -74,6 +100,8 @@ export const products: Product[] = [
         price: 55,
         image: serviceNailart,
         category: "Nail Art",
-        description: "Diseño premium encapsulado con flores secas, glitters o relieve en 3D para una manicura de impacto."
+        description: "Diseño premium encapsulado con flores secas, glitters o relieve en 3D para una manicura de impacto.",
+        durationMin: 110,
+        isActive: false,
     }
 ];

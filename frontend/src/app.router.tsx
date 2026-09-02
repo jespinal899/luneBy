@@ -4,12 +4,12 @@ import { ShopLayouts } from "./shop/layouts/ShopLayouts";
 import { HomePage } from "./shop/pages/home/HomePage";
 import { ProductPage } from "./shop/pages/product/ProductPage";
 import { DashboardPage } from "./admin/pages/dashboard/DashboardPage";
-import { AdminProductsPages } from "./admin/pages/products/AdminProductsPages";
 import { AdminProductPage } from "./admin/pages/product/AdminProductPage";
 import { lazy } from "react";
 import { LoginPage } from "./auth/layouts/pages/login/LoginPage";
 import { RegisterPage } from "./auth/layouts/pages/register/RegisterPage";
 import { ShopPage } from "./shop/pages/Shop/ShopPage";
+import { AdminProductsPage } from "./admin/pages/products/AdminProductsPages";
 
 
 
@@ -73,10 +73,10 @@ export const appRouter = createBrowserRouter([
             },
             {
                 path: "products",
-                element: <AdminProductsPages />
+                element: <AdminProductsPage />
             },
             {
-                path: "product/:idSlug",
+                path: "products/:id",
                 element: <AdminProductPage />
             }
         ]
