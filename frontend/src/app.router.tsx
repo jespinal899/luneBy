@@ -2,7 +2,6 @@
 import { createBrowserRouter, Navigate } from "react-router";
 import { ShopLayouts } from "./shop/layouts/ShopLayouts";
 import { HomePage } from "./shop/pages/home/HomePage";
-import { GenderPage } from "./shop/pages/gender/GenderPage";
 import { ProductPage } from "./shop/pages/product/ProductPage";
 import { DashboardPage } from "./admin/pages/dashboard/DashboardPage";
 import { AdminProductsPages } from "./admin/pages/products/AdminProductsPages";
@@ -10,6 +9,7 @@ import { AdminProductPage } from "./admin/pages/product/AdminProductPage";
 import { lazy } from "react";
 import { LoginPage } from "./auth/layouts/pages/login/LoginPage";
 import { RegisterPage } from "./auth/layouts/pages/register/RegisterPage";
+import { ShopPage } from "./shop/pages/Shop/ShopPage";
 
 
 
@@ -34,8 +34,12 @@ export const appRouter = createBrowserRouter([
                 element: <ProductPage />
             },
             {
-                path: "gender/:gender",
-                element: <GenderPage />
+                path: "shop",
+                element: <ShopPage />
+            },
+            {
+                path: "shop/:shop",
+                element: <ShopPage />
             }
         ],
     },
