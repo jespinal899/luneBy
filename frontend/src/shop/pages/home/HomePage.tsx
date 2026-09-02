@@ -1,4 +1,4 @@
-import { CustomPagination } from "@/components/Cutom/CustomPagination"
+import { CustomPagination } from "@/components/Custom/CustomPagination"
 import { products } from "@/mocks/products.mock"
 import { CustomJumbotron } from "@/shop/components/CustomJumbotron"
 import { ProductsGrid } from "@/shop/components/ProductsGrid"
