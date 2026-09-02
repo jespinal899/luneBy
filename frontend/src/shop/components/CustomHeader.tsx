@@ -1,9 +1,10 @@
-import { Search, Menu } from "lucide-react";
+import { Search, } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useRef, type KeyboardEvent } from "react";
 import { Link, useParams, useSearchParams } from "react-router";
 import { cn } from "@/lib/utils";
+import { CustomLogo } from "@/components/Cutom/CustomLogo";
 
 
 
@@ -47,12 +48,10 @@ export const CustomHeader = () => {
         <div className="container mx-auto px-4 lg:px-8">
             <div className="flex h-16 items-center justify-between">
                 {/* Logo */}
-                <div className="flex items-center space-x-4">
-                    <Button variant="ghost" size="icon" className="md:hidden">
-                        <Menu className="h-5 w-5" />
-                    </Button>
-                    <h1 className="text-xl font-semibold tracking-tight">LUNE BY KELIN</h1>
+                <div className="flex h-full shrink-0 items-center ml-4">
+                    <CustomLogo className="max-h-15" />
                 </div>
+
 
                 {/* Navigation - Desktop */}
                 <nav className="hidden md:flex items-center space-x-8">

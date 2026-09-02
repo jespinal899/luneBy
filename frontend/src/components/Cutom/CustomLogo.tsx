@@ -1,14 +1,20 @@
 import { Link } from 'react-router';
+import logoby from '@/assets/logoby.png';
+import { cn } from '@/lib/utils';
 
-export const CustomLogo = () => {
+interface Props {
+    /** Clases para controlar el tamaño del logo, ej: "h-16", "max-h-10 w-auto" */
+    className?: string;
+}
+
+export const CustomLogo = ({ className }: Props) => {
     return (
         <Link to="/" className="flex items-center whitespace-nowrap">
-            <span className="font-montserrat font-bold text-xl m-0 whitespace-nowrap">
-                Lune By Kelin |
-            </span>
-            <p className="text-muted-foreground m-0 px-2 whitespace-nowrap">
-                Agenda tu cita
-            </p>
+            <img
+                src={logoby}
+                alt="Logo"
+                className={cn('w-auto object-contain', className ?? 'h-40')}
+            />
         </Link>
     );
 };
