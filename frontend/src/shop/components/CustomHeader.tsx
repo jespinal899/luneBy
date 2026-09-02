@@ -106,26 +106,23 @@ export const CustomHeader = () => {
                     </Button>
 
 
-                    <Link to="/auth/login">
-                        <Button
-                            variant="default"
-                            size="sm"
-                            className="ml-2"
-                        >
-                            Login
-                        </Button>
-                    </Link>
+                    <Button
+                        render={<Link to="/auth/login" />}
+                        variant="default"
+                        size="sm"
+                        className="ml-2"
+                    >
+                        Login
+                    </Button>
 
-
-                    <Link to="/admin">
-                        <Button
-                            variant="destructive"
-                            size="sm"
-                            className="ml-2"
-                        >
-                            Admin
-                        </Button>
-                    </Link>
+                    <Button
+                        render={<Link to="/admin" />}
+                        variant="destructive"
+                        size="sm"
+                        className="ml-2"
+                    >
+                        Admin
+                    </Button>
                 </div>
             </div>
         </div>
