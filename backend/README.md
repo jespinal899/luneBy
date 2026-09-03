@@ -6,9 +6,10 @@ y el agendado de citas de Luné by Kelin.
 ## Desarrollo
 
 ```bash
-cp .env.template .env
+cp .env.template .env      # y ajusta DB_PASSWORD
 npm install
-npm run start:dev   # http://localhost:3001/api
+docker compose up -d       # Postgres local en el puerto 5432
+npm run start:dev          # http://localhost:3001/api
 ```
 
 ## Estado
@@ -16,7 +17,7 @@ npm run start:dev   # http://localhost:3001/api
 En construcción, commit a commit:
 
 - [x] Scaffold NestJS
-- [ ] Conexión a PostgreSQL (TypeORM)
+- [x] Conexión a PostgreSQL (TypeORM)
 - [ ] Módulo common (paginación)
 - [ ] Auth (registro / login / JWT + roles)
 - [ ] Services (catálogo con filtros)
