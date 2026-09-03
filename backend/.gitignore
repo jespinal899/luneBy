@@ -4,7 +4,10 @@
 
 postgres/
 
+# Variables de entorno: NUNCA versionar (ni plantillas).
+# Las variables necesarias están documentadas en README.md
 .env
+.env.*
 
 
 # Logs
