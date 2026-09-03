@@ -6,7 +6,9 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Not, Repository } from 'typeorm';
 
+import { User } from '../auth/entities/user.entity';
 import { Service } from '../services/entities/service.entity';
+import { CreateAppointmentDto } from './dto';
 import {
   Appointment,
   AppointmentStatus,
@@ -82,5 +84,57 @@ export class AppointmentsService {
     }
 
     return [...slots].sort();
+  }
+
+  /** Agenda una cita para el usuario autenticado en un slot libre. */
+  async create(dto: CreateAppointmentDto, user: User) {
+    const { serviceId, date, startTime, notes } = dto;
+
+    const service = await this.serviceRepository.findOneBy({ id: serviceId });
+    if (!service) throw new NotFoundException('Servicio no encontrado');
+
+    const available = await this.getAvailability(date, serviceId);
+    if (!available.includes(startTime))
+      throw new BadRequestException('Ese horario ya no está disponible');
+
+    const endTime = toHHMM(toMinutes(startTime) + service.durationMin);
+
+    const appointment = this.appointmentRepository.create({
+      date,
+      startTime,
+      endTime,
+      notes,
+      service,
+      user,
+      status: AppointmentStatus.pending,
+    });
+    await this.appointmentRepository.save(appointment);
+    return appointment;
+  }
+
+  /** Citas del usuario autenticado, de la más reciente a la más antigua. */
+  findMine(user: User) {
+    return this.appointmentRepository.find({
+      where: { user: { id: user.id } },
+      order: { date: 'DESC', startTime: 'DESC' },
+    });
+  }
+
+  async findOne(id: string) {
+    const appointment = await this.appointmentRepository.findOneBy({ id });
+    if (!appointment) throw new NotFoundException('Cita no encontrada');
+    return appointment;
+  }
+
+  /** Cancela una cita, solo si pertenece al usuario que lo pide. */
+  async cancelOwn(id: string, user: User) {
+    const appointment = await this.findOne(id);
+    if (appointment.user.id !== user.id)
+      throw new BadRequestException(
+        'No puedes cancelar una cita que no es tuya',
+      );
+
+    appointment.status = AppointmentStatus.cancelled;
+    return this.appointmentRepository.save(appointment);
   }
 }
