@@ -1,3 +1,5 @@
+import { join } from 'path';
+
 import { Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config';
@@ -31,8 +33,11 @@ import { SeedModule } from './seed/seed.module';
           ? { ssl: { rejectUnauthorized: false } }
           : undefined,
       autoLoadEntities: true,
-      // En prod se desactiva y se usan migraciones.
-      synchronize: process.env.STAGE !== 'prod',
+      // El esquema se gestiona con migraciones (src/migrations), que se
+      // aplican solas al arrancar. Nunca `synchronize`.
+      synchronize: false,
+      migrations: [join(__dirname, 'migrations', '*.js')],
+      migrationsRun: true,
     }),
 
     CommonModule,
