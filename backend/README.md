@@ -119,7 +119,7 @@ tests en cada push o pull request que toque `backend/`.
   - [x] Estrategia JWT y Passport
   - [x] Endpoints de registro y login
   - [x] Protección de rutas por roles (`@Auth`, `@GetUser`, `UserRoleGuard`)
-- [ ] Services (catálogo con filtros de categoría y precio)
+- [x] Services (catálogo con filtros de categoría y precio + CRUD admin)
 - [ ] Appointments (disponibilidad + agendado por slots)
 - [ ] Seed de datos
 - [ ] Migraciones y despliegue (Supabase)

@@ -1,7 +1,20 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
 
 import { PaginationDto } from '../common/dtos/pagination.dto';
+import { Auth } from '../auth/decorators';
+import { ValidRoles } from '../auth/interfaces';
 import { ServicesService } from './services.service';
+import { CreateServiceDto, UpdateServiceDto } from './dto';
 
 @Controller('services')
 export class ServicesController {
@@ -17,5 +30,26 @@ export class ServicesController {
   @Get(':term')
   findOne(@Param('term') term: string) {
     return this.servicesService.findOne(term);
+  }
+
+  @Post()
+  @Auth(ValidRoles.admin)
+  create(@Body() createServiceDto: CreateServiceDto) {
+    return this.servicesService.create(createServiceDto);
+  }
+
+  @Patch(':id')
+  @Auth(ValidRoles.admin)
+  update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateServiceDto: UpdateServiceDto,
+  ) {
+    return this.servicesService.update(id, updateServiceDto);
+  }
+
+  @Delete(':id')
+  @Auth(ValidRoles.admin)
+  remove(@Param('id', ParseUUIDPipe) id: string) {
+    return this.servicesService.remove(id);
   }
 }
