@@ -55,13 +55,14 @@ DATABASE_URL="postgresql://postgres.<ref>:...@aws-0-<region>.pooler.supabase.com
 
 ### Poblar datos de ejemplo (una vez)
 
+`GET /api/seed` está **bloqueado en producción**. Usa el comando:
+
 ```bash
-curl https://luneby-api.onrender.com/api/seed
+# en local, apuntando a Supabase con DATABASE_URL en .env
+npm run build && npm run seed
 ```
 
-> `GET /api/seed` está **bloqueado si `STAGE=prod`**. Para usarlo una vez en
-> Render: pon temporalmente `STAGE=dev`, llama al endpoint y vuelve a `prod`.
-> O carga los datos con un script/SQL propio.
+o en Render: **Shell** del servicio → `npm run seed`.
 
 ---
 
