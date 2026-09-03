@@ -1,0 +1,34 @@
+# Render Blueprint. Crea el servicio con: New + → Blueprint → apuntar a este repo.
+# El rootDir es backend/ porque el repo es un monorepo.
+services:
+  - type: web
+    name: luneby-api
+    runtime: docker
+    plan: free
+    rootDir: backend
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/docs
+    envVars:
+      - key: STAGE
+        value: prod
+      - key: PORT
+        value: 3001
+      - key: JWT_EXPIRES_IN
+        value: 2h
+      - key: JWT_SECRET
+        generateValue: true
+      # El resto se configuran a mano en el panel de Render (Environment):
+      - key: FRONTEND_URL # https://<tu-front>.vercel.app
+        sync: false
+      - key: HOST_API # https://luneby-api.onrender.com/api
+        sync: false
+      - key: DB_HOST # db.<project-ref>.supabase.co  (conexión directa)
+        sync: false
+      - key: DB_PORT # 5432
+        sync: false
+      - key: DB_NAME # postgres
+        sync: false
+      - key: DB_USERNAME # postgres
+        sync: false
+      - key: DB_PASSWORD # la contraseña de la base de datos de Supabase
+        sync: false

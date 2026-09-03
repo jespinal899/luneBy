@@ -206,14 +206,28 @@ tests en cada push o pull request que toque `backend/`.
 
 ---
 
+## Migraciones
+
+El esquema **no** usa `synchronize`: se gestiona con migraciones en
+`src/migrations/`, que se aplican solas al arrancar (`migrationsRun`).
+
+```bash
+# tras cambiar una entidad (con la BD local al día):
+npm run migration:generate -- src/migrations/DescripcionDelCambio
+npx prettier --write "src/migrations/*.ts"
+npm run build          # el .ts se compila a dist/migrations/*.js
+```
+
+- `npm run migration:run` — aplica las pendientes a mano
+- `npm run migration:revert` — deshace la última
+
 ## Producción
 
-- Poner `STAGE=prod`: activa SSL en la conexión a PostgreSQL, desactiva
-  `synchronize` (el esquema pasa a gestionarse con migraciones) y bloquea
-  `GET /api/seed`.
-- `FRONTEND_URL` debe apuntar al dominio real del frontend.
-- `JWT_SECRET` distinto y de alta entropía.
-- Base de datos gestionada (p. ej. Supabase): rellenar `DB_*` con sus credenciales.
+Base de datos en **Supabase**, API en **Render**. Guía completa en
+[`DEPLOY.md`](./DEPLOY.md).
+
+Con `STAGE=prod`: SSL en PostgreSQL, `GET /api/seed` bloqueado, CORS restringido
+a `FRONTEND_URL`. Usa un `JWT_SECRET` propio y de alta entropía.
 
 ## Hoja de ruta
 
@@ -230,5 +244,7 @@ tests en cada push o pull request que toque `backend/`.
 - [x] Appointments (disponibilidad + agendado por slots + gestión admin)
 - [x] Seed de datos (`GET /api/seed`, bloqueado en producción)
 - [x] Documentación OpenAPI (`/api/docs`) y CORS por entorno
-- [ ] Migraciones y despliegue (Supabase)
-- [ ] Subida de imágenes de servicios
+- [x] helmet + rate limiting
+- [x] Subida de imágenes de servicios (a disco; Supabase Storage pendiente)
+- [x] Migraciones de esquema
+- [ ] Despliegue en Supabase + Render (ver `DEPLOY.md`)

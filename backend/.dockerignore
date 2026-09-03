@@ -1,0 +1,10 @@
+node_modules
+dist
+coverage
+postgres
+static/services/*
+!static/services/.gitkeep
+.env
+.env.*
+.git
+*.log
