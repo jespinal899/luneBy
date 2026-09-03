@@ -1,17 +1,39 @@
+import { useMutation } from '@tanstack/react-query';
+import { Link, useLocation, useNavigate } from 'react-router';
+
+import { apiErrorMessage } from '@/api/errors';
 import { CustomLogo } from '@/components/Custom/CustomLogo';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-
-import { Link } from 'react-router';
+import { useAuth } from '@/auth/context/use-auth';
 
 export const LoginPage = () => {
+    const { login } = useAuth();
+    const navigate = useNavigate();
+    const location = useLocation();
+    const from = (location.state as { from?: string } | null)?.from ?? '/';
+
+    const mutation = useMutation({
+        mutationFn: login,
+        onSuccess: () => navigate(from, { replace: true }),
+    });
+
+    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        const form = new FormData(event.currentTarget);
+        mutation.mutate({
+            email: String(form.get('email') ?? ''),
+            password: String(form.get('password') ?? ''),
+        });
+    };
+
     return (
         <div className={'flex flex-col gap-6'}>
             <Card className="overflow-hidden p-0">
                 <CardContent className="grid p-0 md:grid-cols-2">
-                    <form className="p-6 md:p-8">
+                    <form className="p-6 md:p-8" onSubmit={handleSubmit}>
                         <div className="flex flex-col gap-6">
                             <div className="flex flex-col items-center text-center">
                                 <CustomLogo />
@@ -24,6 +46,7 @@ export const LoginPage = () => {
                                 <Label htmlFor="email">Email</Label>
                                 <Input
                                     id="email"
+                                    name="email"
                                     type="email"
                                     placeholder="m@example.com"
                                     required
@@ -39,10 +62,29 @@ export const LoginPage = () => {
                                         ¿Olvidaste tu contraseña?
                                     </a>
                                 </div>
-                                <Input id="password" type="password" required />
+                                <Input
+                                    id="password"
+                                    name="password"
+                                    type="password"
+                                    required
+                                />
                             </div>
-                            <Button type="submit" className="w-full">
-                                Ingresar
+
+                            {mutation.isError && (
+                                <p className="text-sm text-destructive">
+                                    {apiErrorMessage(
+                                        mutation.error,
+                                        'No se pudo iniciar sesión.',
+                                    )}
+                                </p>
+                            )}
+
+                            <Button
+                                type="submit"
+                                className="w-full"
+                                disabled={mutation.isPending}
+                            >
+                                {mutation.isPending ? 'Ingresando…' : 'Ingresar'}
                             </Button>
                             <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
                                 <span className="relative z-10 bg-background px-2 text-muted-foreground">
