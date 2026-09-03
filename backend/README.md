@@ -113,12 +113,12 @@ tests en cada push o pull request que toque `backend/`.
 - [x] Scaffold NestJS
 - [x] Conexión a PostgreSQL (TypeORM)
 - [x] Módulo common (paginación)
-- [ ] Auth (registro / login / JWT + roles)
+- [x] Auth (registro / login / JWT + roles)
   - [x] Entidad `User` y roles
   - [x] DTOs e interfaces
   - [x] Estrategia JWT y Passport
   - [x] Endpoints de registro y login
-  - [ ] Protección de rutas por roles
+  - [x] Protección de rutas por roles (`@Auth`, `@GetUser`, `UserRoleGuard`)
 - [ ] Services (catálogo con filtros de categoría y precio)
 - [ ] Appointments (disponibilidad + agendado por slots)
 - [ ] Seed de datos
