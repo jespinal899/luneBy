@@ -117,7 +117,7 @@ tests en cada push o pull request que toque `backend/`.
   - [x] Entidad `User` y roles
   - [x] DTOs e interfaces
   - [x] Estrategia JWT y Passport
-  - [ ] Endpoints de registro y login
+  - [x] Endpoints de registro y login
   - [ ] Protección de rutas por roles
 - [ ] Services (catálogo con filtros de categoría y precio)
 - [ ] Appointments (disponibilidad + agendado por slots)
