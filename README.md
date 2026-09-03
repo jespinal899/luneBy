@@ -16,7 +16,7 @@
 | :--- | :--- |
 | **Frontend** | React 19, Vite 8, TypeScript 6, React Router v8 (v8.3.0) |
 | **Estilos & UI** | Tailwind CSS v4, Shadcn/ui, Lucide Icons, Montserrat & Inter Fonts |
-| **Backend** | Node.js / Express (Estructura base en la carpeta `backend`) |
+| **Backend** | NestJS 10, TypeORM, PostgreSQL, JWT (carpeta `backend/` — ver su [README](backend/README.md)) |
 
 ---
 
@@ -35,7 +35,14 @@ ProyectoCitas/
 │   │   └── main.tsx         # Punto de entrada de React
 │   ├── tsconfig.json        # Configuración de TypeScript
 │   └── vite.config.ts       # Configuración de Vite & Plugins
-└── backend/                 # Estructura del servidor / API
+└── backend/                 # API REST (NestJS + TypeORM + PostgreSQL)
+    ├── src/
+    │   ├── common/          # DTO de paginación y utilidades compartidas
+    │   ├── auth/            # usuarios, registro/login, JWT y roles
+    │   ├── services/        # catálogo de servicios de manicura
+    │   ├── appointments/    # disponibilidad y agendado de citas
+    │   └── seed/            # datos de ejemplo
+    └── test/                # tests end-to-end
 ```
 
 ---
