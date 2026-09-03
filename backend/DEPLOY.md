@@ -39,18 +39,20 @@ DATABASE_URL="postgresql://postgres.<ref>:...@aws-0-<region>.pooler.supabase.com
 ### Opción A — Blueprint (recomendado)
 
 1. En Render: **New + → Blueprint** y selecciona este repositorio.
-   Detecta `backend/render.yaml`.
+   Detecta `render.yaml` en la raíz (define el servicio `luneby-api` con
+   `rootDir: backend`).
 2. Render pedirá los valores marcados como *sync: false*. Rellena:
+   - `DATABASE_URL` → la URI del *Session pooler* de Supabase (paso 1)
    - `FRONTEND_URL` → la URL de Vercel (ej. `https://luneby.vercel.app`)
    - `HOST_API` → `https://luneby-api.onrender.com/api`
-   - `DATABASE_URL` → la URI del *Session pooler* de Supabase (paso 1)
    - `JWT_SECRET` lo genera Render automáticamente.
-3. Deploy. En el primer arranque se aplican las migraciones sobre Supabase.
+3. **Apply**. En el primer arranque se aplican las migraciones sobre Supabase
+   (ya están aplicadas si corriste `migration:run` antes; es idempotente).
 
 ### Opción B — Servicio manual
 
 - **New + → Web Service** → este repo → *Root Directory* `backend`,
-  *Runtime* `Docker`.
+  *Runtime* `Docker`, *Health Check Path* `/api/services`.
 - Añade las mismas variables de entorno en **Environment**.
 
 ### Poblar datos de ejemplo (una vez)
