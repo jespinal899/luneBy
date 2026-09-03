@@ -28,11 +28,16 @@ export class SeedService {
     private readonly timeOffRepository: Repository<TimeOff>,
   ) {}
 
+  /** Endpoint HTTP: bloqueado en producción. */
   async runSeed() {
     if (this.configService.get('STAGE') === 'prod') {
       throw new ForbiddenException('El seed está deshabilitado en producción');
     }
+    return this.execute();
+  }
 
+  /** Borra y reinserta los datos de ejemplo. Lo usan el endpoint y `npm run seed`. */
+  async execute() {
     await this.wipe();
     await this.insertUsers();
     await this.insertServices();

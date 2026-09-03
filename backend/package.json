@@ -15,6 +15,7 @@
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
+    "seed": "node dist/seed/seed.cli",
     "lint": "eslint \"{src,test}/**/*.ts\" --fix",
     "lint:ci": "eslint \"{src,test}/**/*.ts\"",
     "test": "jest",
