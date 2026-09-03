@@ -162,11 +162,12 @@ npm run start:dev             # API en http://localhost:3001/api
 | `STAGE` | `dev` | `dev` o `prod`. En `prod` se activa SSL y se desactiva `synchronize`. |
 | `PORT` | `3001` | Puerto HTTP de la API. |
 | `FRONTEND_URL` | `http://localhost:5173` | Origen(es) permitido(s) por CORS, separados por coma. |
-| `DB_HOST` | `localhost` | Host de PostgreSQL. |
+| `DB_HOST` | `localhost` | Host de PostgreSQL (ignorado si hay `DATABASE_URL`). |
 | `DB_PORT` | `5432` | Puerto de PostgreSQL. |
 | `DB_NAME` | `LuneByDB` | Nombre de la base de datos. |
 | `DB_USERNAME` | `postgres` | Usuario de PostgreSQL. |
 | `DB_PASSWORD` | *(elige uno local)* | Contraseña de PostgreSQL. |
+| `DATABASE_URL` | *(vacío en local)* | Connection string completa; tiene prioridad sobre las `DB_*` (se usa en prod con el pooler de Supabase). |
 | `JWT_SECRET` | *(cadena larga aleatoria)* | Firma de los JSON Web Tokens. |
 | `JWT_EXPIRES_IN` | `2h` | Caducidad de los tokens. |
 

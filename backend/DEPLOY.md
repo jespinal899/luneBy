@@ -9,23 +9,28 @@ frontend en **Vercel**.
 
 1. Crea un proyecto en [supabase.com](https://supabase.com). Apunta la
    **Database password** que eliges al crearlo.
-2. En **Project Settings → Database → Connection string → "Direct connection"**
-   tienes los datos que necesitas:
+2. En **Project Settings → Database → Connection string** elige **"Session
+   pooler"** en el desplegable y copia la URI. Tiene esta forma:
 
-   | Variable | Valor |
-   | :--- | :--- |
-   | `DB_HOST` | `db.<project-ref>.supabase.co` |
-   | `DB_PORT` | `5432` |
-   | `DB_NAME` | `postgres` |
-   | `DB_USERNAME` | `postgres` |
-   | `DB_PASSWORD` | *(la password del paso 1)* |
+   ```
+   postgresql://postgres.<ref>:[PASSWORD]@aws-0-<region>.pooler.supabase.com:5432/postgres
+   ```
+
+   Esa URI completa es la variable **`DATABASE_URL`**.
+
+   > La "Direct connection" (`db.<ref>.supabase.co`) es **IPv6-only** en los
+   > proyectos nuevos de Supabase; muchas redes no la resuelven. El *Session
+   > pooler* funciona por IPv4 y soporta migraciones.
 
 3. No hace falta crear tablas: al arrancar, la API aplica las migraciones
    (`migrationsRun`). La extensión `uuid-ossp` ya viene habilitada en Supabase.
 
-> Para mucho tráfico, cambia `DB_HOST`/`DB_PORT` al *Session pooler*
-> (`aws-0-....pooler.supabase.com` / `5432`, usuario `postgres.<ref>`).
-> Las migraciones deben correrse siempre contra la conexión directa.
+### Correr las migraciones a mano (opcional)
+
+```bash
+DATABASE_URL="postgresql://postgres.<ref>:...@aws-0-<region>.pooler.supabase.com:5432/postgres" \
+  npm run migration:run
+```
 
 ---
 
@@ -38,7 +43,7 @@ frontend en **Vercel**.
 2. Render pedirá los valores marcados como *sync: false*. Rellena:
    - `FRONTEND_URL` → la URL de Vercel (ej. `https://luneby.vercel.app`)
    - `HOST_API` → `https://luneby-api.onrender.com/api`
-   - `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USERNAME`, `DB_PASSWORD` → los de Supabase
+   - `DATABASE_URL` → la URI del *Session pooler* de Supabase (paso 1)
    - `JWT_SECRET` lo genera Render automáticamente.
 3. Deploy. En el primer arranque se aplican las migraciones sobre Supabase.
 

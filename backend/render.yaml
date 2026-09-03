@@ -22,13 +22,7 @@ services:
         sync: false
       - key: HOST_API # https://luneby-api.onrender.com/api
         sync: false
-      - key: DB_HOST # db.<project-ref>.supabase.co  (conexión directa)
-        sync: false
-      - key: DB_PORT # 5432
-        sync: false
-      - key: DB_NAME # postgres
-        sync: false
-      - key: DB_USERNAME # postgres
-        sync: false
-      - key: DB_PASSWORD # la contraseña de la base de datos de Supabase
+      # Connection string del "Session pooler" de Supabase (IPv4).
+      # Project Settings → Database → Connection string → Session pooler.
+      - key: DATABASE_URL
         sync: false
