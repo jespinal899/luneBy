@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Clock, DollarSign, SaveAll, X } from 'lucide-react';
+import { Clock, DollarSign, SaveAll, Upload, X } from 'lucide-react';
 import { Link, useNavigate, useParams } from 'react-router';
 
 import { AdminTitle } from '@/admin/components/AdminTitle';
@@ -7,6 +7,7 @@ import {
     useCreateService,
     useUpdateService,
 } from '@/admin/hooks/use-service-mutations';
+import { useUploadImage } from '@/admin/hooks/use-upload-image';
 import { apiErrorMessage } from '@/api/errors';
 import { Button } from '@/components/ui/button';
 import type { ServiceInput } from '@/shop/api/services.actions';
@@ -53,9 +54,16 @@ export const AdminProductPage = () => {
     const createMutation = useCreateService();
     const updateMutation = useUpdateService(id ?? '');
     const mutation = isNew ? createMutation : updateMutation;
+    const upload = useUploadImage();
 
     const set = <K extends keyof ServiceInput>(field: K, value: ServiceInput[K]) =>
         setForm((prev) => ({ ...prev, [field]: value }));
+
+    const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (!file) return;
+        upload.mutate(file, { onSuccess: (url) => set('image', url) });
+    };
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -209,28 +217,53 @@ export const AdminProductPage = () => {
                             Imagen del servicio
                         </h2>
 
-                        <label className="mb-2 block text-sm font-medium text-slate-700">
-                            URL de la imagen
-                        </label>
-                        <input
-                            type="url"
-                            value={form.image}
-                            onChange={(e) => set('image', e.target.value)}
-                            className={inputClass}
-                            placeholder="https://…"
-                        />
-
                         {form.image ? (
-                            <img
-                                src={form.image}
-                                alt="Vista previa"
-                                className="mt-4 aspect-square w-full rounded-lg border border-slate-200 object-cover"
-                            />
+                            <div className="relative">
+                                <img
+                                    src={form.image}
+                                    alt="Vista previa"
+                                    className="aspect-square w-full rounded-lg border border-slate-200 object-cover"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => set('image', '')}
+                                    className="absolute right-2 top-2 rounded-full bg-red-500 p-1 text-white"
+                                >
+                                    <X className="h-3 w-3" />
+                                </button>
+                            </div>
                         ) : (
-                            <p className="mt-3 text-xs text-slate-400">
-                                Si lo dejas vacío se usa una imagen por categoría.
+                            <label className="relative block cursor-pointer rounded-lg border-2 border-dashed border-slate-300 p-6 text-center transition-colors hover:border-slate-400">
+                                <input
+                                    type="file"
+                                    accept="image/jpeg,image/png,image/webp"
+                                    onChange={handleImageChange}
+                                    disabled={upload.isPending}
+                                    className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+                                />
+                                <Upload className="mx-auto h-10 w-10 text-slate-400" />
+                                <p className="mt-2 text-sm font-medium text-slate-700">
+                                    {upload.isPending
+                                        ? 'Subiendo…'
+                                        : 'Sube una foto del resultado'}
+                                </p>
+                                <p className="text-xs text-slate-400">
+                                    JPG, PNG o WEBP · hasta 5 MB
+                                </p>
+                            </label>
+                        )}
+
+                        {upload.isError && (
+                            <p className="mt-2 text-xs text-red-600">
+                                {apiErrorMessage(
+                                    upload.error,
+                                    'No se pudo subir la imagen.',
+                                )}
                             </p>
                         )}
+                        <p className="mt-3 text-xs text-slate-400">
+                            Si no subes ninguna se usa una imagen por categoría.
+                        </p>
                     </div>
 
                     <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
