@@ -1,81 +1,103 @@
-import { AdminTitle } from '@/admin/components/AdminTitle';
-import { useParams, Link } from 'react-router';
-
 import { useState } from 'react';
-import { X, Upload, SaveAll, Clock, DollarSign } from 'lucide-react';
+import { Clock, DollarSign, SaveAll, X } from 'lucide-react';
+import { Link, useNavigate, useParams } from 'react-router';
+
+import { AdminTitle } from '@/admin/components/AdminTitle';
+import {
+    useCreateService,
+    useUpdateService,
+} from '@/admin/hooks/use-service-mutations';
+import { apiErrorMessage } from '@/api/errors';
 import { Button } from '@/components/ui/button';
-import { CATEGORIES, products } from '@/mocks/products.mock';
+import type { ServiceInput } from '@/shop/api/services.actions';
+import { useService } from '@/shop/hooks/use-services';
+import { SERVICE_CATEGORIES } from '@/shop/lib/categories';
 
-interface Service {
-    id: string;
-    name: string;
-    price: number;
-    durationMin: number;
-    category: string;
-    description: string;
-    isActive: boolean;
-    image: string;
-}
-
-const emptyService: Service = {
-    id: 'new',
+const emptyForm: ServiceInput = {
     name: '',
     price: 0,
     durationMin: 60,
-    category: CATEGORIES[0],
+    category: SERVICE_CATEGORIES[0],
     description: '',
-    isActive: true,
     image: '',
+    isActive: true,
 };
+
+const inputClass =
+    'w-full rounded-lg border border-slate-300 px-4 py-2.5 transition-all focus:border-transparent focus:ring-2 focus:ring-slate-900/20';
 
 export const AdminProductPage = () => {
     const { id } = useParams();
     const isNew = id === 'new';
+    const navigate = useNavigate();
 
-    const existing = products.find((p) => p.id === id);
+    const { data: existing, isLoading } = useService(isNew ? undefined : id);
+
+    const [form, setForm] = useState<ServiceInput>(emptyForm);
+    const [hydratedFrom, setHydratedFrom] = useState<string | null>(null);
+
+    // Cuando llega el servicio a editar, se vuelca al formulario una sola vez.
+    if (existing && existing.id !== hydratedFrom) {
+        setHydratedFrom(existing.id);
+        setForm({
+            name: existing.name,
+            price: existing.price,
+            durationMin: existing.durationMin,
+            category: existing.category,
+            description: existing.description ?? '',
+            image: existing.image ?? '',
+            isActive: existing.isActive,
+        });
+    }
+
+    const createMutation = useCreateService();
+    const updateMutation = useUpdateService(id ?? '');
+    const mutation = isNew ? createMutation : updateMutation;
+
+    const set = <K extends keyof ServiceInput>(field: K, value: ServiceInput[K]) =>
+        setForm((prev) => ({ ...prev, [field]: value }));
+
+    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        mutation.mutate(form, {
+            onSuccess: () => navigate('/admin/products'),
+        });
+    };
 
     const title = isNew ? 'Nuevo servicio' : 'Editar servicio';
     const subtitle = isNew
         ? 'Crea un servicio de uñas que tus clientas podrán agendar.'
         : 'Actualiza la información de este servicio.';
 
-    const [service, setService] = useState<Service>(
-        existing
-            ? {
-                  id: existing.id,
-                  name: existing.name,
-                  price: existing.price,
-                  durationMin: existing.durationMin,
-                  category: existing.category,
-                  description: existing.description,
-                  isActive: existing.isActive,
-                  image: existing.image,
-              }
-            : emptyService
-    );
-
-    const handleChange = <K extends keyof Service>(field: K, value: Service[K]) => {
-        setService((prev) => ({ ...prev, [field]: value }));
-    };
-
-    const inputClass =
-        'w-full rounded-lg border border-slate-300 px-4 py-2.5 transition-all focus:border-transparent focus:ring-2 focus:ring-slate-900/20';
+    if (!isNew && isLoading) {
+        return <p className="py-16 text-center text-slate-500">Cargando servicio…</p>;
+    }
 
     return (
-        <>
+        <form onSubmit={handleSubmit}>
             <div className="flex items-center justify-between">
                 <AdminTitle title={title} subtitle={subtitle} />
                 <div className="mb-10 flex justify-end gap-4">
-                    <Button variant="outline" render={<Link to="/admin/products" />}>
+                    <Button
+                        type="button"
+                        variant="outline"
+                        render={<Link to="/admin/products" />}
+                    >
                         <X className="h-4 w-4" />
                         Cancelar
                     </Button>
-                    <Button>
+                    <Button type="submit" disabled={mutation.isPending}>
                         <SaveAll className="h-4 w-4" />
-                        Guardar cambios
+                        {mutation.isPending ? 'Guardando…' : 'Guardar'}
                     </Button>
                 </div>
             </div>
+
+            {mutation.isError && (
+                <p className="mb-6 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">
+                    {apiErrorMessage(mutation.error, 'No se pudo guardar el servicio.')}
+                </p>
+            )}
 
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
                 {/* Formulario principal */}
@@ -92,8 +114,9 @@ export const AdminProductPage = () => {
                                 </label>
                                 <input
                                     type="text"
-                                    value={service.name}
-                                    onChange={(e) => handleChange('name', e.target.value)}
+                                    required
+                                    value={form.name}
+                                    onChange={(e) => set('name', e.target.value)}
                                     className={inputClass}
                                     placeholder="Ej: Manicura Rusa Premium"
                                 />
@@ -109,9 +132,11 @@ export const AdminProductPage = () => {
                                         <input
                                             type="number"
                                             min={0}
-                                            value={service.price}
+                                            step="0.01"
+                                            required
+                                            value={form.price}
                                             onChange={(e) =>
-                                                handleChange('price', parseFloat(e.target.value) || 0)
+                                                set('price', parseFloat(e.target.value) || 0)
                                             }
                                             className={`${inputClass} pl-9`}
                                             placeholder="0.00"
@@ -127,13 +152,14 @@ export const AdminProductPage = () => {
                                         <Clock className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                                         <input
                                             type="number"
-                                            min={0}
-                                            step={15}
-                                            value={service.durationMin}
+                                            min={5}
+                                            step={5}
+                                            required
+                                            value={form.durationMin}
                                             onChange={(e) =>
-                                                handleChange(
+                                                set(
                                                     'durationMin',
-                                                    parseInt(e.target.value) || 0
+                                                    parseInt(e.target.value) || 0,
                                                 )
                                             }
                                             className={`${inputClass} pl-9`}
@@ -148,11 +174,11 @@ export const AdminProductPage = () => {
                                     Categoría
                                 </label>
                                 <select
-                                    value={service.category}
-                                    onChange={(e) => handleChange('category', e.target.value)}
+                                    value={form.category}
+                                    onChange={(e) => set('category', e.target.value)}
                                     className={inputClass}
                                 >
-                                    {CATEGORIES.map((c) => (
+                                    {SERVICE_CATEGORIES.map((c) => (
                                         <option key={c} value={c}>
                                             {c}
                                         </option>
@@ -165,13 +191,11 @@ export const AdminProductPage = () => {
                                     Descripción
                                 </label>
                                 <textarea
-                                    value={service.description}
-                                    onChange={(e) =>
-                                        handleChange('description', e.target.value)
-                                    }
+                                    value={form.description}
+                                    onChange={(e) => set('description', e.target.value)}
                                     rows={5}
                                     className={`${inputClass} resize-none`}
-                                    placeholder="Describe en qué consiste el servicio, qué incluye y su duración aproximada."
+                                    placeholder="Describe en qué consiste el servicio y qué incluye."
                                 />
                             </div>
                         </div>
@@ -181,38 +205,31 @@ export const AdminProductPage = () => {
                 {/* Barra lateral */}
                 <div className="space-y-6">
                     <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-                        <h2 className="mb-6 text-lg font-semibold text-slate-800">
+                        <h2 className="mb-4 text-lg font-semibold text-slate-800">
                             Imagen del servicio
                         </h2>
 
-                        {service.image ? (
-                            <div className="relative">
-                                <img
-                                    src={service.image}
-                                    alt={service.name}
-                                    className="aspect-square w-full rounded-lg border border-slate-200 object-cover"
-                                />
-                                <button
-                                    onClick={() => handleChange('image', '')}
-                                    className="absolute right-2 top-2 rounded-full bg-red-500 p-1 text-white"
-                                >
-                                    <X className="h-3 w-3" />
-                                </button>
-                            </div>
+                        <label className="mb-2 block text-sm font-medium text-slate-700">
+                            URL de la imagen
+                        </label>
+                        <input
+                            type="url"
+                            value={form.image}
+                            onChange={(e) => set('image', e.target.value)}
+                            className={inputClass}
+                            placeholder="https://…"
+                        />
+
+                        {form.image ? (
+                            <img
+                                src={form.image}
+                                alt="Vista previa"
+                                className="mt-4 aspect-square w-full rounded-lg border border-slate-200 object-cover"
+                            />
                         ) : (
-                            <div className="relative rounded-lg border-2 border-dashed border-slate-300 p-6 text-center transition-all hover:border-slate-400">
-                                <input
-                                    type="file"
-                                    accept="image/*"
-                                    className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
-                                    onChange={(e) => console.log(e.target.files)}
-                                />
-                                <Upload className="mx-auto h-10 w-10 text-slate-400" />
-                                <p className="mt-2 text-sm font-medium text-slate-700">
-                                    Sube una foto del resultado
-                                </p>
-                                <p className="text-xs text-slate-400">PNG o JPG hasta 10MB</p>
-                            </div>
+                            <p className="mt-3 text-xs text-slate-400">
+                                Si lo dejas vacío se usa una imagen por categoría.
+                            </p>
                         )}
                     </div>
 
@@ -232,25 +249,14 @@ export const AdminProductPage = () => {
                             </div>
                             <input
                                 type="checkbox"
-                                checked={service.isActive}
-                                onChange={(e) => handleChange('isActive', e.target.checked)}
+                                checked={form.isActive}
+                                onChange={(e) => set('isActive', e.target.checked)}
                                 className="h-5 w-5 accent-slate-900"
                             />
                         </label>
-
-                        <div className="mt-4 flex items-center justify-between p-3 text-sm">
-                            <span className="font-medium text-slate-700">Duración</span>
-                            <span className="text-slate-600">{service.durationMin} min</span>
-                        </div>
-                        <div className="flex items-center justify-between p-3 text-sm">
-                            <span className="font-medium text-slate-700">Precio</span>
-                            <span className="text-slate-600">
-                                ${service.price.toFixed(2)}
-                            </span>
-                        </div>
                     </div>
                 </div>
             </div>
-        </>
+        </form>
     );
 };
