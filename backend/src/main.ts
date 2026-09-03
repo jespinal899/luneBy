@@ -1,12 +1,22 @@
 import { NestFactory } from '@nestjs/core';
 import { Logger, ValidationPipe } from '@nestjs/common';
+import { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+
+import helmet from 'helmet';
 
 import { AppModule } from './app.module';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
   const logger = new Logger('Bootstrap');
+
+  // Detrás del proxy de Render/Supabase: necesario para el rate limiting por IP.
+  app.set('trust proxy', 1);
+
+  // Cabeceras de seguridad. CSP desactivada porque la única página HTML que
+  // servimos es Swagger UI (usa scripts/estilos inline).
+  app.use(helmet({ contentSecurityPolicy: false }));
 
   app.setGlobalPrefix('api');
 
