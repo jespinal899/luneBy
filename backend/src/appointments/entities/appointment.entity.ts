@@ -41,10 +41,10 @@ export class Appointment {
   @Column('text', { nullable: true })
   notes: string;
 
-  @ManyToOne(() => Service, { eager: true })
+  @ManyToOne(() => Service, (service) => service.appointments, { eager: true })
   service: Service;
 
-  @ManyToOne(() => User, { eager: true })
+  @ManyToOne(() => User, (user) => user.appointments, { eager: true })
   user: User;
 
   @CreateDateColumn()

@@ -3,8 +3,11 @@ import {
   BeforeUpdate,
   Column,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+
+import { Appointment } from '../../appointments/entities/appointment.entity';
 
 @Entity('users')
 export class User {
@@ -28,6 +31,9 @@ export class User {
 
   @Column('text', { array: true, default: ['client'] })
   roles: string[];
+
+  @OneToMany(() => Appointment, (appointment) => appointment.user)
+  appointments: Appointment[];
 
   @BeforeInsert()
   checkFieldsBeforeInsert() {

@@ -3,8 +3,11 @@ import {
   BeforeUpdate,
   Column,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+
+import { Appointment } from '../../appointments/entities/appointment.entity';
 
 @Entity({ name: 'services' })
 export class Service {
@@ -37,6 +40,9 @@ export class Service {
   /** Si el servicio se puede agendar. */
   @Column('bool', { default: true })
   isActive: boolean;
+
+  @OneToMany(() => Appointment, (appointment) => appointment.service)
+  appointments: Appointment[];
 
   @BeforeInsert()
   generateSlugOnInsert() {
