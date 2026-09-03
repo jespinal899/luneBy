@@ -4,10 +4,13 @@ import { createBrowserRouter, Navigate } from 'react-router';
 import { ProtectedRoute } from './auth/components/ProtectedRoute';
 import { LoginPage } from './auth/layouts/pages/login/LoginPage';
 import { RegisterPage } from './auth/layouts/pages/register/RegisterPage';
+import { AdminAppointmentsPage } from './admin/pages/appointments/AdminAppointmentsPage';
 import { AdminProductPage } from './admin/pages/product/AdminProductPage';
 import { AdminProductsPage } from './admin/pages/products/AdminProductsPages';
 import { DashboardPage } from './admin/pages/dashboard/DashboardPage';
 import { ShopLayouts } from './shop/layouts/ShopLayouts';
+import { AgendarPage } from './shop/pages/agendar/AgendarPage';
+import { MyAppointmentsPage } from './shop/pages/citas/MyAppointmentsPage';
 import { HomePage } from './shop/pages/home/HomePage';
 import { ProductPage } from './shop/pages/product/ProductPage';
 import { ShopPage } from './shop/pages/Shop/ShopPage';
@@ -23,8 +26,17 @@ export const appRouter = createBrowserRouter([
     children: [
       { index: true, element: <HomePage /> },
       { path: 'product/:idSlug', element: <ProductPage /> },
+      { path: 'shop/agendar', element: <AgendarPage /> },
       { path: 'shop', element: <ShopPage /> },
       { path: 'shop/:shop', element: <ShopPage /> },
+      {
+        path: 'mis-citas',
+        element: (
+          <ProtectedRoute>
+            <MyAppointmentsPage />
+          </ProtectedRoute>
+        ),
+      },
     ],
   },
   // Autenticación
@@ -49,6 +61,7 @@ export const appRouter = createBrowserRouter([
       { index: true, element: <DashboardPage /> },
       { path: 'products', element: <AdminProductsPage /> },
       { path: 'products/:id', element: <AdminProductPage /> },
+      { path: 'citas', element: <AdminAppointmentsPage /> },
     ],
   },
 ]);
