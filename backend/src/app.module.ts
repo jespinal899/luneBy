@@ -6,6 +6,7 @@ import { CommonModule } from './common/common.module';
 import { AuthModule } from './auth/auth.module';
 import { ServicesModule } from './services/services.module';
 import { AppointmentsModule } from './appointments/appointments.module';
+import { SeedModule } from './seed/seed.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { AppointmentsModule } from './appointments/appointments.module';
     AuthModule,
     ServicesModule,
     AppointmentsModule,
+    SeedModule,
   ],
 })
 export class AppModule {}

@@ -121,5 +121,5 @@ tests en cada push o pull request que toque `backend/`.
   - [x] Protección de rutas por roles (`@Auth`, `@GetUser`, `UserRoleGuard`)
 - [x] Services (catálogo con filtros de categoría y precio + CRUD admin)
 - [x] Appointments (disponibilidad + agendado por slots + gestión admin)
-- [ ] Seed de datos
+- [x] Seed de datos (`GET /api/seed`, bloqueado en producción)
 - [ ] Migraciones y despliegue (Supabase)
