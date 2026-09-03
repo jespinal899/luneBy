@@ -4,11 +4,14 @@ import { RouterProvider } from 'react-router';
 
 import { queryClient } from './api/query-client';
 import { appRouter } from './app.router';
+import { AuthProvider } from './auth/context/AuthProvider';
 
 export const Luneby = () => {
   return (
     <QueryClientProvider client={queryClient}>
-      <RouterProvider router={appRouter} />
+      <AuthProvider>
+        <RouterProvider router={appRouter} />
+      </AuthProvider>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );
