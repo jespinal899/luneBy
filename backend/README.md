@@ -19,7 +19,8 @@ En construcción, commit a commit:
 - [x] Scaffold NestJS
 - [x] Conexión a PostgreSQL (TypeORM)
 - [x] Módulo common (paginación)
-- [ ] Auth (registro / login / JWT + roles)
+- [~] Auth (registro / login / JWT + roles)
+  - [x] Entidad User y roles
 - [ ] Services (catálogo con filtros)
 - [ ] Appointments (citas por slots de horario)
 - [ ] Seed de datos
