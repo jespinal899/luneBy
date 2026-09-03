@@ -2,6 +2,8 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { CommonModule } from './common/common.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -22,6 +24,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       // En prod se desactiva y se usan migraciones.
       synchronize: process.env.STAGE !== 'prod',
     }),
+
+    CommonModule,
   ],
 })
 export class AppModule {}
