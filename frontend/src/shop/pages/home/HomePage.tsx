@@ -1,15 +1,13 @@
 import { Link } from 'react-router';
 import { CalendarCheck, Sparkles, Clock, ShieldCheck, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { CustomPagination } from '@/components/Custom/CustomPagination';
-import { products } from '@/mocks/products.mock';
 import { ProductsGrid } from '@/shop/components/ProductsGrid';
+import { useServices } from '@/shop/hooks/use-services';
 import heroImage from '@/assets/service-nailart.jpg';
 
 const stats = [
   { value: '4.9', label: 'Valoración de clientas' },
   { value: '+2.500', label: 'Citas realizadas' },
-
 ];
 
 const steps = [
@@ -31,6 +29,9 @@ const steps = [
 ];
 
 export const HomePage = () => {
+  const { data, isLoading } = useServices({ limit: 6 });
+  const services = (data?.products ?? []).filter((s) => s.isActive);
+
   return (
     <>
       {/* Hero — banner ancho */}
@@ -40,7 +41,7 @@ export const HomePage = () => {
           alt="Estudio de uñas Lune By Kelin"
           className="absolute inset-0 -z-10 h-full w-full object-cover object-center"
         />
-        <div className="absolute inset-0 -z-10 bg-gradient-to-r from-brand-dark/95 via-brand/80 to-brand/40" />
+        <div className="absolute inset-0 -z-10 bg-gradient from-brand-dark/95 via-brand/80 to-brand/40" />
 
         <div className="container mx-auto px-4 py-16 md:py-24 lg:px-8">
           <div className="max-w-2xl text-brand-foreground">
@@ -122,10 +123,31 @@ export const HomePage = () => {
       </section>
 
       {/* Catálogo */}
-      <ProductsGrid products={products} />
-      <div className="container mx-auto px-4 pb-16 lg:px-8">
-        <CustomPagination totalPages={5} />
-      </div>
+      <section className="py-16">
+        <div className="container mx-auto px-4 lg:px-8">
+          <div className="mb-10 flex items-end justify-between gap-4">
+            <div>
+              <h2 className="font-montserrat text-3xl tracking-tight">
+                Nuestros servicios
+              </h2>
+              <p className="mt-2 text-muted-foreground">
+                Elige el tuyo y agenda en segundos.
+              </p>
+            </div>
+            <Button variant="outline" render={<Link to="/shop" />}>
+              Ver todos
+            </Button>
+          </div>
+
+          {isLoading ? (
+            <p className="py-16 text-center text-muted-foreground">
+              Cargando servicios…
+            </p>
+          ) : (
+            <ProductsGrid services={services} />
+          )}
+        </div>
+      </section>
 
       {/* CTA final */}
       <section className="bg-brand-dark text-brand-foreground">
