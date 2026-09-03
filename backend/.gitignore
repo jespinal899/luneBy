@@ -4,6 +4,10 @@
 
 postgres/
 
+# Imágenes subidas (efímeras; en prod van a Supabase Storage)
+static/services/*
+!static/services/.gitkeep
+
 # Variables de entorno: NUNCA versionar (ni plantillas).
 # Las variables necesarias están documentadas en README.md
 .env

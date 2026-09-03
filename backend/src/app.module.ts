@@ -8,6 +8,7 @@ import { CommonModule } from './common/common.module';
 import { AuthModule } from './auth/auth.module';
 import { ServicesModule } from './services/services.module';
 import { AppointmentsModule } from './appointments/appointments.module';
+import { FilesModule } from './files/files.module';
 import { SeedModule } from './seed/seed.module';
 
 @Module({
@@ -38,6 +39,7 @@ import { SeedModule } from './seed/seed.module';
     AuthModule,
     ServicesModule,
     AppointmentsModule,
+    FilesModule,
     SeedModule,
   ],
   providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
