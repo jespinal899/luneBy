@@ -36,3 +36,21 @@ export interface ServicesPage {
   pages: number;
   products: Service[];
 }
+
+export type AppointmentStatus =
+  | 'pending'
+  | 'confirmed'
+  | 'cancelled'
+  | 'done';
+
+export interface Appointment {
+  id: string;
+  date: string; // YYYY-MM-DD
+  startTime: string; // HH:mm
+  endTime: string; // HH:mm
+  status: AppointmentStatus;
+  notes: string | null;
+  service: Service;
+  user: User;
+  createdAt: string;
+}
