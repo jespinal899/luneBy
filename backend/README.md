@@ -62,6 +62,79 @@ src/
 
 ---
 
+## Modelo de datos
+
+El esquema lo genera TypeORM a partir de las entidades (`synchronize` en `dev`;
+migraciones en `prod`).
+
+```mermaid
+erDiagram
+    users ||--o{ appointments : "tiene"
+    services ||--o{ appointments : "se agenda en"
+
+    users {
+        uuid id PK "uuid_generate_v4()"
+        text email UK
+        text password "select:false (hash bcrypt)"
+        text fullName
+        text phone "nullable"
+        boolean isActive "default true"
+        text_array roles "default {client}"
+    }
+
+    services {
+        uuid id PK
+        text name UK
+        float price "default 0"
+        text description "nullable"
+        text category
+        int durationMin "default 60"
+        text image "nullable (URL)"
+        text slug UK
+        boolean isActive "default true"
+    }
+
+    appointments {
+        uuid id PK
+        uuid userId FK
+        uuid serviceId FK
+        date date
+        text startTime "HH:mm"
+        text endTime "HH:mm (calculado)"
+        text status "pending|confirmed|cancelled|done"
+        text notes "nullable"
+        timestamptz createdAt "default now()"
+    }
+
+    availability_rules {
+        uuid id PK
+        int weekday "0=domingo .. 6=sabado"
+        text startTime "HH:mm"
+        text endTime "HH:mm"
+        int slotIntervalMin "default 30"
+        boolean isActive "default true"
+    }
+
+    time_off {
+        uuid id PK
+        date date
+        text startTime "nullable (null = dia completo)"
+        text endTime "nullable"
+        text reason "nullable"
+    }
+```
+
+| Relación | Cardinalidad | Clave |
+| :--- | :--- | :--- |
+| `users` → `appointments` | 1 : N | `appointments.userId` |
+| `services` → `appointments` | 1 : N | `appointments.serviceId` |
+| `availability_rules`, `time_off` | *sin FK* | parámetros del calendario; los lee el cálculo de disponibilidad |
+
+Índices: `UNIQUE` en `users.email`, `services.name`, `services.slug`; índice
+compuesto `(date, startTime)` en `appointments`.
+
+---
+
 ## Puesta en marcha (desarrollo)
 
 Requisitos: Node.js ≥ 20, Docker.
