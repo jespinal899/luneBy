@@ -9,6 +9,7 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 import { PaginationDto } from '../common/dtos/pagination.dto';
 import { Auth } from '../auth/decorators';
@@ -16,6 +17,7 @@ import { ValidRoles } from '../auth/interfaces';
 import { ServicesService } from './services.service';
 import { CreateServiceDto, UpdateServiceDto } from './dto';
 
+@ApiTags('Services')
 @Controller('services')
 export class ServicesController {
   constructor(private readonly servicesService: ServicesService) {}
@@ -34,12 +36,14 @@ export class ServicesController {
 
   @Post()
   @Auth(ValidRoles.admin)
+  @ApiBearerAuth()
   create(@Body() createServiceDto: CreateServiceDto) {
     return this.servicesService.create(createServiceDto);
   }
 
   @Patch(':id')
   @Auth(ValidRoles.admin)
+  @ApiBearerAuth()
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateServiceDto: UpdateServiceDto,
@@ -49,6 +53,7 @@ export class ServicesController {
 
   @Delete(':id')
   @Auth(ValidRoles.admin)
+  @ApiBearerAuth()
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.servicesService.remove(id);
   }
