@@ -6,6 +6,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 
+import { HealthController } from './health.controller';
 import { CommonModule } from './common/common.module';
 import { AuthModule } from './auth/auth.module';
 import { ServicesModule } from './services/services.module';
@@ -28,7 +29,13 @@ const buildDbOptions = (config: ConfigService): TypeOrmModuleOptions => {
   // si no, se arma desde las variables `DB_*`.
   const url = config.get<string>('DATABASE_URL');
   if (url) {
-    return { ...common, url, ssl: { rejectUnauthorized: false } };
+    return {
+      ...common,
+      url,
+      ssl: { rejectUnauthorized: false },
+      // El pooler de Supabase (free) tiene pocas conexiones: limitamos el pool.
+      extra: { max: 5 },
+    };
   }
 
   const isProd = config.get('STAGE') === 'prod';
@@ -40,7 +47,7 @@ const buildDbOptions = (config: ConfigService): TypeOrmModuleOptions => {
     username: config.get<string>('DB_USERNAME'),
     password: config.get<string>('DB_PASSWORD'),
     ssl: isProd,
-    extra: isProd ? { ssl: { rejectUnauthorized: false } } : undefined,
+    extra: isProd ? { max: 5, ssl: { rejectUnauthorized: false } } : undefined,
   };
 };
 
@@ -63,6 +70,7 @@ const buildDbOptions = (config: ConfigService): TypeOrmModuleOptions => {
     FilesModule,
     SeedModule,
   ],
+  controllers: [HealthController],
   providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
 })
 export class AppModule {}

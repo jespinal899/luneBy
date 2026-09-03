@@ -8,7 +8,7 @@ services:
     region: virginia # cerca de Supabase us-east-1
     rootDir: backend # el monorepo tiene la API en backend/
     dockerfilePath: ./Dockerfile
-    healthCheckPath: /api/services
+    healthCheckPath: /api/health
     autoDeploy: true
     envVars:
       - key: STAGE
