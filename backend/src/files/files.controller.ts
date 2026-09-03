@@ -8,28 +8,25 @@ import {
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 import { Response } from 'express';
-import { diskStorage } from 'multer';
+import { memoryStorage } from 'multer';
 
 import { Auth } from '../auth/decorators';
 import { ValidRoles } from '../auth/interfaces';
-import { FilesService, SERVICES_UPLOAD_DIR } from './files.service';
-import { fileFilter, fileNamer } from './helpers';
+import { FilesService } from './files.service';
+import { fileFilter } from './helpers';
 
 const MAX_SIZE = 5 * 1024 * 1024; // 5 MB
 
 @ApiTags('Files')
 @Controller('files')
 export class FilesController {
-  constructor(
-    private readonly filesService: FilesService,
-    private readonly configService: ConfigService,
-  ) {}
+  constructor(private readonly filesService: FilesService) {}
 
+  /** Sirve una imagen guardada en disco (solo cuando no se usa Supabase Storage). */
   @Get('service/:imageName')
   findServiceImage(
     @Res() res: Response,
@@ -45,21 +42,16 @@ export class FilesController {
     FileInterceptor('file', {
       fileFilter,
       limits: { fileSize: MAX_SIZE },
-      storage: diskStorage({
-        destination: SERVICES_UPLOAD_DIR,
-        filename: fileNamer,
-      }),
+      storage: memoryStorage(),
     }),
   )
-  uploadServiceImage(@UploadedFile() file: Express.Multer.File) {
+  async uploadServiceImage(@UploadedFile() file: Express.Multer.File) {
     if (!file) {
       throw new BadRequestException(
         'Sube un archivo de imagen (jpg, png o webp) de hasta 5 MB',
       );
     }
-
-    const host =
-      this.configService.get<string>('HOST_API') ?? 'http://localhost:3001/api';
-    return { url: `${host}/files/service/${file.filename}` };
+    const url = await this.filesService.storeServiceImage(file);
+    return { url };
   }
 }

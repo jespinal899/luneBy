@@ -170,6 +170,10 @@ npm run start:dev             # API en http://localhost:3001/api
 | `DATABASE_URL` | *(vacío en local)* | Connection string completa; tiene prioridad sobre las `DB_*` (se usa en prod con el pooler de Supabase). |
 | `JWT_SECRET` | *(cadena larga aleatoria)* | Firma de los JSON Web Tokens. |
 | `JWT_EXPIRES_IN` | `2h` | Caducidad de los tokens. |
+| `HOST_API` | `http://localhost:3001/api` | URL pública de la API (para las imágenes servidas desde disco). |
+| `SUPABASE_URL` | *(vacío en local)* | `https://<ref>.supabase.co`. Si está, las imágenes van a Supabase Storage en vez de al disco. |
+| `SUPABASE_SERVICE_ROLE_KEY` | *(vacío en local)* | Clave `service_role` de Supabase (secreta). |
+| `SUPABASE_STORAGE_BUCKET` | `service-images` | Bucket público donde se guardan las imágenes. |
 
 Genera un `JWT_SECRET`:
 

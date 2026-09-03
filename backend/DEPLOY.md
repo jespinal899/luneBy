@@ -45,7 +45,13 @@ DATABASE_URL="postgresql://postgres.<ref>:...@aws-0-<region>.pooler.supabase.com
    - `DATABASE_URL` → la URI del *Session pooler* de Supabase (paso 1)
    - `FRONTEND_URL` → la URL de Vercel (ej. `https://luneby.vercel.app`)
    - `HOST_API` → `https://luneby-api.onrender.com/api`
+   - `SUPABASE_URL` → `https://<ref>.supabase.co`
+   - `SUPABASE_SERVICE_ROLE_KEY` → *Project Settings → API → `service_role`*
    - `JWT_SECRET` lo genera Render automáticamente.
+
+   Con `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY` las imágenes de servicios se
+   suben a Supabase Storage (bucket público `service-images`, creado solo); sin
+   ellas, se guardan en el disco de Render (efímero).
 3. **Apply**. En el primer arranque se aplican las migraciones sobre Supabase
    (ya están aplicadas si corriste `migration:run` antes; es idempotente).
 
