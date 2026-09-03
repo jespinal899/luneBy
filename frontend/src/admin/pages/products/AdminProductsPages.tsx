@@ -40,7 +40,7 @@ export const AdminProductsPage = () => {
             <Table className="mb-10 border border-gray-200 bg-white p-10 shadow-xs">
                 <TableHeader>
                     <TableRow>
-                        <TableHead className="w-[80px]">ID</TableHead>
+                        <TableHead className="w-[80 px]">ID</TableHead>
                         <TableHead>Imagen</TableHead>
                         <TableHead>Servicio</TableHead>
                         <TableHead>Categoría</TableHead>
@@ -71,16 +71,14 @@ export const AdminProductsPage = () => {
                             <TableCell>${service.price.toFixed(2)}</TableCell>
                             <TableCell>
                                 <span
-                                    className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${
-                                        service.isActive
-                                            ? 'bg-emerald-50 text-emerald-700'
-                                            : 'bg-slate-100 text-slate-500'
-                                    }`}
+                                    className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${service.isActive
+                                        ? 'bg-emerald-50 text-emerald-700'
+                                        : 'bg-slate-100 text-slate-500'
+                                        }`}
                                 >
                                     <span
-                                        className={`h-1.5 w-1.5 rounded-full ${
-                                            service.isActive ? 'bg-emerald-500' : 'bg-slate-400'
-                                        }`}
+                                        className={`h-1.5 w-1.5 rounded-full ${service.isActive ? 'bg-emerald-500' : 'bg-slate-400'
+                                            }`}
                                     />
                                     {service.isActive ? 'Disponible' : 'Oculto'}
                                 </span>
