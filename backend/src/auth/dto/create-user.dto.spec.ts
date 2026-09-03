@@ -20,7 +20,9 @@ describe('CreateUserDto', () => {
   });
 
   it('rechaza un email con formato inválido', async () => {
-    expect(await errorProps(build({ email: 'no-es-email' }))).toContain('email');
+    expect(await errorProps(build({ email: 'no-es-email' }))).toContain(
+      'email',
+    );
   });
 
   it('rechaza una contraseña sin mayúscula, minúscula y número', async () => {
