@@ -11,8 +11,14 @@ import {
 
 import { Auth, GetUser } from '../auth/decorators';
 import { User } from '../auth/entities/user.entity';
+import { ValidRoles } from '../auth/interfaces';
 import { AppointmentsService } from './appointments.service';
-import { AvailabilityQueryDto, CreateAppointmentDto } from './dto';
+import {
+  AvailabilityQueryDto,
+  CreateAppointmentDto,
+  UpdateAppointmentStatusDto,
+} from './dto';
+import { AppointmentStatus } from './entities';
 
 @Controller('appointments')
 export class AppointmentsController {
@@ -46,5 +52,27 @@ export class AppointmentsController {
   @Auth()
   cancelOwn(@Param('id', ParseUUIDPipe) id: string, @GetUser() user: User) {
     return this.appointmentsService.cancelOwn(id, user);
+  }
+
+  // ---- Administración ----
+
+  /** Agenda completa (filtros opcionales ?date= y ?status=). */
+  @Get()
+  @Auth(ValidRoles.admin)
+  findAll(
+    @Query('date') date?: string,
+    @Query('status') status?: AppointmentStatus,
+  ) {
+    return this.appointmentsService.findAll({ date, status });
+  }
+
+  /** Confirma, completa o cancela una cita. */
+  @Patch(':id/status')
+  @Auth(ValidRoles.admin)
+  updateStatus(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: UpdateAppointmentStatusDto,
+  ) {
+    return this.appointmentsService.updateStatus(id, dto.status);
   }
 }

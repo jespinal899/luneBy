@@ -120,6 +120,6 @@ tests en cada push o pull request que toque `backend/`.
   - [x] Endpoints de registro y login
   - [x] Protección de rutas por roles (`@Auth`, `@GetUser`, `UserRoleGuard`)
 - [x] Services (catálogo con filtros de categoría y precio + CRUD admin)
-- [ ] Appointments (disponibilidad + agendado por slots)
+- [x] Appointments (disponibilidad + agendado por slots + gestión admin)
 - [ ] Seed de datos
 - [ ] Migraciones y despliegue (Supabase)

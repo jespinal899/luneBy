@@ -137,4 +137,20 @@ export class AppointmentsService {
     appointment.status = AppointmentStatus.cancelled;
     return this.appointmentRepository.save(appointment);
   }
+
+  // ---- Administración (Kelin) ----
+
+  /** Agenda completa, opcionalmente filtrada por fecha y/o estado. */
+  findAll(filters: { date?: string; status?: AppointmentStatus }) {
+    return this.appointmentRepository.find({
+      where: { date: filters.date, status: filters.status },
+      order: { date: 'ASC', startTime: 'ASC' },
+    });
+  }
+
+  async updateStatus(id: string, status: AppointmentStatus) {
+    const appointment = await this.findOne(id);
+    appointment.status = status;
+    return this.appointmentRepository.save(appointment);
+  }
 }
