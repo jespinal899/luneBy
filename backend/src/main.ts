@@ -14,9 +14,16 @@ async function bootstrap() {
   // Detrás del proxy de Render/Supabase: necesario para el rate limiting por IP.
   app.set('trust proxy', 1);
 
-  // Cabeceras de seguridad. CSP desactivada porque la única página HTML que
-  // servimos es Swagger UI (usa scripts/estilos inline).
-  app.use(helmet({ contentSecurityPolicy: false }));
+  // Cabeceras de seguridad.
+  // - CSP off: la única página HTML que servimos es Swagger UI (scripts inline).
+  // - CORP cross-origin: el frontend (otro dominio) carga las imágenes de
+  //   /api/files/service/*.
+  app.use(
+    helmet({
+      contentSecurityPolicy: false,
+      crossOriginResourcePolicy: { policy: 'cross-origin' },
+    }),
+  );
 
   app.setGlobalPrefix('api');
 
