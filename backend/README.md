@@ -6,8 +6,27 @@
 API REST para **Luné by Kelin**, un estudio profesional de manicura: catálogo de
 servicios, cálculo de disponibilidad y agendado de citas por franjas horarias.
 
-Este backend se construye de forma incremental, un commit por cambio. El estado
-actual está en la sección [Hoja de ruta](#hoja-de-ruta).
+Este backend se construye de forma incremental, un commit por cambio.
+
+## Endpoints
+
+| Método | Ruta | Acceso |
+| :--- | :--- | :--- |
+| `POST` | `/api/auth/register` | Público |
+| `POST` | `/api/auth/login` | Público |
+| `GET` | `/api/auth/check-status` | Autenticado |
+| `GET` | `/api/services` | Público (query: `page`, `limit`, `q`, `categorias`, `price`, `minPrice`, `maxPrice`) |
+| `GET` | `/api/services/:idOslug` | Público |
+| `POST` `PATCH` `DELETE` | `/api/services[/:id]` | Admin |
+| `GET` | `/api/appointments/availability?date=&serviceId=` | Público |
+| `POST` | `/api/appointments` | Autenticado |
+| `GET` | `/api/appointments/me` | Autenticado |
+| `PATCH` | `/api/appointments/:id/cancel` | Autenticado (dueño) |
+| `GET` | `/api/appointments?date=&status=` | Admin |
+| `PATCH` | `/api/appointments/:id/status` | Admin |
+| `GET` | `/api/seed` | Público (bloqueado si `STAGE=prod`) |
+
+Detalle interactivo en `/api/docs`.
 
 ---
 
@@ -55,6 +74,11 @@ docker compose up -d          # PostgreSQL local en el puerto 5432
 npm run start:dev             # API en http://localhost:3001/api
 ```
 
+- API: `http://localhost:3001/api`
+- Documentación OpenAPI (Swagger): `http://localhost:3001/api/docs`
+- Datos de ejemplo: `GET http://localhost:3001/api/seed`
+  (admin `kelin@luneby.com` / clienta `cliente@test.com`, ambos `Abc123`)
+
 > El repositorio **no versiona ningún archivo `.env`** (ni plantillas). Crea tu
 > propio `.env` a partir de la tabla siguiente.
 
@@ -64,6 +88,7 @@ npm run start:dev             # API en http://localhost:3001/api
 | :--- | :--- | :--- |
 | `STAGE` | `dev` | `dev` o `prod`. En `prod` se activa SSL y se desactiva `synchronize`. |
 | `PORT` | `3001` | Puerto HTTP de la API. |
+| `FRONTEND_URL` | `http://localhost:5173` | Origen(es) permitido(s) por CORS, separados por coma. |
 | `DB_HOST` | `localhost` | Host de PostgreSQL. |
 | `DB_PORT` | `5432` | Puerto de PostgreSQL. |
 | `DB_NAME` | `LuneByDB` | Nombre de la base de datos. |
@@ -108,6 +133,15 @@ tests en cada push o pull request que toque `backend/`.
 
 ---
 
+## Producción
+
+- Poner `STAGE=prod`: activa SSL en la conexión a PostgreSQL, desactiva
+  `synchronize` (el esquema pasa a gestionarse con migraciones) y bloquea
+  `GET /api/seed`.
+- `FRONTEND_URL` debe apuntar al dominio real del frontend.
+- `JWT_SECRET` distinto y de alta entropía.
+- Base de datos gestionada (p. ej. Supabase): rellenar `DB_*` con sus credenciales.
+
 ## Hoja de ruta
 
 - [x] Scaffold NestJS
@@ -122,4 +156,6 @@ tests en cada push o pull request que toque `backend/`.
 - [x] Services (catálogo con filtros de categoría y precio + CRUD admin)
 - [x] Appointments (disponibilidad + agendado por slots + gestión admin)
 - [x] Seed de datos (`GET /api/seed`, bloqueado en producción)
+- [x] Documentación OpenAPI (`/api/docs`) y CORS por entorno
 - [ ] Migraciones y despliegue (Supabase)
+- [ ] Subida de imágenes de servicios
