@@ -32,3 +32,43 @@ export const getService = async (term: string) => {
   const { data } = await http.get<Service>(`/services/${term}`);
   return data;
 };
+
+// --- Administración ---
+
+export interface ServiceInput {
+  name: string;
+  price: number;
+  category: string;
+  durationMin: number;
+  description?: string;
+  image?: string;
+  isActive?: boolean;
+}
+
+/** Quita descripción/imagen vacías (la API valida `image` como URL). */
+const toBody = (input: ServiceInput) => {
+  const body: Record<string, unknown> = {
+    name: input.name,
+    price: input.price,
+    category: input.category,
+    durationMin: input.durationMin,
+    isActive: input.isActive ?? true,
+  };
+  if (input.description?.trim()) body.description = input.description.trim();
+  if (input.image?.trim()) body.image = input.image.trim();
+  return body;
+};
+
+export const createService = async (input: ServiceInput) => {
+  const { data } = await http.post<Service>('/services', toBody(input));
+  return data;
+};
+
+export const updateService = async (id: string, input: ServiceInput) => {
+  const { data } = await http.patch<Service>(`/services/${id}`, toBody(input));
+  return data;
+};
+
+export const deleteService = async (id: string) => {
+  await http.delete(`/services/${id}`);
+};
