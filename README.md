@@ -14,8 +14,8 @@
 
 | Componente | Tecnologías Utilizadas |
 | :--- | :--- |
-| **Frontend** | React 19, Vite 8, TypeScript 6, React Router v8 (v8.3.0) |
-| **Estilos & UI** | Tailwind CSS v4, Shadcn/ui, Lucide Icons, Montserrat & Inter Fonts |
+| **Frontend** | React 19, Vite 8, TypeScript, React Router v8, TanStack Query, axios |
+| **Estilos & UI** | Tailwind CSS v4, Base UI, Lucide Icons, Montserrat & Inter Fonts |
 | **Backend** | NestJS 10, TypeORM, PostgreSQL, JWT (carpeta `backend/` — ver su [README](backend/README.md)) |
 
 ---
@@ -28,13 +28,12 @@ El repositorio está organizado de la siguiente manera:
 ProyectoCitas/
 ├── frontend/                # Aplicación cliente (React + Vite)
 │   ├── src/
-│   │   ├── assets/          # Imágenes de servicios y recursos visuales
-│   │   ├── components/      # Componentes globales reutilizables (ui, custom)
-│   │   ├── mocks/           # Datos simulados de servicios/productos
-│   │   ├── shop/            # Vistas y componentes del catálogo de la tienda
-│   │   └── main.tsx         # Punto de entrada de React
-│   ├── tsconfig.json        # Configuración de TypeScript
-│   └── vite.config.ts       # Configuración de Vite & Plugins
+│   │   ├── api/             # cliente axios, QueryClient, tipos de la API
+│   │   ├── auth/            # contexto de sesión, login/registro, rutas protegidas
+│   │   ├── shop/            # catálogo, detalle, agendar cita, mis citas
+│   │   ├── admin/           # panel: servicios y agenda de citas
+│   │   └── components/ui/   # componentes base
+│   └── README.md            # puesta en marcha y variables de entorno
 └── backend/                 # API REST (NestJS + TypeORM + PostgreSQL)
     ├── src/
     │   ├── common/          # DTO de paginación y utilidades compartidas
