@@ -1,35 +1,66 @@
-# React + TypeScript + Vite
+# Luné by Kelin — Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Aplicación web (React 19 + Vite + TypeScript) para el estudio de manicura
+**Luné by Kelin**: catálogo de servicios, agendado de citas y panel de
+administración. Consume la API del backend (carpeta `../backend`).
 
-Currently, two official plugins are available:
+## Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+| Área | Tecnología |
+| :--- | :--- |
+| Framework | React 19 + Vite |
+| Router | react-router (data router) |
+| Estado servidor | TanStack Query (`@tanstack/react-query`) |
+| HTTP | axios (`src/api/http.ts`) |
+| Estilos | Tailwind CSS v4 + `@base-ui/react` |
+| Lint | oxlint |
 
-## React Compiler
+## Puesta en marcha
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+Requisitos: Node.js ≥ 20 y el backend corriendo.
 
-Note: This will impact Vite dev & build performances.
-You can also try [the experimental native React Compiler support in plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md#rust-react-compiler) by using `compiler: true` in the plugin options instead of using the Babel plugin.
+```bash
+# 1. Backend + base de datos (en ../backend)
+docker start lunebydb           # o: docker compose up -d
+cd ../backend && npm run start:dev   # API en http://localhost:3001/api
 
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+# 2. Frontend
+cd frontend
+npm install
+# crea .env con la URL de la API (ver abajo)
+npm run dev                     # http://localhost:5173
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+Para tener datos: `GET http://localhost:3001/api/seed`
+(admin `kelin@luneby.com` / clienta `cliente@test.com`, ambos `Abc123`).
+
+### Variables de entorno
+
+El repositorio **no versiona ningún `.env`**. Crea `frontend/.env`:
+
+| Variable | Ejemplo | Descripción |
+| :--- | :--- | :--- |
+| `VITE_API_URL` | `http://localhost:3001/api` | URL base de la API. Si se omite se usa ese mismo valor por defecto. |
+
+En producción (Vercel) se configura `VITE_API_URL` con la URL pública del backend.
+
+## Estructura
+
+```
+src/
+├── api/           # http.ts (axios), query-client.ts, types.ts, errors.ts
+├── auth/          # AuthContext, login/registro, ProtectedRoute
+├── shop/          # catálogo, detalle, agendar, mis citas + hooks/api
+├── admin/         # panel: servicios y agenda de citas + hooks/api
+├── components/ui/ # componentes base
+└── app.router.tsx # rutas
+```
+
+## Scripts
+
+| Comando | Descripción |
+| :--- | :--- |
+| `npm run dev` | Servidor de desarrollo. |
+| `npm run build` | `tsc -b` + build de producción. |
+| `npm run preview` | Sirve el build. |
+| `npm run lint` | oxlint. |
