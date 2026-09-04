@@ -34,14 +34,15 @@ ProyectoCitas/
 │   │   ├── admin/           # panel: servicios y agenda de citas
 │   │   └── components/ui/   # componentes base
 │   └── README.md            # puesta en marcha y variables de entorno
-└── backend/                 # API REST (NestJS + TypeORM + PostgreSQL)
-    ├── src/
-    │   ├── common/          # DTO de paginación y utilidades compartidas
-    │   ├── auth/            # usuarios, registro/login, JWT y roles
-    │   ├── services/        # catálogo de servicios de manicura
-    │   ├── appointments/    # disponibilidad y agendado de citas
-    │   └── seed/            # datos de ejemplo
-    └── test/                # tests end-to-end
+├── backend/                 # API REST (NestJS + TypeORM + PostgreSQL)
+│   ├── src/
+│   │   ├── common/          # DTO de paginación y utilidades compartidas
+│   │   ├── auth/            # usuarios, registro/login, JWT y roles
+│   │   ├── services/        # catálogo de servicios de manicura
+│   │   └── appointments/    # disponibilidad y agendado de citas
+│   └── test/                # tests end-to-end
+└── supabase/                # esquema y datos base (migraciones SQL)
+    └── migrations/          # 0001_esquema_inicial.sql, 0002_datos_demo.sql
 ```
 
 ---

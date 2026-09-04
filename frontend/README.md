@@ -31,8 +31,9 @@ npm install
 npm run dev                     # http://localhost:5173
 ```
 
-Para tener datos: `GET http://localhost:3001/api/seed`
-(admin `kelin@luneby.com` / clienta `cliente@test.com`, ambos `Abc123`).
+Los datos base (usuarios, catálogo, horario) los crea la migración
+`supabase/migrations/0002_datos_demo.sql` al preparar la base del backend.
+Usuarios: admin `kelin@luneby.com` / clienta `cliente@test.com`, ambos `Abc123`.
 
 ### Variables de entorno
 

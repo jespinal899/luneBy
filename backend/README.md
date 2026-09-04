@@ -24,7 +24,6 @@ Este backend se construye de forma incremental, un commit por cambio.
 | `PATCH` | `/api/appointments/:id/cancel` | Autenticado (dueño) |
 | `GET` | `/api/appointments?date=&status=` | Admin |
 | `PATCH` | `/api/appointments/:id/status` | Admin |
-| `GET` | `/api/seed` | Público (bloqueado si `STAGE=prod`) |
 
 Detalle interactivo en `/api/docs`.
 
@@ -56,16 +55,19 @@ src/
 ├── common/                 # PaginationDto y utilidades compartidas
 ├── auth/                   # usuarios, registro/login, JWT, roles
 ├── services/               # catálogo de servicios de manicura
-├── appointments/           # reglas de disponibilidad, bloqueos y citas
-└── seed/                   # carga de datos de ejemplo (solo fuera de prod)
+└── appointments/           # reglas de disponibilidad, bloqueos y citas
 ```
+
+El esquema y los datos base viven en `../supabase/migrations/` (SQL, aplicadas
+con la CLI de Supabase). La API solo se conecta: nunca usa `synchronize` ni
+aplica migraciones al arrancar.
 
 ---
 
 ## Modelo de datos
 
-El esquema lo genera TypeORM a partir de las entidades (`synchronize` en `dev`;
-migraciones en `prod`).
+El esquema se define en `../supabase/migrations/0001_esquema_inicial.sql`. Las
+entidades de TypeORM lo reflejan para las consultas (nunca lo generan).
 
 ```mermaid
 erDiagram
@@ -144,13 +146,19 @@ cd backend
 # Crea el archivo .env con las variables de la tabla de abajo
 npm install
 docker compose up -d          # PostgreSQL local en el puerto 5432
+
+# Aplica esquema + datos base al Postgres local (una vez):
+psql "$DATABASE_URL" -f ../supabase/migrations/0001_esquema_inicial.sql
+psql "$DATABASE_URL" -f ../supabase/migrations/0002_datos_demo.sql
+# (o, con la CLI de Supabase: `supabase db reset`)
+
 npm run start:dev             # API en http://localhost:3001/api
 ```
 
 - API: `http://localhost:3001/api`
 - Documentación OpenAPI (Swagger): `http://localhost:3001/api/docs`
-- Datos de ejemplo: `GET http://localhost:3001/api/seed`
-  (admin `kelin@luneby.com` / clienta `cliente@test.com`, ambos `Abc123`)
+- Usuarios de ejemplo (los crea `0002_datos_demo.sql`): admin
+  `kelin@luneby.com` / clienta `cliente@test.com`, ambos `Abc123`
 
 > El repositorio **no versiona ningún archivo `.env`** (ni plantillas). Crea tu
 > propio `.env` a partir de la tabla siguiente.
@@ -159,7 +167,7 @@ npm run start:dev             # API en http://localhost:3001/api
 
 | Variable | Ejemplo | Descripción |
 | :--- | :--- | :--- |
-| `STAGE` | `dev` | `dev` o `prod`. En `prod` se activa SSL y se desactiva `synchronize`. |
+| `STAGE` | `dev` | `dev` o `prod`. En `prod` se activa SSL en PostgreSQL. |
 | `PORT` | `3001` | Puerto HTTP de la API. |
 | `FRONTEND_URL` | `http://localhost:5173` | Origen(es) permitido(s) por CORS, separados por coma. |
 | `DB_HOST` | `localhost` | Host de PostgreSQL (ignorado si hay `DATABASE_URL`). |
@@ -213,26 +221,26 @@ tests en cada push o pull request que toque `backend/`.
 
 ## Migraciones
 
-El esquema **no** usa `synchronize`: se gestiona con migraciones en
-`src/migrations/`, que se aplican solas al arrancar (`migrationsRun`).
+El esquema y los datos base se versionan como SQL en
+[`../supabase/migrations/`](../supabase/migrations/) y se aplican con la **CLI de
+Supabase** (`supabase db push`). La API nunca usa `synchronize` ni aplica
+migraciones al arrancar; solo se conecta.
 
 ```bash
-# tras cambiar una entidad (con la BD local al día):
-npm run migration:generate -- src/migrations/DescripcionDelCambio
-npx prettier --write "src/migrations/*.ts"
-npm run build          # el .ts se compila a dist/migrations/*.js
+supabase migration new descripcion_del_cambio   # crea supabase/migrations/NNNN_*.sql
+# edita el .sql (SQL idempotente: if not exists, on conflict, ...)
+supabase db push                                 # aplica las pendientes
 ```
 
-- `npm run migration:run` — aplica las pendientes a mano
-- `npm run migration:revert` — deshace la última
+Ver [`../supabase/README.md`](../supabase/README.md).
 
 ## Producción
 
 Base de datos en **Supabase**, API en **Render**. Guía completa en
 [`DEPLOY.md`](./DEPLOY.md).
 
-Con `STAGE=prod`: SSL en PostgreSQL, `GET /api/seed` bloqueado, CORS restringido
-a `FRONTEND_URL`. Usa un `JWT_SECRET` propio y de alta entropía.
+Con `STAGE=prod`: SSL en PostgreSQL y CORS restringido a `FRONTEND_URL`. Usa un
+`JWT_SECRET` propio y de alta entropía.
 
 ## Hoja de ruta
 
@@ -247,9 +255,8 @@ a `FRONTEND_URL`. Usa un `JWT_SECRET` propio y de alta entropía.
   - [x] Protección de rutas por roles (`@Auth`, `@GetUser`, `UserRoleGuard`)
 - [x] Services (catálogo con filtros de categoría y precio + CRUD admin)
 - [x] Appointments (disponibilidad + agendado por slots + gestión admin)
-- [x] Seed de datos (`GET /api/seed`, bloqueado en producción)
 - [x] Documentación OpenAPI (`/api/docs`) y CORS por entorno
 - [x] helmet + rate limiting
-- [x] Subida de imágenes de servicios (a disco; Supabase Storage pendiente)
-- [x] Migraciones de esquema
-- [ ] Despliegue en Supabase + Render (ver `DEPLOY.md`)
+- [x] Subida de imágenes de servicios a Supabase Storage
+- [x] Migraciones SQL con la CLI de Supabase (`../supabase/migrations/`)
+- [x] Despliegue en Supabase + Render (ver `DEPLOY.md`)

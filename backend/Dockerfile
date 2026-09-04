@@ -23,5 +23,5 @@ COPY --from=build /app/dist ./dist
 COPY --from=build /app/static ./static
 
 EXPOSE 3001
-# Al arrancar, TypeORM aplica las migraciones pendientes (migrationsRun).
+# El esquema lo gestionan las migraciones SQL de supabase/ (fuera de esta imagen).
 CMD ["node", "dist/main"]

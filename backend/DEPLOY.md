@@ -22,15 +22,18 @@ frontend en **Vercel**.
    > proyectos nuevos de Supabase; muchas redes no la resuelven. El *Session
    > pooler* funciona por IPv4 y soporta migraciones.
 
-3. No hace falta crear tablas: al arrancar, la API aplica las migraciones
-   (`migrationsRun`). La extensión `uuid-ossp` ya viene habilitada en Supabase.
+3. Aplica el esquema y los datos base con la **CLI de Supabase**:
 
-### Correr las migraciones a mano (opcional)
+   ```bash
+   npm i -g supabase
+   supabase login
+   supabase link --project-ref <ref>
+   supabase db push          # aplica supabase/migrations/*.sql
+   ```
 
-```bash
-DATABASE_URL="postgresql://postgres.<ref>:...@aws-0-<region>.pooler.supabase.com:5432/postgres" \
-  npm run migration:run
-```
+   Los scripts son idempotentes: `db push` es seguro aunque la base ya tenga
+   el esquema. Crea los 2 usuarios de ejemplo, el catálogo y el horario.
+   Detalle en [`../supabase/README.md`](../supabase/README.md).
 
 ---
 
@@ -52,25 +55,14 @@ DATABASE_URL="postgresql://postgres.<ref>:...@aws-0-<region>.pooler.supabase.com
    Con `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY` las imágenes de servicios se
    suben a Supabase Storage (bucket público `service-images`, creado solo); sin
    ellas, se guardan en el disco de Render (efímero).
-3. **Apply**. En el primer arranque se aplican las migraciones sobre Supabase
-   (ya están aplicadas si corriste `migration:run` antes; es idempotente).
+3. **Apply**. La API solo se conecta a la base; no crea tablas ni datos. El
+   esquema y los datos base los pusiste con `supabase db push` (paso 1.3).
 
 ### Opción B — Servicio manual
 
 - **New + → Web Service** → este repo → *Root Directory* `backend`,
-  *Runtime* `Docker`, *Health Check Path* `/api/services`.
+  *Runtime* `Docker`, *Health Check Path* `/api/health`.
 - Añade las mismas variables de entorno en **Environment**.
-
-### Poblar datos de ejemplo (una vez)
-
-`GET /api/seed` está **bloqueado en producción**. Usa el comando:
-
-```bash
-# en local, apuntando a Supabase con DATABASE_URL en .env
-npm run build && npm run seed
-```
-
-o en Render: **Shell** del servicio → `npm run seed`.
 
 ---
 
@@ -84,15 +76,15 @@ o en Render: **Shell** del servicio → `npm run seed`.
 
 ## Migraciones
 
-El esquema se versiona en `src/migrations/`. Flujo al cambiar una entidad:
+El esquema y los datos base se versionan como SQL en `supabase/migrations/`
+(raíz del repo). Flujo al cambiar el esquema:
 
 ```bash
-# con la base de datos local al día
-npm run migration:generate -- src/migrations/DescripcionDelCambio
-npx prettier --write "src/migrations/*.ts"
-npm run build
-# al reiniciar la API (local o Render) la migración se aplica sola
+supabase migration new descripcion_del_cambio   # crea supabase/migrations/NNNN_*.sql
+# edita el .sql — SQL idempotente (if not exists, on conflict, where not exists)
+supabase db push                                 # aplica las pendientes en la nube
 ```
 
-- `npm run migration:run` — aplica pendientes manualmente
-- `npm run migration:revert` — deshace la última
+`supabase db push` solo ejecuta los archivos que aún no están registrados en
+`supabase_migrations.schema_migrations`. Guía completa en
+[`../supabase/README.md`](../supabase/README.md).
