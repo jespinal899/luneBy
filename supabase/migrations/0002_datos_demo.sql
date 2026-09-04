@@ -5,18 +5,16 @@
 --   · users y services      -> "on conflict (email|name) do nothing"
 --   · availability_rules     -> solo para los días sin regla ("where not exists")
 --
--- Contraseña de los dos usuarios: Abc123  (hash bcrypt vía pgcrypto).
+-- Contraseña de los dos usuarios: Abc123  (hash bcrypt, cost 10).
 -- Cámbiala en cuanto entres por primera vez.
-
-create extension if not exists "pgcrypto";
 
 -- ---------------------------------------------------------------------------
 -- Usuarios
 -- ---------------------------------------------------------------------------
 insert into public.users (email, password, "fullName", phone, "isActive", roles)
 values
-  ('kelin@luneby.com', crypt('Abc123', gen_salt('bf', 10)), 'Kelin (Admin)',      null,           true, '{admin}'),
-  ('cliente@test.com', crypt('Abc123', gen_salt('bf', 10)), 'Clienta de Prueba',  '+18090000000', true, '{client}')
+  ('kelin@luneby.com', '$2b$10$ckqPNMR7vKSYUjE0wn4sdu1jM1R3nqVeNSrDM4p5rQku5dTZLfSWy', 'Kelin (Admin)',     null,           true, '{admin}'),
+  ('cliente@test.com', '$2b$10$kOIkuLVh8esUjD5C3IYcAOSxPo81rvUldMqi7h7N998oNPIPWNQfq', 'Clienta de Prueba', '+18090000000', true, '{client}')
 on conflict (email) do nothing;
 
 -- ---------------------------------------------------------------------------
