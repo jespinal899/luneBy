@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Not, Repository } from 'typeorm';
+import { Not, QueryFailedError, Repository } from 'typeorm';
 
 import { User } from '../auth/entities/user.entity';
 import { Service } from '../services/entities/service.entity';
@@ -107,8 +107,23 @@ export class AppointmentsService {
       service,
       user,
       status: AppointmentStatus.pending,
+      priceAtBooking: service.price,
     });
-    await this.appointmentRepository.save(appointment);
+
+    try {
+      await this.appointmentRepository.save(appointment);
+    } catch (error) {
+      // `no_overlap_citas`: otra reserva ocupó el tramo entre la comprobación
+      // de disponibilidad y el guardado (condición de carrera).
+      if (
+        error instanceof QueryFailedError &&
+        (error as { code?: string }).code === '23P01'
+      ) {
+        throw new BadRequestException('Ese horario ya no está disponible');
+      }
+      throw error;
+    }
+
     return appointment;
   }
 

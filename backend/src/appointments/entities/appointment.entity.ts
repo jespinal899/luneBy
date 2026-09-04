@@ -41,6 +41,10 @@ export class Appointment {
   @Column('text', { nullable: true })
   notes: string;
 
+  /** Precio del servicio congelado en el momento de reservar. */
+  @Column('float', { name: 'priceAtBooking', nullable: true })
+  priceAtBooking: number;
+
   @ManyToOne(() => Service, (service) => service.appointments, { eager: true })
   service: Service;
 
