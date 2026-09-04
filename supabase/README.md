@@ -18,6 +18,7 @@ varias veces sobre la misma base de datos no rompe nada ni duplica filas.
 | :- | :-- | :-- |
 | 0001 | `esquema_inicial.sql` | Tablas `users`, `services`, `appointments`, `availability_rules`, `time_off`; índice `(date, startTime)`; FKs de `appointments`. `create ... if not exists` + guardas sobre `pg_constraint`. |
 | 0002 | `datos_demo.sql` | 2 usuarios (`kelin@luneby.com` admin / `cliente@test.com`, contraseña `Abc123`), 8 servicios y el horario lunes–sábado 09:00–18:00 (slots de 30 min). `on conflict do nothing` / `where not exists`. |
+| 0003 | `normalizar_esquema.sql` | Limpieza de la etapa TypeORM en el proyecto en la nube: borra la tabla `migrations`, los FKs e índice duplicados de `appointments` y renombra los constraints autogenerados (`PK_...`, `UQ_...`) a nombres legibles. No hace nada en una base creada desde cero. |
 
 > Las citas y los bloqueos de agenda los crea la aplicación en runtime; no hay
 > datos semilla para ellos.
