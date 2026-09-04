@@ -50,6 +50,8 @@ export interface Appointment {
   endTime: string; // HH:mm
   status: AppointmentStatus;
   notes: string | null;
+  /** Precio del servicio congelado al reservar (puede faltar en citas antiguas). */
+  priceAtBooking: number | null;
   service: Service;
   user: User;
   createdAt: string;

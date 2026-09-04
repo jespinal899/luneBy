@@ -18,6 +18,10 @@ export interface DashboardStats {
   topServices: { name: string; count: number; revenue: number }[];
 }
 
+/** Lo que se cobró por una cita: el precio congelado al reservar, o el actual
+ *  del servicio si la cita es anterior a que se guardara ese dato. */
+const chargedPrice = (a: Appointment) => a.priceAtBooking ?? a.service.price;
+
 /** Deriva las métricas del panel a partir de la agenda completa. */
 export const computeDashboard = (appointments: Appointment[]): DashboardStats => {
   const today = localISO(new Date());
@@ -42,13 +46,13 @@ export const computeDashboard = (appointments: Appointment[]): DashboardStats =>
         a.date.startsWith(month) &&
         (a.status === 'confirmed' || a.status === 'done'),
     )
-    .reduce((sum, a) => sum + a.service.price, 0);
+    .reduce((sum, a) => sum + chargedPrice(a), 0);
 
   const byService = new Map<string, { count: number; revenue: number }>();
   for (const a of active) {
     const cur = byService.get(a.service.name) ?? { count: 0, revenue: 0 };
     cur.count += 1;
-    cur.revenue += a.service.price;
+    cur.revenue += chargedPrice(a);
     byService.set(a.service.name, cur);
   }
 
