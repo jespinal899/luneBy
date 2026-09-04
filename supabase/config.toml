@@ -1,0 +1,12 @@
+# Configuración para la CLI de Supabase.
+# Docs: https://supabase.com/docs/guides/local-development/cli/config
+#
+# `project_id` enlaza este repo con el proyecto en la nube (`supabase link`).
+# `major_version` solo afecta al Postgres local de `supabase start`; ajústalo
+# a la versión real del proyecto si usas el entorno local (Studio → Settings
+# → Infrastructure).
+
+project_id = "fxlttpayjkkbfomveavx"
+
+[db]
+major_version = 15
