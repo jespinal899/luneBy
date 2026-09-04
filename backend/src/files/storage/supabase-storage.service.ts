@@ -64,8 +64,11 @@ export class SupabaseStorageService {
     );
 
     if (!res.ok) {
-      this.logger.error(`Supabase Storage ${res.status}: ${await res.text()}`);
-      throw new InternalServerErrorException('No se pudo subir la imagen');
+      const body = await res.text();
+      this.logger.error(`Supabase Storage ${res.status}: ${body}`);
+      throw new InternalServerErrorException(
+        `Supabase Storage ${res.status}: ${body}`,
+      );
     }
 
     return `${this.url}/storage/v1/object/public/${this.bucket}/${path}`;
