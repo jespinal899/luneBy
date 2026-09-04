@@ -1,9 +1,14 @@
 import { existsSync } from 'fs';
-import { writeFile } from 'fs/promises';
+import { mkdir, writeFile } from 'fs/promises';
 import { join } from 'path';
 import { randomUUID } from 'crypto';
 
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 import { SupabaseStorageService } from './storage/supabase-storage.service';
@@ -18,6 +23,8 @@ export const SERVICES_UPLOAD_DIR = join(
 
 @Injectable()
 export class FilesService {
+  private readonly logger = new Logger('FilesService');
+
   constructor(
     private readonly config: ConfigService,
     private readonly supabase: SupabaseStorageService,
@@ -31,14 +38,24 @@ export class FilesService {
     const ext = file.mimetype.split('/')[1];
     const filename = `${randomUUID()}.${ext}`;
 
-    if (this.supabase.isEnabled()) {
-      return this.supabase.upload(filename, file.buffer, file.mimetype);
-    }
+    try {
+      if (this.supabase.isEnabled()) {
+        return await this.supabase.upload(filename, file.buffer, file.mimetype);
+      }
 
-    await writeFile(join(SERVICES_UPLOAD_DIR, filename), file.buffer);
-    const host =
-      this.config.get<string>('HOST_API') ?? 'http://localhost:3001/api';
-    return `${host}/files/service/${filename}`;
+      await mkdir(SERVICES_UPLOAD_DIR, { recursive: true });
+      await writeFile(join(SERVICES_UPLOAD_DIR, filename), file.buffer);
+      const host =
+        this.config.get<string>('HOST_API') ?? 'http://localhost:3001/api';
+      return `${host}/files/service/${filename}`;
+    } catch (error) {
+      if (error instanceof InternalServerErrorException) throw error;
+      this.logger.error(
+        `Fallo al guardar la imagen (${file.mimetype}, ${file.size} bytes)`,
+        error instanceof Error ? error.stack : String(error),
+      );
+      throw new InternalServerErrorException('No se pudo guardar la imagen');
+    }
   }
 
   /** Ruta absoluta a una imagen guardada en disco (fallback local). */
