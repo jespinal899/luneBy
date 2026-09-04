@@ -49,15 +49,12 @@ export class FilesService {
         this.config.get<string>('HOST_API') ?? 'http://localhost:3001/api';
       return `${host}/files/service/${filename}`;
     } catch (error) {
-      if (error instanceof InternalServerErrorException) throw error;
       const detail = error instanceof Error ? error.message : String(error);
       this.logger.error(
         `Fallo al guardar la imagen (${file.mimetype}, ${file.size} bytes): ${detail}`,
         error instanceof Error ? error.stack : undefined,
       );
-      throw new InternalServerErrorException(
-        `No se pudo guardar la imagen: ${detail}`,
-      );
+      throw new InternalServerErrorException('No se pudo guardar la imagen');
     }
   }
 
