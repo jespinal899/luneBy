@@ -1,5 +1,3 @@
-import { join } from 'path';
-
 import { Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -12,17 +10,14 @@ import { AuthModule } from './auth/auth.module';
 import { ServicesModule } from './services/services.module';
 import { AppointmentsModule } from './appointments/appointments.module';
 import { FilesModule } from './files/files.module';
-import { SeedModule } from './seed/seed.module';
 
 const buildDbOptions = (config: ConfigService): TypeOrmModuleOptions => {
   const common: TypeOrmModuleOptions = {
     type: 'postgres',
     autoLoadEntities: true,
-    // El esquema se gestiona con migraciones (src/migrations), que se
-    // aplican solas al arrancar. Nunca `synchronize`.
+    // El esquema y los datos base los gestionan las migraciones SQL de
+    // `supabase/migrations` (Supabase CLI). La app solo se conecta.
     synchronize: false,
-    migrations: [join(__dirname, 'migrations', '*.js')],
-    migrationsRun: true,
   };
 
   // Con `DATABASE_URL` (connection string del pooler de Supabase) se usa esa;
@@ -68,7 +63,6 @@ const buildDbOptions = (config: ConfigService): TypeOrmModuleOptions => {
     ServicesModule,
     AppointmentsModule,
     FilesModule,
-    SeedModule,
   ],
   controllers: [HealthController],
   providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
