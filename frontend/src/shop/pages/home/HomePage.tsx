@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Sparkle } from '@/components/Sparkle';
 import { ProductsGrid } from '@/shop/components/ProductsGrid';
 import { useServices } from '@/shop/hooks/use-services';
-import heroImage from '@/assets/service-nailart.jpg';
+import heroImage from '@/assets/hero-nailart.webp';
 
 const steps = [
   {
@@ -93,7 +93,10 @@ export const HomePage = () => {
             <img
               src={heroImage}
               alt="Trabajo de uñas de Luné by Kelin"
+              width={1400}
+              height={1750}
               fetchPriority="high"
+              decoding="async"
               className="aspect-[4/5] w-full rounded-[42%_58%_62%_38%/48%_42%_58%_52%] object-cover shadow-xl shadow-brand/15"
             />
             <Sparkle className="absolute -right-2 top-6 h-6 w-6 text-gold" />

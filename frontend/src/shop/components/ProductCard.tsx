@@ -20,6 +20,8 @@ export const ProductCard = ({ service }: Props) => {
                         <img
                             src={serviceImage(service.image, service.category)}
                             alt={service.name}
+                            loading="lazy"
+                            decoding="async"
                             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                         />
                         <div className="image-overlay" />

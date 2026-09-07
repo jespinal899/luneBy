@@ -32,6 +32,8 @@ export class FilesController {
     @Res() res: Response,
     @Param('imageName') imageName: string,
   ) {
+    // El nombre es un UUID inmutable: el navegador puede cachearlo indefinidamente.
+    res.set('Cache-Control', 'public, max-age=31536000, immutable');
     res.sendFile(this.filesService.getServiceImagePath(imageName));
   }
 

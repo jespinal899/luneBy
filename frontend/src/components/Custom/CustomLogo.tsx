@@ -1,5 +1,5 @@
 import { Link } from 'react-router';
-import logoby from '@/assets/logoby.png';
+import logoby from '@/assets/logoby.webp';
 import { cn } from '@/lib/utils';
 
 interface Props {
@@ -13,6 +13,9 @@ export const CustomLogo = ({ className }: Props) => {
             <img
                 src={logoby}
                 alt="Logo"
+                width={480}
+                height={480}
+                fetchPriority="high"
                 className={cn('w-auto object-contain', className ?? 'h-40')}
             />
         </Link>

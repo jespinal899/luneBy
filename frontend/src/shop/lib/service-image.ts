@@ -1,6 +1,6 @@
-import serviceAcrylic from '@/assets/service-acrylic.jpg';
-import serviceGel from '@/assets/service-gel.jpg';
-import serviceNailart from '@/assets/service-nailart.jpg';
+import serviceAcrylic from '@/assets/service-acrylic.webp';
+import serviceGel from '@/assets/service-gel.webp';
+import serviceNailart from '@/assets/service-nailart.webp';
 
 const byCategory: Record<string, string> = {
   Acrilico: serviceAcrylic,
