@@ -1,14 +1,10 @@
 import { Link } from 'react-router';
 import { CalendarCheck, Sparkles, Clock, ShieldCheck, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Sparkle } from '@/components/Sparkle';
 import { ProductsGrid } from '@/shop/components/ProductsGrid';
 import { useServices } from '@/shop/hooks/use-services';
 import heroImage from '@/assets/service-nailart.jpg';
-
-const stats = [
-  { value: '4.9', label: 'Valoración de clientas' },
-  { value: '+2.500', label: 'Citas realizadas' },
-];
 
 const steps = [
   {
@@ -34,57 +30,74 @@ export const HomePage = () => {
 
   return (
     <>
-      {/* Hero — banner ancho */}
-      <section className="relative isolate overflow-hidden">
-        <img
-          src={heroImage}
-          alt="Estudio de uñas Lune By Kelin"
-          className="absolute inset-0 -z-10 h-full w-full object-cover object-center"
-        />
-        <div className="absolute inset-0 -z-10 bg-gradient from-brand-dark/95 via-brand/80 to-brand/40" />
+      {/* Hero */}
+      <section className="relative overflow-hidden bg-cream">
+        <Sparkle className="pointer-events-none absolute left-[5%] top-[26%] hidden h-7 w-7 text-gold lg:block" />
+        <Sparkle className="pointer-events-none absolute left-[46%] top-[12%] hidden h-4 w-4 text-gold/70 lg:block" />
+        <Sparkle className="pointer-events-none absolute bottom-[16%] left-[39%] hidden h-5 w-5 text-gold/80 lg:block" />
 
-        <div className="container mx-auto px-4 py-16 md:py-24 lg:px-8">
-          <div className="max-w-2xl text-brand-foreground">
-            <span className="inline-flex items-center gap-2 rounded-full bg-gold px-3 py-1 text-xs font-semibold tracking-wide text-gold-foreground">
-              <Sparkles className="h-3.5 w-3.5" />
-              Estudio de uñas · Lune By Kelin
-            </span>
-            <h1 className="mt-5 font-display text-4xl font-semibold leading-[1.1] tracking-tight sm:text-5xl lg:text-6xl">
-              Tus uñas, tu mejor{' '}
-              <span className="italic text-gold">accesorio de lujo</span>
-            </h1>
-            <p className="mt-4 max-w-xl text-base text-white/85 sm:text-lg">
-              Bienvenida a LuneBy Kelin. Especialistas en manicura rusa, uñas
-              acrílicas esculpidas y nail art de autor. Cotiza tu diseño favorito en
-              tiempo real y agenda tu cita en segundos.
+        <div className="container mx-auto grid items-center gap-12 px-4 py-16 lg:grid-cols-2 lg:gap-8 lg:px-8 lg:py-24">
+          {/* Texto */}
+          <div className="relative z-10 max-w-xl">
+            <p className="flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.28em] text-brand/70">
+              <Sparkle className="h-3.5 w-3.5" />
+              Estudio de uñas
+              <Sparkle className="h-3.5 w-3.5" />
             </p>
-            <div className="mt-7 flex flex-wrap gap-3">
+
+            <h1 className="mt-6 font-display text-[2.25rem] leading-[1.08] text-brand-dark sm:text-[3.5rem]">
+              Tus uñas,
+              <br />
+              tu mejor
+              <span className="mt-1 block font-script text-[1.3em] font-normal leading-[1.1] text-gold sm:text-[1.45em]">
+                accesorio de lujo
+              </span>
+            </h1>
+
+            <p className="mt-6 max-w-md text-base leading-relaxed text-brand-dark/70">
+              Especialistas en manicura rusa, uñas acrílicas esculpidas y nail
+              art de autor.
+            </p>
+            <p className="mt-3 max-w-md text-base leading-relaxed text-brand-dark/70">
+              Cotiza tu diseño favorito en tiempo real y agenda tu cita en
+              segundos.
+            </p>
+
+            <div className="mt-8 flex flex-wrap gap-3">
               <Button
                 size="lg"
                 render={<Link to="/shop/agendar" />}
-                className="h-11 bg-gold px-6 text-gold-foreground hover:bg-gold/90"
+                className="h-11 rounded-full bg-brand px-6 text-brand-foreground hover:bg-brand-dark"
               >
-                Agendar cita
+                <Sparkles className="h-4 w-4" />
+                Agendar mi cita
                 <ArrowRight className="h-4 w-4" />
               </Button>
               <Button
                 size="lg"
-                variant="secondary"
+                variant="outline"
                 render={<Link to="/shop" />}
-                className="h-11 px-6"
+                className="h-11 rounded-full border-brand/25 bg-transparent px-6 text-brand-dark hover:bg-brand/5"
               >
                 Ver servicios
               </Button>
             </div>
+          </div>
 
-            <div className="mt-10 flex flex-wrap gap-x-10 gap-y-4">
-              {stats.map((s) => (
-                <div key={s.label}>
-                  <p className="text-2xl font-semibold">{s.value}</p>
-                  <p className="text-sm text-white/70">{s.label}</p>
-                </div>
-              ))}
-            </div>
+          {/* Imagen */}
+          <div className="relative mx-auto w-full max-w-[78vw] sm:max-w-sm lg:max-w-md">
+            <div
+              aria-hidden
+              className="absolute -inset-3 -z-10 -rotate-3 rounded-[42%_58%_62%_38%/48%_42%_58%_52%] border-2 border-gold/50 sm:-inset-4"
+            />
+            <img
+              src={heroImage}
+              alt="Trabajo de uñas de Luné by Kelin"
+              fetchPriority="high"
+              className="aspect-[4/5] w-full rounded-[42%_58%_62%_38%/48%_42%_58%_52%] object-cover shadow-xl shadow-brand/15"
+            />
+            <Sparkle className="absolute -right-2 top-6 h-6 w-6 text-gold" />
+            <Sparkle className="absolute -left-4 bottom-24 h-4 w-4 text-gold/80" />
           </div>
         </div>
       </section>

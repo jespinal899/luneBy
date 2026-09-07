@@ -44,7 +44,7 @@ export const CustomHeader = () => {
     );
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-brand/10 bg-[#FBF6EC]/95 backdrop-blur">
+    <header className="sticky top-0 z-50 w-full border-b border-brand/10 bg-cream/95 backdrop-blur">
       <div className="container mx-auto px-4 lg:px-8">
         <div className="flex h-16 items-center justify-between gap-6">
           {/* Logo + navegación */}
