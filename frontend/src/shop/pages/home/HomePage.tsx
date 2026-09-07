@@ -3,6 +3,7 @@ import { CalendarCheck, Sparkles, Clock, ShieldCheck, ArrowRight } from 'lucide-
 import { Button } from '@/components/ui/button';
 import { Sparkle } from '@/components/Sparkle';
 import { ProductsGrid } from '@/shop/components/ProductsGrid';
+import { ProductsGridSkeleton } from '@/shop/components/ProductsGridSkeleton';
 import { useServices } from '@/shop/hooks/use-services';
 import heroImage from '@/assets/hero-nailart.webp';
 
@@ -156,9 +157,7 @@ export const HomePage = () => {
           </div>
 
           {isLoading ? (
-            <p className="py-16 text-center text-muted-foreground">
-              Cargando servicios…
-            </p>
+            <ProductsGridSkeleton />
           ) : (
             <ProductsGrid services={services} />
           )}
