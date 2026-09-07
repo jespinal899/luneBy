@@ -43,7 +43,12 @@ export class FilesService {
     // acaba pesando ~40 KB, lo que hace que el catálogo cargue al instante.
     const optimized = await sharp(file.buffer)
       .rotate() // respeta la orientación EXIF
-      .resize({ width: 1000, height: 1000, fit: 'inside', withoutEnlargement: true })
+      .resize({
+        width: 1000,
+        height: 1000,
+        fit: 'inside',
+        withoutEnlargement: true,
+      })
       .webp({ quality: 74 })
       .toBuffer();
 
