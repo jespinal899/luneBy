@@ -15,9 +15,10 @@ ENV NODE_ENV=production
 ENV STAGE=prod
 
 COPY package*.json ./
-# Reutiliza los node_modules ya compilados (bcrypt) y quita los de desarrollo.
-COPY --from=build /app/node_modules ./node_modules
-RUN npm prune --omit=dev && npm cache clean --force
+# Instala solo dependencias de producción, ya compiladas para linux.
+# (No se copian los node_modules del build + `npm prune`: eso rompe los
+#  binarios por plataforma de `sharp`.)
+RUN npm ci --omit=dev && npm cache clean --force
 
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/static ./static
