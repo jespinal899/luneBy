@@ -9,8 +9,8 @@ export const SERVICE_CATEGORIES = [
 
 export const PRICE_BANDS = [
   { value: 'any', label: 'Cualquier precio' },
-  { value: '0-50', label: '$0 - $50' },
-  { value: '50-100', label: '$50 - $100' },
-  { value: '100-200', label: '$100 - $200' },
-  { value: '200+', label: '$200+' },
+  { value: '0-300', label: 'Hasta L. 300' },
+  { value: '300-500', label: 'L. 300 - 500' },
+  { value: '500-800', label: 'L. 500 - 800' },
+  { value: '800+', label: 'Más de L. 800' },
 ] as const;

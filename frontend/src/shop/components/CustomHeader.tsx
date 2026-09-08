@@ -1,12 +1,14 @@
 import { useRef, type KeyboardEvent } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router';
-import { LogOut, Search, Sparkles } from 'lucide-react';
+import { Calculator, LogOut, Search, Sparkles } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { CustomLogo } from '@/components/Custom/CustomLogo';
 import { useAuth } from '@/auth/context/use-auth';
+import { useQuote } from '@/quote/use-quote';
+import { formatLps } from '@/shop/lib/format';
 
 const navLinks = [
   { to: '/', label: 'Inicio', match: (shop?: string) => !shop },
@@ -20,6 +22,7 @@ export const CustomHeader = () => {
   const { shop } = useParams();
   const navigate = useNavigate();
   const { status, user, isAdmin, logout } = useAuth();
+  const quote = useQuote();
 
   const inputRef = useRef<HTMLInputElement>(null);
   const query = searchParams.get('query') || '';
@@ -88,6 +91,24 @@ export const CustomHeader = () => {
             >
               <Search className="h-5 w-5" />
             </Button>
+
+            {/* Cotización */}
+            <button
+              type="button"
+              onClick={quote.open}
+              aria-label="Ver mi cotización"
+              className="relative flex h-9 items-center gap-1.5 rounded-full border border-brand/25 px-3 text-sm text-brand-dark transition-colors hover:bg-brand/5"
+            >
+              <Calculator className="h-4 w-4" />
+              <span className="hidden sm:inline">
+                {quote.count > 0 ? formatLps(quote.total) : 'Cotizar'}
+              </span>
+              {quote.count > 0 && (
+                <span className="absolute -right-1.5 -top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-brand px-1 text-[10px] font-bold text-brand-foreground">
+                  {quote.count}
+                </span>
+              )}
+            </button>
 
             {status === 'authenticated' ? (
               <div className="flex items-center gap-2">

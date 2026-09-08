@@ -5,12 +5,12 @@ import {
   MoreThanOrEqual,
 } from 'typeorm';
 
-/** Bandas de precio que envía el FilterSidebar del frontend. */
+/** Bandas de precio (Lempiras) que envía el FilterSidebar del frontend. */
 const BANDS: Record<string, [number, number | undefined]> = {
-  '0-50': [0, 50],
-  '50-100': [50, 100],
-  '100-200': [100, 200],
-  '200+': [200, undefined],
+  '0-300': [0, 300],
+  '300-500': [300, 500],
+  '500-800': [500, 800],
+  '800+': [800, undefined],
 };
 
 /**

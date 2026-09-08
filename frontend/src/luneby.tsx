@@ -5,6 +5,7 @@ import { RouterProvider } from 'react-router';
 import { CACHE_BUSTER, persister, queryClient } from './api/query-client';
 import { appRouter } from './app.router';
 import { AuthProvider } from './auth/context/AuthProvider';
+import { QuoteProvider } from './quote/QuoteProvider';
 
 export const Luneby = () => {
   return (
@@ -27,7 +28,9 @@ export const Luneby = () => {
       }}
     >
       <AuthProvider>
-        <RouterProvider router={appRouter} />
+        <QuoteProvider>
+          <RouterProvider router={appRouter} />
+        </QuoteProvider>
       </AuthProvider>
       <ReactQueryDevtools initialIsOpen={false} />
     </PersistQueryClientProvider>

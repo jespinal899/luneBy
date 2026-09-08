@@ -1,8 +1,9 @@
 import { Link } from "react-router";
 
 import type { Service } from "@/api/types";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { AddToQuoteButton } from "@/quote/AddToQuoteButton";
+import { formatLps } from "../lib/format";
 import { serviceImage } from "../lib/service-image";
 
 interface Props {
@@ -40,21 +41,27 @@ export const ProductCard = ({ service }: Props) => {
                         </p>
                     </div>
 
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-end justify-between">
                         <div>
-                            <p className="font-semibold text-lg">${service.price}</p>
+                            <p className="font-semibold text-lg">
+                                {formatLps(service.price)}
+                            </p>
                             <p className="text-xs text-muted-foreground">
                                 {service.durationMin} min
                             </p>
                         </div>
-                        <Button
-                            size="sm"
-                            variant="outline"
-                            render={<Link to={to} />}
-                            className="text-xs px-4 py-2 h-8"
-                        >
-                            Reservar
-                        </Button>
+                        <div className="flex flex-col items-end gap-1.5">
+                            <AddToQuoteButton
+                                service={service}
+                                className="h-8 px-3 text-xs"
+                            />
+                            <Link
+                                to={to}
+                                className="text-xs text-muted-foreground hover:underline"
+                            >
+                                Ver detalle
+                            </Link>
+                        </div>
                     </div>
                 </div>
             </CardContent>

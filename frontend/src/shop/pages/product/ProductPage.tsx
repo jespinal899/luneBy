@@ -2,8 +2,10 @@ import { ArrowLeft, CalendarCheck, Clock } from 'lucide-react';
 import { Link, useParams } from 'react-router';
 
 import { Button } from '@/components/ui/button';
+import { AddToQuoteButton } from '@/quote/AddToQuoteButton';
 import { ProductsGrid } from '@/shop/components/ProductsGrid';
 import { useService, useServices } from '@/shop/hooks/use-services';
+import { formatLps } from '@/shop/lib/format';
 import { serviceImage } from '@/shop/lib/service-image';
 
 export const ProductPage = () => {
@@ -62,7 +64,9 @@ export const ProductPage = () => {
                     </h1>
 
                     <div className="mt-4 flex items-center gap-6">
-                        <span className="text-2xl font-semibold">${service.price}</span>
+                        <span className="text-2xl font-semibold">
+                            {formatLps(service.price)}
+                        </span>
                         <span className="inline-flex items-center gap-1.5 text-sm text-muted-foreground">
                             <Clock className="h-4 w-4" />
                             {service.durationMin} min
@@ -73,7 +77,7 @@ export const ProductPage = () => {
                         <p className="mt-6 text-muted-foreground">{service.description}</p>
                     )}
 
-                    <div className="mt-auto pt-8">
+                    <div className="mt-auto flex flex-wrap gap-3 pt-8">
                         <Button
                             size="lg"
                             className="h-11 px-6"
@@ -82,6 +86,11 @@ export const ProductPage = () => {
                             <CalendarCheck className="h-4 w-4" />
                             Agendar este servicio
                         </Button>
+                        <AddToQuoteButton
+                            service={service}
+                            size="lg"
+                            className="h-11 px-6"
+                        />
                     </div>
                 </div>
             </div>

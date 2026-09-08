@@ -5,11 +5,13 @@ import { Link, useLocation, useNavigate, useSearchParams } from 'react-router';
 import { apiErrorMessage } from '@/api/errors';
 import { useAuth } from '@/auth/context/use-auth';
 import { Button } from '@/components/ui/button';
+import { useQuote } from '@/quote/use-quote';
 import {
     useAvailability,
     useCreateAppointment,
 } from '@/shop/hooks/use-appointments';
 import { useServices } from '@/shop/hooks/use-services';
+import { formatLps } from '@/shop/lib/format';
 
 const inputClass =
     'w-full rounded-lg border border-slate-300 px-4 py-2.5 focus:border-transparent focus:ring-2 focus:ring-slate-900/20';
@@ -23,10 +25,19 @@ export const AgendarPage = () => {
     const { data: servicesData } = useServices({ limit: 100 });
     const services = (servicesData?.products ?? []).filter((s) => s.isActive);
 
+    const quote = useQuote();
+    const fromQuote = quote.items.length > 1;
+
     const [serviceId, setServiceId] = useState(params.get('serviceId') ?? '');
     const [date, setDate] = useState('');
     const [slot, setSlot] = useState('');
-    const [notes, setNotes] = useState('');
+    const [notes, setNotes] = useState(() =>
+        fromQuote
+            ? `Cotización (${quote.items.length} servicios · ${formatLps(
+                  quote.total,
+              )}): ${quote.items.map((i) => i.name).join(', ')}`
+            : '',
+    );
 
     const today = new Date().toISOString().slice(0, 10);
     const selectedService = services.find((s) => s.id === serviceId);
@@ -56,6 +67,15 @@ export const AgendarPage = () => {
                 Elige tu servicio, el día y una hora disponible.
             </p>
 
+            {fromQuote && (
+                <div className="mt-6 rounded-xl border border-gold/40 bg-gold/10 px-4 py-3 text-sm text-brand-dark">
+                    Vienes de una cotización de{' '}
+                    <strong>{quote.items.length} servicios</strong> (
+                    {formatLps(quote.total)}). El detalle quedó en las notas;
+                    abajo eliges el servicio principal para reservar la hora.
+                </div>
+            )}
+
             <div className="mt-10 grid gap-10 lg:grid-cols-3">
                 {/* Formulario */}
                 <div className="space-y-6 lg:col-span-2">
@@ -72,7 +92,8 @@ export const AgendarPage = () => {
                             <option value="">Selecciona un servicio…</option>
                             {services.map((s) => (
                                 <option key={s.id} value={s.id}>
-                                    {s.name} · ${s.price} · {s.durationMin} min
+                                    {s.name} · {formatLps(s.price)} ·{' '}
+                                    {s.durationMin} min
                                 </option>
                             ))}
                         </select>
@@ -152,8 +173,8 @@ export const AgendarPage = () => {
                             <p className="font-medium">{selectedService.name}</p>
                             <p className="flex items-center gap-1.5 text-muted-foreground">
                                 <Clock className="h-4 w-4" />
-                                {selectedService.durationMin} min · $
-                                {selectedService.price}
+                                {selectedService.durationMin} min ·{' '}
+                                {formatLps(selectedService.price)}
                             </p>
                             {date && <p className="text-muted-foreground">{date}</p>}
                             {slot && (

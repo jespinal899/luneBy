@@ -11,6 +11,7 @@ import { Link } from 'react-router';
 import { AdminTitle } from '@/admin/components/AdminTitle';
 import { useAdminAppointments } from '@/admin/hooks/use-admin-appointments';
 import { computeDashboard } from '@/admin/lib/dashboard-stats';
+import { formatLps } from '@/shop/lib/format';
 import type { AppointmentStatus } from '@/api/types';
 import { Button } from '@/components/ui/button';
 
@@ -60,7 +61,7 @@ export const DashboardPage = () => {
         },
         {
             title: 'Ingresos estimados del mes',
-            value: `$${kpis.ingresosMes.toFixed(0)}`,
+            value: formatLps(kpis.ingresosMes),
             hint: 'citas confirmadas o realizadas',
             icon: Wallet,
         },
@@ -160,7 +161,7 @@ export const DashboardPage = () => {
                                         </div>
                                     </div>
                                     <span className="text-sm font-semibold text-slate-900">
-                                        ${s.revenue.toFixed(0)}
+                                        {formatLps(s.revenue)}
                                     </span>
                                 </div>
                             ))}

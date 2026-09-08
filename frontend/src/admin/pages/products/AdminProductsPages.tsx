@@ -3,6 +3,7 @@ import { Link, useSearchParams } from 'react-router';
 
 import { AdminTitle } from '@/admin/components/AdminTitle';
 import { useDeleteService } from '@/admin/hooks/use-service-mutations';
+import { formatLps } from '@/shop/lib/format';
 import { CustomPagination } from '@/components/Custom/CustomPagination';
 import { Button } from '@/components/ui/button';
 import {
@@ -99,7 +100,7 @@ export const AdminProductsPage = () => {
                                     <TableCell>
                                         {formatDuration(service.durationMin)}
                                     </TableCell>
-                                    <TableCell>${service.price.toFixed(2)}</TableCell>
+                                    <TableCell>{formatLps(service.price)}</TableCell>
                                     <TableCell>
                                         <span
                                             className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${

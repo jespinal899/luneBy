@@ -6,16 +6,16 @@ describe('priceFilter', () => {
     expect(priceFilter({ price: 'any' })).toBeUndefined();
   });
 
-  it('banda "0-50" produce un Between(0, 50)', () => {
-    const op = priceFilter({ price: '0-50' });
+  it('banda "0-300" produce un Between(0, 300)', () => {
+    const op = priceFilter({ price: '0-300' });
     expect(op?.type).toBe('between');
-    expect(op?.value).toEqual([0, 50]);
+    expect(op?.value).toEqual([0, 300]);
   });
 
-  it('banda "200+" produce un MoreThanOrEqual(200)', () => {
-    const op = priceFilter({ price: '200+' });
+  it('banda "800+" produce un MoreThanOrEqual(800)', () => {
+    const op = priceFilter({ price: '800+' });
     expect(op?.type).toBe('moreThanOrEqual');
-    expect(op?.value).toBe(200);
+    expect(op?.value).toBe(800);
   });
 
   it('solo minPrice produce MoreThanOrEqual', () => {
@@ -37,7 +37,7 @@ describe('priceFilter', () => {
   });
 
   it('la banda tiene prioridad sobre minPrice/maxPrice', () => {
-    const op = priceFilter({ price: '50-100', minPrice: 0, maxPrice: 500 });
-    expect(op?.value).toEqual([50, 100]);
+    const op = priceFilter({ price: '300-500', minPrice: 0, maxPrice: 999 });
+    expect(op?.value).toEqual([300, 500]);
   });
 });

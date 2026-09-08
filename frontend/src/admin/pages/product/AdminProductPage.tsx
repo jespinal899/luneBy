@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Clock, DollarSign, SaveAll, Upload, X } from 'lucide-react';
+import { Clock, SaveAll, Upload, X } from 'lucide-react';
 import { Link, useNavigate, useParams } from 'react-router';
 
 import { AdminTitle } from '@/admin/components/AdminTitle';
@@ -133,21 +133,23 @@ export const AdminProductPage = () => {
                             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                                 <div>
                                     <label className="mb-2 block text-sm font-medium text-slate-700">
-                                        Precio ($)
+                                        Precio (L.)
                                     </label>
                                     <div className="relative">
-                                        <DollarSign className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                                        <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm font-medium text-slate-400">
+                                            L.
+                                        </span>
                                         <input
                                             type="number"
                                             min={0}
-                                            step="0.01"
+                                            step="1"
                                             required
                                             value={form.price}
                                             onChange={(e) =>
                                                 set('price', parseFloat(e.target.value) || 0)
                                             }
                                             className={`${inputClass} pl-9`}
-                                            placeholder="0.00"
+                                            placeholder="0"
                                         />
                                     </div>
                                 </div>
