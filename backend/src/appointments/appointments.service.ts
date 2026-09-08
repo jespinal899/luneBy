@@ -4,11 +4,18 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Not, QueryFailedError, Repository } from 'typeorm';
+import {
+  Between,
+  IsNull,
+  MoreThanOrEqual,
+  Not,
+  QueryFailedError,
+  Repository,
+} from 'typeorm';
 
 import { User } from '../auth/entities/user.entity';
 import { Service } from '../services/entities/service.entity';
-import { CreateAppointmentDto } from './dto';
+import { CreateAppointmentDto, CreateTimeOffDto, ScheduleDayDto } from './dto';
 import {
   Appointment,
   AppointmentStatus,
@@ -167,5 +174,84 @@ export class AppointmentsService {
     const appointment = await this.findOne(id);
     appointment.status = status;
     return this.appointmentRepository.save(appointment);
+  }
+
+  // ---- Horario de trabajo (admin) ----
+
+  /** Los 7 días de la semana; los que no tienen regla van desactivados. */
+  async getSchedule() {
+    const rules = await this.ruleRepository.find();
+    return Array.from({ length: 7 }, (_, weekday) => {
+      const rule = rules.find((r) => r.weekday === weekday);
+      return {
+        weekday,
+        startTime: rule?.startTime ?? '17:30',
+        endTime: rule?.endTime ?? '22:00',
+        isActive: rule?.isActive ?? false,
+      };
+    });
+  }
+
+  /** Reemplaza el horario semanal completo. */
+  async replaceSchedule(days: ScheduleDayDto[]) {
+    for (const d of days) {
+      if (d.isActive && toMinutes(d.startTime) >= toMinutes(d.endTime)) {
+        throw new BadRequestException(
+          'La hora de apertura debe ser anterior a la de cierre',
+        );
+      }
+    }
+
+    await this.ruleRepository.deleteAll();
+
+    const rows = days
+      .filter((d) => d.isActive)
+      .map((d) =>
+        this.ruleRepository.create({
+          weekday: d.weekday,
+          startTime: d.startTime,
+          endTime: d.endTime,
+          slotIntervalMin: 30,
+          isActive: true,
+        }),
+      );
+    if (rows.length) await this.ruleRepository.save(rows);
+
+    return this.getSchedule();
+  }
+
+  // ---- Días cerrados (admin) ----
+
+  listTimeOff(from?: string, to?: string) {
+    const where =
+      from && to
+        ? { date: Between(from, to) }
+        : from
+          ? { date: MoreThanOrEqual(from) }
+          : {};
+    return this.timeOffRepository.find({ where, order: { date: 'ASC' } });
+  }
+
+  /** Cierra un día completo. Si ya estaba cerrado, devuelve el registro. */
+  async addTimeOff(dto: CreateTimeOffDto) {
+    const existing = await this.timeOffRepository.findOneBy({
+      date: dto.date,
+      startTime: IsNull(),
+    });
+    if (existing) return existing;
+
+    return this.timeOffRepository.save(
+      this.timeOffRepository.create({
+        date: dto.date,
+        reason: dto.reason,
+        startTime: null,
+        endTime: null,
+      }),
+    );
+  }
+
+  async removeTimeOff(id: string) {
+    const result = await this.timeOffRepository.delete(id);
+    if (!result.affected) throw new NotFoundException('Bloqueo no encontrado');
   }
 }

@@ -8,6 +8,7 @@ import { AdminAppointmentsPage } from './admin/pages/appointments/AdminAppointme
 import { AdminProductPage } from './admin/pages/product/AdminProductPage';
 import { AdminProductsPage } from './admin/pages/products/AdminProductsPages';
 import { DashboardPage } from './admin/pages/dashboard/DashboardPage';
+import { HorarioPage } from './admin/pages/horario/HorarioPage';
 import { ShopLayouts } from './shop/layouts/ShopLayouts';
 import { NotFoundPage } from './shop/pages/NotFoundPage';
 import { AgendarPage } from './shop/pages/agendar/AgendarPage';
@@ -79,6 +80,7 @@ export const appRouter = createBrowserRouter([
       { path: 'products', element: <AdminProductsPage /> },
       { path: 'products/:id', element: <AdminProductPage /> },
       { path: 'citas', element: <AdminAppointmentsPage /> },
+      { path: 'horario', element: <HorarioPage /> },
     ],
   },
 ]);

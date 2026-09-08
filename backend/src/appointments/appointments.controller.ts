@@ -1,12 +1,14 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Header,
   Param,
   ParseUUIDPipe,
   Patch,
   Post,
+  Put,
   Query,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
@@ -18,7 +20,9 @@ import { AppointmentsService } from './appointments.service';
 import {
   AvailabilityQueryDto,
   CreateAppointmentDto,
+  CreateTimeOffDto,
   UpdateAppointmentStatusDto,
+  UpdateScheduleDto,
 } from './dto';
 import { AppointmentStatus } from './entities';
 
@@ -63,7 +67,51 @@ export class AppointmentsController {
     return this.appointmentsService.cancelOwn(id, user);
   }
 
-  // ---- Administración ----
+  // ---- Administración: horario de trabajo ----
+
+  /** Horario semanal (7 días). */
+  @Get('schedule')
+  @Auth(ValidRoles.admin)
+  @ApiBearerAuth()
+  @Header('Cache-Control', 'private, no-cache')
+  getSchedule() {
+    return this.appointmentsService.getSchedule();
+  }
+
+  /** Reemplaza el horario semanal completo. */
+  @Put('schedule')
+  @Auth(ValidRoles.admin)
+  @ApiBearerAuth()
+  replaceSchedule(@Body() dto: UpdateScheduleDto) {
+    return this.appointmentsService.replaceSchedule(dto.days);
+  }
+
+  /** Días cerrados (desde hoy, o entre ?from= y ?to=). */
+  @Get('time-off')
+  @Auth(ValidRoles.admin)
+  @ApiBearerAuth()
+  @Header('Cache-Control', 'private, no-cache')
+  listTimeOff(@Query('from') from?: string, @Query('to') to?: string) {
+    return this.appointmentsService.listTimeOff(from, to);
+  }
+
+  /** Cierra un día completo. */
+  @Post('time-off')
+  @Auth(ValidRoles.admin)
+  @ApiBearerAuth()
+  addTimeOff(@Body() dto: CreateTimeOffDto) {
+    return this.appointmentsService.addTimeOff(dto);
+  }
+
+  /** Reabre un día cerrado. */
+  @Delete('time-off/:id')
+  @Auth(ValidRoles.admin)
+  @ApiBearerAuth()
+  removeTimeOff(@Param('id', ParseUUIDPipe) id: string) {
+    return this.appointmentsService.removeTimeOff(id);
+  }
+
+  // ---- Administración: citas ----
 
   /** Agenda completa (filtros opcionales ?date= y ?status=). */
   @Get()

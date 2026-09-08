@@ -1,5 +1,6 @@
 import { Link, useLocation } from 'react-router';
 import {
+    CalendarClock,
     CalendarDays,
     ChevronLeft,
     ChevronRight,
@@ -19,6 +20,7 @@ const menuItems = [
     { icon: Home, label: 'Dashboard', to: '/admin' },
     { icon: Scissors, label: 'Servicios', to: '/admin/products' },
     { icon: CalendarDays, label: 'Citas', to: '/admin/citas' },
+    { icon: CalendarClock, label: 'Horario', to: '/admin/horario' },
 ];
 
 export const AdminSidebar: React.FC<SidebarProps> = ({
