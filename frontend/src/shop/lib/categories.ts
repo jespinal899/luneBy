@@ -7,6 +7,9 @@ export const SERVICE_CATEGORIES = [
   'Nail Art',
 ] as const;
 
+/** Categoría reservada para los complementos (servicios de tipo "estilo"). */
+export const ESTILO_CATEGORY = 'Estilo';
+
 export const PRICE_BANDS = [
   { value: 'any', label: 'Cualquier precio' },
   { value: '0-300', label: 'Hasta L. 300' },

@@ -12,7 +12,7 @@ import { apiErrorMessage } from '@/api/errors';
 import { Button } from '@/components/ui/button';
 import type { ServiceInput } from '@/shop/api/services.actions';
 import { useService } from '@/shop/hooks/use-services';
-import { SERVICE_CATEGORIES } from '@/shop/lib/categories';
+import { ESTILO_CATEGORY, SERVICE_CATEGORIES } from '@/shop/lib/categories';
 
 const emptyForm: ServiceInput = {
     name: '',
@@ -22,6 +22,7 @@ const emptyForm: ServiceInput = {
     description: '',
     image: '',
     isActive: true,
+    kind: 'base',
 };
 
 const inputClass =
@@ -48,6 +49,7 @@ export const AdminProductPage = () => {
             description: existing.description ?? '',
             image: existing.image ?? '',
             isActive: existing.isActive,
+            kind: existing.kind ?? 'base',
         });
     }
 
@@ -58,6 +60,22 @@ export const AdminProductPage = () => {
 
     const set = <K extends keyof ServiceInput>(field: K, value: ServiceInput[K]) =>
         setForm((prev) => ({ ...prev, [field]: value }));
+
+    // Al cambiar el tipo, ajusta la categoría para que sea coherente.
+    const setKind = (kind: 'base' | 'estilo') =>
+        setForm((prev) => ({
+            ...prev,
+            kind,
+            category:
+                kind === 'estilo'
+                    ? ESTILO_CATEGORY
+                    : prev.category === ESTILO_CATEGORY
+                      ? SERVICE_CATEGORIES[0]
+                      : prev.category,
+        }));
+
+    const categoryOptions =
+        form.kind === 'estilo' ? [ESTILO_CATEGORY] : SERVICE_CATEGORIES;
 
     const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
@@ -179,21 +197,52 @@ export const AdminProductPage = () => {
                                 </div>
                             </div>
 
-                            <div>
-                                <label className="mb-2 block text-sm font-medium text-slate-700">
-                                    Categoría
-                                </label>
-                                <select
-                                    value={form.category}
-                                    onChange={(e) => set('category', e.target.value)}
-                                    className={inputClass}
-                                >
-                                    {SERVICE_CATEGORIES.map((c) => (
-                                        <option key={c} value={c}>
-                                            {c}
+                            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                                <div>
+                                    <label className="mb-2 block text-sm font-medium text-slate-700">
+                                        Tipo de servicio
+                                    </label>
+                                    <select
+                                        value={form.kind ?? 'base'}
+                                        onChange={(e) =>
+                                            setKind(
+                                                e.target.value as 'base' | 'estilo',
+                                            )
+                                        }
+                                        className={inputClass}
+                                    >
+                                        <option value="base">
+                                            Servicio base (manicura, acrílico…)
                                         </option>
-                                    ))}
-                                </select>
+                                        <option value="estilo">
+                                            Estilo (complemento que suma a la cita)
+                                        </option>
+                                    </select>
+                                    <p className="mt-1 text-xs text-slate-400">
+                                        Los estilos no se listan en la tienda; se
+                                        eligen al agendar y suman a la cotización.
+                                    </p>
+                                </div>
+
+                                <div>
+                                    <label className="mb-2 block text-sm font-medium text-slate-700">
+                                        Categoría
+                                    </label>
+                                    <select
+                                        value={form.category}
+                                        onChange={(e) =>
+                                            set('category', e.target.value)
+                                        }
+                                        disabled={form.kind === 'estilo'}
+                                        className={`${inputClass} disabled:opacity-60`}
+                                    >
+                                        {categoryOptions.map((c) => (
+                                            <option key={c} value={c}>
+                                                {c}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
                             </div>
 
                             <div>
