@@ -15,6 +15,7 @@ export const useAvailability = (
   useQuery({
     queryKey: ['availability', date, serviceId],
     queryFn: () => getAvailability(date as string, serviceId as string),
+    staleTime: 15_000, // cambia con cada reserva
     enabled: Boolean(date && serviceId),
   });
 
@@ -22,6 +23,7 @@ export const useMyAppointments = () =>
   useQuery({
     queryKey: ['my-appointments'],
     queryFn: getMyAppointments,
+    staleTime: 30_000,
   });
 
 const useInvalidateAppointments = () => {

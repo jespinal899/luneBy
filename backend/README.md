@@ -42,6 +42,18 @@ Toda operación de escritura (`POST` / `PATCH` / `DELETE`) acepta la cabecera
 Los errores de constraint de la base de datos se traducen a respuestas claras:
 duplicado → `409`, referencia inválida → `400` (nunca un `500` genérico).
 
+### Caché
+
+- `GET /services` y `GET /services/:slug` se cachean **en memoria 60 s**
+  (`CacheModule`); la caché se vacía al crear/editar/borrar un servicio.
+- Cabeceras `Cache-Control`: catálogo `public, max-age=60`, disponibilidad
+  `public, max-age=15`, datos de usuario `private, no-cache`, auth `no-store`.
+  Las imágenes servidas desde disco: `immutable`.
+- Express añade `ETag` a las respuestas JSON → reintentos condicionales (`304`).
+
+El frontend además cachea con TanStack Query (catálogo 5 min) y guarda el
+catálogo en `localStorage` para que aparezca al instante al recargar.
+
 ---
 
 ## Stack

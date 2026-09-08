@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Header,
   Param,
   ParseUUIDPipe,
   Patch,
@@ -28,6 +29,8 @@ export class AppointmentsController {
 
   /** Horas libres para una fecha y un servicio. */
   @Get('availability')
+  // Cambia con cada reserva: caché muy corta.
+  @Header('Cache-Control', 'public, max-age=15')
   getAvailability(@Query() query: AvailabilityQueryDto) {
     return this.appointmentsService.getAvailability(
       query.date,
@@ -47,6 +50,7 @@ export class AppointmentsController {
   @Get('me')
   @Auth()
   @ApiBearerAuth()
+  @Header('Cache-Control', 'private, no-cache')
   findMine(@GetUser() user: User) {
     return this.appointmentsService.findMine(user);
   }
@@ -65,6 +69,7 @@ export class AppointmentsController {
   @Get()
   @Auth(ValidRoles.admin)
   @ApiBearerAuth()
+  @Header('Cache-Control', 'private, no-cache')
   findAll(
     @Query('date') date?: string,
     @Query('status') status?: AppointmentStatus,

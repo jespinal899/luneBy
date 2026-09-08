@@ -11,6 +11,7 @@ export const useAdminAppointments = (filters: AppointmentFilters = {}) =>
   useQuery({
     queryKey: ['admin-appointments', filters],
     queryFn: () => getAppointments(filters),
+    staleTime: 30_000,
   });
 
 export const useUpdateAppointmentStatus = () => {

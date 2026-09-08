@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { CacheModule } from '@nestjs/cache-manager';
 import { APP_GUARD } from '@nestjs/core';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
@@ -52,6 +53,10 @@ const buildDbOptions = (config: ConfigService): TypeOrmModuleOptions => {
 
     // 100 peticiones por minuto y por IP (global).
     ThrottlerModule.forRoot([{ ttl: 60_000, limit: 100 }]),
+
+    // Caché en memoria del proceso. La usan las lecturas del catálogo
+    // (`ServicesController`) vía `CacheInterceptor`. TTL en milisegundos.
+    CacheModule.register({ isGlobal: true, ttl: 60_000, max: 200 }),
 
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],

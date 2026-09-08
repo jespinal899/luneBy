@@ -3,12 +3,15 @@ import {
   Controller,
   Delete,
   Get,
+  Header,
   Param,
   ParseUUIDPipe,
   Patch,
   Post,
   Query,
+  UseInterceptors,
 } from '@nestjs/common';
+import { CacheInterceptor } from '@nestjs/cache-manager';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 import { PaginationDto } from '../common/dtos/pagination.dto';
@@ -19,17 +22,22 @@ import { CreateServiceDto, UpdateServiceDto } from './dto';
 
 @ApiTags('Services')
 @Controller('services')
+// `CacheInterceptor` solo cachea peticiones GET (60 s, en memoria). El servicio
+// vacía la caché al crear/editar/borrar un servicio.
+@UseInterceptors(CacheInterceptor)
 export class ServicesController {
   constructor(private readonly servicesService: ServicesService) {}
 
   /** Catálogo con paginación y filtros de categoría / precio. */
   @Get()
+  @Header('Cache-Control', 'public, max-age=60')
   findAll(@Query() paginationDto: PaginationDto) {
     return this.servicesService.findAll(paginationDto);
   }
 
   /** Detalle de un servicio por id (UUID) o por slug. */
   @Get(':term')
+  @Header('Cache-Control', 'public, max-age=60')
   findOne(@Param('term') term: string) {
     return this.servicesService.findOne(term);
   }

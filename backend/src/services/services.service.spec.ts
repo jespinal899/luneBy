@@ -1,4 +1,5 @@
 import { NotFoundException } from '@nestjs/common';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
@@ -12,6 +13,7 @@ describe('ServicesService', () => {
     findAndCount: jest.fn(),
     findOneBy: jest.fn(),
   };
+  const cache = { reset: jest.fn() };
 
   beforeEach(async () => {
     jest.clearAllMocks();
@@ -22,6 +24,7 @@ describe('ServicesService', () => {
           provide: getRepositoryToken(Service),
           useValue: serviceRepository,
         },
+        { provide: CACHE_MANAGER, useValue: cache },
       ],
     }).compile();
     service = moduleRef.get(ServicesService);

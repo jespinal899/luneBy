@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Header, Post } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 
@@ -12,14 +12,17 @@ import { User } from './entities/user.entity';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  // Nada de auth se cachea: las respuestas llevan el token del usuario.
   // Límites estrictos contra fuerza bruta / creación masiva de cuentas.
   @Post('register')
+  @Header('Cache-Control', 'no-store')
   @Throttle({ default: { limit: 5, ttl: 60_000 } })
   register(@Body() createUserDto: CreateUserDto) {
     return this.authService.register(createUserDto);
   }
 
   @Post('login')
+  @Header('Cache-Control', 'no-store')
   @Throttle({ default: { limit: 5, ttl: 60_000 } })
   login(@Body() loginUserDto: LoginUserDto) {
     return this.authService.login(loginUserDto);
@@ -28,6 +31,7 @@ export class AuthController {
   @Get('check-status')
   @Auth()
   @ApiBearerAuth()
+  @Header('Cache-Control', 'no-store')
   checkAuthStatus(@GetUser() user: User) {
     return this.authService.checkAuthStatus(user);
   }
