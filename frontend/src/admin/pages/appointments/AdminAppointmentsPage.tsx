@@ -7,6 +7,7 @@ import {
 } from '@/admin/hooks/use-admin-appointments';
 import type { AppointmentStatus } from '@/api/types';
 import { Button } from '@/components/ui/button';
+import { formatLps } from '@/shop/lib/format';
 import {
     Table,
     TableBody,
@@ -122,7 +123,30 @@ export const AdminAppointmentsPage = () => {
                                         {appt.user.phone ?? appt.user.email}
                                     </span>
                                 </TableCell>
-                                <TableCell>{appt.service.name}</TableCell>
+                                <TableCell>
+                                    {appt.service.name}
+                                    {(appt.items ?? []).some(
+                                        (i) => i.kind === 'estilo',
+                                    ) && (
+                                        <span className="block text-xs text-slate-400">
+                                            {(appt.items ?? [])
+                                                .filter((i) => i.kind === 'estilo')
+                                                .map(
+                                                    (i) =>
+                                                        i.nameAtBooking +
+                                                        (i.quantity > 1
+                                                            ? ` ×${i.quantity}`
+                                                            : ''),
+                                                )
+                                                .join(', ')}
+                                        </span>
+                                    )}
+                                    {appt.priceAtBooking != null && (
+                                        <span className="block text-xs font-medium text-slate-500">
+                                            {formatLps(appt.priceAtBooking)}
+                                        </span>
+                                    )}
+                                </TableCell>
                                 <TableCell>
                                     <span
                                         className={`rounded-full px-2.5 py-1 text-xs font-medium ${STATUS_STYLE[appt.status]}`}

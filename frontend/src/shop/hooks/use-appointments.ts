@@ -11,10 +11,12 @@ import {
 export const useAvailability = (
   date: string | undefined,
   serviceId: string | undefined,
+  extraMinutes = 0,
 ) =>
   useQuery({
-    queryKey: ['availability', date, serviceId],
-    queryFn: () => getAvailability(date as string, serviceId as string),
+    queryKey: ['availability', date, serviceId, extraMinutes],
+    queryFn: () =>
+      getAvailability(date as string, serviceId as string, extraMinutes),
     staleTime: 15_000, // cambia con cada reserva
     enabled: Boolean(date && serviceId),
   });

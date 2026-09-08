@@ -9,6 +9,8 @@ export interface ServiceFilters {
   categorias?: string;
   /** Banda de precio: "any" | "0-50" | "50-100" | "100-200" | "200+". */
   price?: string;
+  /** Tipo de servicio: "base" | "estilo". */
+  kind?: 'base' | 'estilo';
 }
 
 /** Quita claves vacías / "any" para no ensuciar la query. */

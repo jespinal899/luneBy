@@ -4,7 +4,12 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { Service } from '../services/entities/service.entity';
 import { AppointmentsService } from './appointments.service';
-import { Appointment, AvailabilityRule, TimeOff } from './entities';
+import {
+  Appointment,
+  AppointmentItem,
+  AvailabilityRule,
+  TimeOff,
+} from './entities';
 
 describe('AppointmentsService · getAvailability', () => {
   let service: AppointmentsService;
@@ -12,7 +17,8 @@ describe('AppointmentsService · getAvailability', () => {
   const appointmentRepository = { find: jest.fn() };
   const ruleRepository = { find: jest.fn() };
   const timeOffRepository = { find: jest.fn() };
-  const serviceRepository = { findOneBy: jest.fn() };
+  const serviceRepository = { findOneBy: jest.fn(), findBy: jest.fn() };
+  const itemRepository = { create: jest.fn((x) => x) };
 
   const activeService = (durationMin = 60) => ({
     id: 's1',
@@ -41,6 +47,10 @@ describe('AppointmentsService · getAvailability', () => {
         },
         { provide: getRepositoryToken(TimeOff), useValue: timeOffRepository },
         { provide: getRepositoryToken(Service), useValue: serviceRepository },
+        {
+          provide: getRepositoryToken(AppointmentItem),
+          useValue: itemRepository,
+        },
       ],
     }).compile();
 

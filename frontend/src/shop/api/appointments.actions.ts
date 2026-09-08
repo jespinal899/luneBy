@@ -1,18 +1,28 @@
 import { http } from '@/api/http';
 import type { Appointment } from '@/api/types';
 
-/** Horas de inicio libres ("HH:mm") para una fecha y un servicio. */
-export const getAvailability = async (date: string, serviceId: string) => {
+/** Horas de inicio libres ("HH:mm") para una fecha, un servicio base y sus estilos. */
+export const getAvailability = async (
+  date: string,
+  serviceId: string,
+  extraMinutes = 0,
+) => {
   const { data } = await http.get<string[]>('/appointments/availability', {
-    params: { date, serviceId },
+    params: { date, serviceId, extraMinutes },
   });
   return data;
 };
+
+export interface AppointmentItemInput {
+  serviceId: string;
+  quantity: number;
+}
 
 export interface CreateAppointmentInput {
   serviceId: string;
   date: string;
   startTime: string;
+  items?: AppointmentItemInput[];
   notes?: string;
 }
 

@@ -27,6 +27,8 @@ export interface Service {
   image: string | null;
   slug: string;
   isActive: boolean;
+  /** 'base' = servicio principal; 'estilo' = complemento que suma a la cotización. */
+  kind: 'base' | 'estilo';
 }
 
 /** Respuesta paginada de GET /services (el listado va bajo `products`). */
@@ -43,6 +45,16 @@ export type AppointmentStatus =
   | 'cancelled'
   | 'done';
 
+/** Línea de la cotización congelada de una cita. */
+export interface AppointmentItem {
+  id: string;
+  nameAtBooking: string;
+  priceAtBooking: number;
+  kind: 'base' | 'estilo';
+  quantity: number;
+  service: Service | null;
+}
+
 export interface Appointment {
   id: string;
   date: string; // YYYY-MM-DD
@@ -50,9 +62,13 @@ export interface Appointment {
   endTime: string; // HH:mm
   status: AppointmentStatus;
   notes: string | null;
-  /** Precio del servicio congelado al reservar (puede faltar en citas antiguas). */
+  /** Precio total congelado al reservar (base + estilos; puede faltar en citas antiguas). */
   priceAtBooking: number | null;
+  /** Duración total en minutos (base + estilos). */
+  durationMin?: number;
   service: Service;
+  /** Servicio base y estilos elegidos (puede faltar en citas antiguas). */
+  items?: AppointmentItem[];
   user: User;
   createdAt: string;
 }

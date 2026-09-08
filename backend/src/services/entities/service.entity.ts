@@ -41,6 +41,10 @@ export class Service {
   @Column('bool', { default: true })
   isActive: boolean;
 
+  /** 'base' = servicio principal (manicura, acrílico…); 'estilo' = complemento. */
+  @Column('text', { default: 'base' })
+  kind: 'base' | 'estilo';
+
   @OneToMany(() => Appointment, (appointment) => appointment.service)
   appointments: Appointment[];
 

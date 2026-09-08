@@ -4,11 +4,13 @@ import {
   Entity,
   Index,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
 import { Service } from '../../services/entities/service.entity';
 import { User } from '../../auth/entities/user.entity';
+import { AppointmentItem } from './appointment-item.entity';
 
 export enum AppointmentStatus {
   pending = 'pending',
@@ -41,12 +43,23 @@ export class Appointment {
   @Column('text', { nullable: true })
   notes: string;
 
-  /** Precio del servicio congelado en el momento de reservar. */
+  /** Precio total congelado al reservar (base + estilos). */
   @Column('float', { name: 'priceAtBooking', nullable: true })
   priceAtBooking: number;
 
+  /** Duración total en minutos (base + estilos), calculada al reservar. */
+  @Column('int', { name: 'durationMin', default: 60 })
+  durationMin: number;
+
   @ManyToOne(() => Service, (service) => service.appointments, { eager: true })
   service: Service;
+
+  /** Líneas de la cotización: el servicio base y cada estilo elegido. */
+  @OneToMany(() => AppointmentItem, (item) => item.appointment, {
+    eager: true,
+    cascade: true,
+  })
+  items: AppointmentItem[];
 
   @ManyToOne(() => User, (user) => user.appointments, { eager: true })
   user: User;

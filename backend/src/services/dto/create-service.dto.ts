@@ -1,5 +1,6 @@
 import {
   IsBoolean,
+  IsIn,
   IsInt,
   IsNumber,
   IsOptional,
@@ -41,4 +42,9 @@ export class CreateServiceDto {
   @IsOptional()
   @IsBoolean()
   isActive?: boolean;
+
+  /** 'base' (servicio principal) o 'estilo' (complemento). */
+  @IsOptional()
+  @IsIn(['base', 'estilo'])
+  kind?: 'base' | 'estilo';
 }

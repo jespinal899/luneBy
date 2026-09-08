@@ -39,6 +39,7 @@ export class AppointmentsController {
     return this.appointmentsService.getAvailability(
       query.date,
       query.serviceId,
+      query.extraMinutes,
     );
   }
 

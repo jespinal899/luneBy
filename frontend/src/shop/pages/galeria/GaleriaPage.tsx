@@ -7,7 +7,7 @@ import { useServices } from '@/shop/hooks/use-services';
 import { serviceImage } from '@/shop/lib/service-image';
 
 export const GaleriaPage = () => {
-  const { data, isLoading } = useServices({ limit: 30 });
+  const { data, isLoading } = useServices({ limit: 30, kind: 'base' });
   const items = (data?.products ?? []).filter((s) => s.isActive);
 
   return (

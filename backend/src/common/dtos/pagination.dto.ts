@@ -31,6 +31,11 @@ export class PaginationDto {
   @IsString()
   price?: string;
 
+  /** Tipo de servicio: "base" | "estilo". Sin valor devuelve todos. */
+  @IsOptional()
+  @IsString()
+  kind?: string;
+
   @IsOptional()
   @Min(0)
   @Type(() => Number)

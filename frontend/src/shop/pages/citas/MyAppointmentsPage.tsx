@@ -3,6 +3,7 @@ import { Link } from 'react-router';
 import type { AppointmentStatus } from '@/api/types';
 import { Button } from '@/components/ui/button';
 import { useCancelAppointment, useMyAppointments } from '@/shop/hooks/use-appointments';
+import { formatLps } from '@/shop/lib/format';
 
 const STATUS: Record<AppointmentStatus, { label: string; className: string }> = {
     pending: { label: 'Pendiente', className: 'bg-amber-50 text-amber-700' },
@@ -49,8 +50,26 @@ export const MyAppointmentsPage = () => {
                             >
                                 <div className="flex-1">
                                     <p className="font-medium">{appt.service.name}</p>
+                                    {(appt.items ?? []).some(
+                                        (i) => i.kind === 'estilo',
+                                    ) && (
+                                        <p className="text-xs text-muted-foreground">
+                                            {(appt.items ?? [])
+                                                .filter((i) => i.kind === 'estilo')
+                                                .map(
+                                                    (i) =>
+                                                        i.nameAtBooking +
+                                                        (i.quantity > 1
+                                                            ? ` ×${i.quantity}`
+                                                            : ''),
+                                                )
+                                                .join(', ')}
+                                        </p>
+                                    )}
                                     <p className="text-sm text-muted-foreground">
                                         {appt.date} · {appt.startTime}–{appt.endTime}
+                                        {appt.priceAtBooking != null &&
+                                            ` · ${formatLps(appt.priceAtBooking)}`}
                                     </p>
                                 </div>
 

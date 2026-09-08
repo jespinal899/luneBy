@@ -6,6 +6,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   Between,
+  In,
   IsNull,
   MoreThanOrEqual,
   Not,
@@ -18,6 +19,7 @@ import { Service } from '../services/entities/service.entity';
 import { CreateAppointmentDto, CreateTimeOffDto, ScheduleDayDto } from './dto';
 import {
   Appointment,
+  AppointmentItem,
   AppointmentStatus,
   AvailabilityRule,
   TimeOff,
@@ -35,6 +37,8 @@ export class AppointmentsService {
     private readonly timeOffRepository: Repository<TimeOff>,
     @InjectRepository(Service)
     private readonly serviceRepository: Repository<Service>,
+    @InjectRepository(AppointmentItem)
+    private readonly itemRepository: Repository<AppointmentItem>,
   ) {}
 
   /**
@@ -42,7 +46,11 @@ export class AppointmentsService {
    * Descarta las que se solapan con citas existentes, con bloqueos de agenda
    * y, si la fecha es hoy, con las horas ya pasadas.
    */
-  async getAvailability(date: string, serviceId: string): Promise<string[]> {
+  async getAvailability(
+    date: string,
+    serviceId: string,
+    extraMinutes = 0,
+  ): Promise<string[]> {
     const service = await this.serviceRepository.findOneBy({ id: serviceId });
     if (!service) throw new NotFoundException('Servicio no encontrado');
     if (!service.isActive)
@@ -50,7 +58,7 @@ export class AppointmentsService {
         'Ese servicio no está disponible para agendar',
       );
 
-    const duration = service.durationMin;
+    const duration = service.durationMin + Math.max(0, extraMinutes);
     const weekday = new Date(`${date}T00:00:00`).getDay();
 
     const rules = await this.ruleRepository.find({
@@ -93,18 +101,52 @@ export class AppointmentsService {
     return [...slots].sort();
   }
 
-  /** Agenda una cita para el usuario autenticado en un slot libre. */
+  /** Agenda una cita (servicio base + estilos) en un slot libre. */
   async create(dto: CreateAppointmentDto, user: User) {
-    const { serviceId, date, startTime, notes } = dto;
+    const { serviceId, date, startTime, notes, items = [] } = dto;
 
     const service = await this.serviceRepository.findOneBy({ id: serviceId });
     if (!service) throw new NotFoundException('Servicio no encontrado');
+    if (service.kind !== 'base')
+      throw new BadRequestException('Debes elegir un servicio base');
 
-    const available = await this.getAvailability(date, serviceId);
+    // Resolver los estilos y agrupar cantidades por servicio.
+    const quantityByStyle = new Map<string, number>();
+    for (const item of items) {
+      quantityByStyle.set(
+        item.serviceId,
+        (quantityByStyle.get(item.serviceId) ?? 0) + item.quantity,
+      );
+    }
+
+    const styleIds = [...quantityByStyle.keys()];
+    const styles = styleIds.length
+      ? await this.serviceRepository.findBy({ id: In(styleIds) })
+      : [];
+    if (styles.length !== styleIds.length)
+      throw new NotFoundException('Alguno de los estilos no existe');
+    for (const style of styles) {
+      if (style.kind !== 'estilo' || !style.isActive)
+        throw new BadRequestException(`"${style.name}" no es un estilo válido`);
+    }
+
+    const extraMinutes = styles.reduce(
+      (sum, s) => sum + s.durationMin * (quantityByStyle.get(s.id) ?? 0),
+      0,
+    );
+    const stylesTotal = styles.reduce(
+      (sum, s) => sum + s.price * (quantityByStyle.get(s.id) ?? 0),
+      0,
+    );
+
+    const durationMin = service.durationMin + extraMinutes;
+    const totalPrice = service.price + stylesTotal;
+
+    const available = await this.getAvailability(date, serviceId, extraMinutes);
     if (!available.includes(startTime))
       throw new BadRequestException('Ese horario ya no está disponible');
 
-    const endTime = toHHMM(toMinutes(startTime) + service.durationMin);
+    const endTime = toHHMM(toMinutes(startTime) + durationMin);
 
     const appointment = this.appointmentRepository.create({
       date,
@@ -114,7 +156,26 @@ export class AppointmentsService {
       service,
       user,
       status: AppointmentStatus.pending,
-      priceAtBooking: service.price,
+      priceAtBooking: totalPrice,
+      durationMin,
+      items: [
+        this.itemRepository.create({
+          service,
+          nameAtBooking: service.name,
+          priceAtBooking: service.price,
+          kind: 'base',
+          quantity: 1,
+        }),
+        ...styles.map((s) =>
+          this.itemRepository.create({
+            service: s,
+            nameAtBooking: s.name,
+            priceAtBooking: s.price,
+            kind: 'estilo',
+            quantity: quantityByStyle.get(s.id) ?? 1,
+          }),
+        ),
+      ],
     });
 
     try {
