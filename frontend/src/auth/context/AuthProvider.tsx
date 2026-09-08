@@ -6,8 +6,10 @@ import {
   checkStatusRequest,
   loginRequest,
   registerRequest,
+  updateProfileRequest,
   type LoginPayload,
   type RegisterPayload,
+  type UpdateProfilePayload,
 } from '../api/auth.actions';
 import { AuthContext, type AuthStatus } from './auth-context';
 
@@ -43,6 +45,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     applyAuth(await registerRequest(payload));
   };
 
+  const updateProfile = async (payload: UpdateProfilePayload) => {
+    applyAuth(await updateProfileRequest(payload));
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -51,6 +57,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         isAdmin: user?.roles.includes('admin') ?? false,
         login,
         register,
+        updateProfile,
         logout: clearAuth,
       }}
     >

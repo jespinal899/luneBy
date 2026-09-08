@@ -80,9 +80,14 @@ export const MobileNav = ({ open, onClose, links }: Props) => {
               </Link>
             ))}
             {status === 'authenticated' && (
-              <Link to="/mis-citas" onClick={onClose} className={itemClass}>
-                Mis citas
-              </Link>
+              <>
+                <Link to="/mis-citas" onClick={onClose} className={itemClass}>
+                  Mis citas
+                </Link>
+                <Link to="/perfil" onClick={onClose} className={itemClass}>
+                  Mi cuenta
+                </Link>
+              </>
             )}
           </nav>
 

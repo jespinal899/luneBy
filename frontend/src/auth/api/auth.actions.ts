@@ -28,3 +28,26 @@ export const checkStatusRequest = async () => {
   const { data } = await http.get<AuthResponse>('/auth/check-status');
   return data;
 };
+
+export interface UpdateProfilePayload {
+  fullName?: string;
+  phone?: string;
+}
+
+export interface ChangePasswordPayload {
+  currentPassword: string;
+  newPassword: string;
+}
+
+export const updateProfileRequest = async (payload: UpdateProfilePayload) => {
+  const { data } = await http.patch<AuthResponse>('/auth/profile', payload);
+  return data;
+};
+
+export const changePasswordRequest = async (payload: ChangePasswordPayload) => {
+  const { data } = await http.patch<{ message: string }>(
+    '/auth/password',
+    payload,
+  );
+  return data;
+};

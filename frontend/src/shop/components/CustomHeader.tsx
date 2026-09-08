@@ -1,28 +1,29 @@
 import { useRef, useState, type KeyboardEvent } from 'react';
-import { Link, useNavigate, useParams, useSearchParams } from 'react-router';
-import { Calculator, LogOut, Menu, Search, Sparkles } from 'lucide-react';
+import { Link, NavLink, useSearchParams } from 'react-router';
+import { Calculator, Menu, Search } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { CustomLogo } from '@/components/Custom/CustomLogo';
+import { UserMenu } from '@/auth/components/UserMenu';
 import { useAuth } from '@/auth/context/use-auth';
 import { useQuote } from '@/quote/use-quote';
 import { formatLps } from '@/shop/lib/format';
 import { MobileNav } from './MobileNav';
 
-const navLinks = [
-  { to: '/', label: 'Inicio', match: (shop?: string) => !shop },
-  { to: '/shop/servicios', label: 'Servicios', match: (s?: string) => s === 'servicios' },
-  { to: '/shop/agendar', label: 'Agendar', match: (s?: string) => s === 'agendar' },
-  { to: '/shop/contacto', label: 'Contacto', match: (s?: string) => s === 'contacto' },
+export const navLinks = [
+  { to: '/', label: 'Inicio', end: true },
+  { to: '/shop', label: 'Servicios' },
+  { to: '/galeria', label: 'Galería' },
+  { to: '/shop/agendar', label: 'Agendar' },
+  { to: '/nosotros', label: 'Nosotros' },
+  { to: '/contacto', label: 'Contacto' },
 ];
 
 export const CustomHeader = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const { shop } = useParams();
-  const navigate = useNavigate();
-  const { status, user, isAdmin, logout } = useAuth();
+  const { status } = useAuth();
   const quote = useQuote();
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -37,15 +38,11 @@ export const CustomHeader = () => {
     setSearchParams(next);
   };
 
-  const handleLogout = () => {
-    logout();
-    navigate('/');
-  };
-
-  const linkClass = (active: boolean) =>
+  const linkClass = ({ isActive }: { isActive: boolean }) =>
     cn(
       'text-sm font-medium text-brand-dark/75 transition-colors hover:text-brand',
-      active && 'text-brand underline decoration-gold decoration-2 underline-offset-[6px]',
+      isActive &&
+        'text-brand underline decoration-gold decoration-2 underline-offset-[6px]',
     );
 
   return (
@@ -53,31 +50,33 @@ export const CustomHeader = () => {
       <div className="container mx-auto px-4 lg:px-8">
         <div className="flex h-16 items-center justify-between gap-4">
           {/* Logo + navegación */}
-          <div className="flex items-center gap-3 md:gap-8">
+          <div className="flex items-center gap-3 lg:gap-8">
             <button
               type="button"
               onClick={() => setMenuOpen(true)}
               aria-label="Abrir menú"
-              className="-ml-1 rounded-lg p-1.5 text-brand-dark transition-colors hover:bg-brand/5 md:hidden"
+              className="-ml-1 rounded-lg p-1.5 text-brand-dark transition-colors hover:bg-brand/5 lg:hidden"
             >
               <Menu className="h-6 w-6" />
             </button>
 
             <CustomLogo className="max-h-14" />
 
-            <nav className="hidden items-center gap-7 md:flex">
+            <nav className="hidden items-center gap-6 lg:flex">
               {navLinks.map((l) => (
-                <Link key={l.to} to={l.to} className={linkClass(l.match(shop))}>
+                <NavLink
+                  key={l.to}
+                  to={l.to}
+                  end={l.end}
+                  className={linkClass}
+                >
                   {l.label}
-                </Link>
+                </NavLink>
               ))}
               {status === 'authenticated' && (
-                <Link
-                  to="/mis-citas"
-                  className={linkClass(shop === 'mis-citas')}
-                >
+                <NavLink to="/mis-citas" className={linkClass}>
                   Mis citas
-                </Link>
+                </NavLink>
               )}
             </nav>
           </div>
@@ -91,7 +90,7 @@ export const CustomHeader = () => {
                 placeholder="Buscar servicios..."
                 defaultValue={query}
                 onKeyDown={handleSearch}
-                className="h-9 w-56 rounded-full border-brand/15 bg-white pl-9 xl:w-64"
+                className="h-9 w-48 rounded-full border-brand/15 bg-white pl-9 xl:w-60"
               />
             </div>
 
@@ -114,38 +113,17 @@ export const CustomHeader = () => {
             </button>
 
             {status === 'authenticated' ? (
-              <div className="hidden items-center gap-2 md:flex">
-                <span className="hidden text-sm font-medium text-brand-dark/70 xl:inline">
-                  {user?.fullName}
-                </span>
-                {isAdmin && (
-                  <Button
-                    render={<Link to="/admin" />}
-                    size="sm"
-                    className="h-9 gap-1.5 rounded-full bg-brand px-4 text-brand-foreground hover:bg-brand-dark"
-                  >
-                    <Sparkles className="h-4 w-4" />
-                    Admin
-                  </Button>
-                )}
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleLogout}
-                  className="h-9 gap-1.5 rounded-full border-brand/25 px-4 text-brand-dark hover:bg-brand/5"
-                >
-                  <LogOut className="h-4 w-4" />
-                  Salir
-                </Button>
+              <div className="hidden lg:block">
+                <UserMenu />
               </div>
             ) : (
               <Button
                 render={<Link to="/auth/login" />}
                 variant="outline"
                 size="sm"
-                className="hidden h-9 rounded-full border-brand/25 px-5 text-brand-dark hover:bg-brand/5 md:inline-flex"
+                className="hidden h-9 rounded-full border-brand/25 px-5 text-brand-dark hover:bg-brand/5 lg:inline-flex"
               >
-                Login
+                Iniciar sesión
               </Button>
             )}
           </div>

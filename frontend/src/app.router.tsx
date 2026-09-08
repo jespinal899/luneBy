@@ -9,9 +9,14 @@ import { AdminProductPage } from './admin/pages/product/AdminProductPage';
 import { AdminProductsPage } from './admin/pages/products/AdminProductsPages';
 import { DashboardPage } from './admin/pages/dashboard/DashboardPage';
 import { ShopLayouts } from './shop/layouts/ShopLayouts';
+import { NotFoundPage } from './shop/pages/NotFoundPage';
 import { AgendarPage } from './shop/pages/agendar/AgendarPage';
 import { MyAppointmentsPage } from './shop/pages/citas/MyAppointmentsPage';
+import { ContactoPage } from './shop/pages/contacto/ContactoPage';
+import { GaleriaPage } from './shop/pages/galeria/GaleriaPage';
 import { HomePage } from './shop/pages/home/HomePage';
+import { NosotrosPage } from './shop/pages/nosotros/NosotrosPage';
+import { PerfilPage } from './shop/pages/perfil/PerfilPage';
 import { ProductPage } from './shop/pages/product/ProductPage';
 import { ShopPage } from './shop/pages/Shop/ShopPage';
 
@@ -23,17 +28,29 @@ export const appRouter = createBrowserRouter([
   {
     path: '/',
     element: <ShopLayouts />,
+    errorElement: <NotFoundPage />,
     children: [
       { index: true, element: <HomePage /> },
       { path: 'product/:idSlug', element: <ProductPage /> },
       { path: 'shop/agendar', element: <AgendarPage /> },
       { path: 'shop', element: <ShopPage /> },
       { path: 'shop/:shop', element: <ShopPage /> },
+      { path: 'galeria', element: <GaleriaPage /> },
+      { path: 'nosotros', element: <NosotrosPage /> },
+      { path: 'contacto', element: <ContactoPage /> },
       {
         path: 'mis-citas',
         element: (
           <ProtectedRoute>
             <MyAppointmentsPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'perfil',
+        element: (
+          <ProtectedRoute>
+            <PerfilPage />
           </ProtectedRoute>
         ),
       },

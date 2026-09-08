@@ -1,51 +1,98 @@
+import { Link } from 'react-router';
+
+import { salon } from '@/shop/lib/salon';
 
 export const CustomFooter = () => {
-    return (
-        <footer className="border-t py-12 px-4 lg:px-8 mt-16">
-            <div className="container mx-auto">
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-                    <div>
-                        <h3 className="font-semibold mb-4">LUNE BY KELIN</h3>
-                        <p className="text-sm text-muted-foreground">
-                            Estudio profesional de manicura, aplicacion de uñas esculpidas, nall art de tendencia y cuidado de manos.
-                            Diseñamos con pasion y precision para resaltar tu estilo unico
-                        </p>
-                    </div>
+  return (
+    <footer className="mt-16 border-t px-4 py-12 lg:px-8">
+      <div className="container mx-auto">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
+          <div>
+            <h3 className="mb-4 font-display text-lg text-brand-dark">
+              {salon.name}
+            </h3>
+            <p className="text-sm text-muted-foreground">
+              Estudio profesional de manicura, uñas acrílicas esculpidas y nail
+              art de autor. Diseñamos con pasión y precisión para resaltar tu
+              estilo único.
+            </p>
+          </div>
 
-                    <div>
-                        <h4 className="font-medium mb-4">Servicios populares</h4>
-                        <ul className="space-y-2 text-sm text-muted-foreground">
-                            <li><a href="#" className="hover:text-foreground">Uñas acrilicas</a></li>
-                            <li><a href="#" className="hover:text-foreground">Manicura rusa y en gel</a></li>
-                            <li><a href="#" className="hover:text-foreground">Diseños Nail Art</a></li>
-                            <li><a href="#" className="hover:text-foreground">Baño de acrilico & retiro seguro</a></li>
-                            <li><a href="#" className="hover:text-foreground">Spa de manos hidratante</a></li>
-                        </ul>
-                    </div>
+          <div>
+            <h4 className="mb-4 font-medium">Explora</h4>
+            <ul className="space-y-2 text-sm text-muted-foreground">
+              <li>
+                <Link to="/shop" className="hover:text-foreground">
+                  Servicios
+                </Link>
+              </li>
+              <li>
+                <Link to="/galeria" className="hover:text-foreground">
+                  Galería
+                </Link>
+              </li>
+              <li>
+                <Link to="/nosotros" className="hover:text-foreground">
+                  Nosotros
+                </Link>
+              </li>
+              <li>
+                <Link to="/shop/agendar" className="hover:text-foreground">
+                  Agendar cita
+                </Link>
+              </li>
+              <li>
+                <Link to="/contacto" className="hover:text-foreground">
+                  Contacto
+                </Link>
+              </li>
+            </ul>
+          </div>
 
-                    <div>
-                        <h4 className="font-medium mb-4">Horario de atencion</h4>
-                        <ul className="space-y-2 text-sm text-muted-foreground">
-                            <li><a href="#" className="hover:text-foreground">Lunes a Viernes: 5:30 PM - 10:00 PM</a></li>
-                            <li><a href="#" className="hover:text-foreground">Sabados: 5:30 PM - 10:00 PM</a></li>
-                            <li><a href="#" className="hover:text-foreground">Domingos: Previa a cita especial</a></li>
-                        </ul>
-                    </div>
+          <div>
+            <h4 className="mb-4 font-medium">Horario</h4>
+            <ul className="space-y-2 text-sm text-muted-foreground">
+              {salon.hours.map((h) => (
+                <li key={h.days}>
+                  {h.days}: {h.time}
+                </li>
+              ))}
+            </ul>
+          </div>
 
-                    <div>
-                        <h4 className="font-medium mb-4">Ubicacion</h4>
-                        <ul className="space-y-2 text-sm text-muted-foreground">
-                            <li><a href="#" className="hover:text-foreground">Estudio LuneBy, Choloma, Cortés, Honduras</a></li>
-                            <li><a href="#" className="hover:text-foreground">Consultas directas: +504 2525-2525</a></li>
+          <div>
+            <h4 className="mb-4 font-medium">Contacto</h4>
+            <ul className="space-y-2 text-sm text-muted-foreground">
+              <li>{salon.address}</li>
+              <li>
+                <a
+                  href={`tel:${salon.phone.replace(/\s/g, '')}`}
+                  className="hover:text-foreground"
+                >
+                  {salon.phone}
+                </a>
+              </li>
+              <li>
+                <a
+                  href={`https://instagram.com/${salon.instagram}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="hover:text-foreground"
+                >
+                  @{salon.instagram}
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
 
-                        </ul>
-                    </div>
-                </div>
-
-                <div className="border-t mt-8 pt-8 text-center text-sm text-muted-foreground">
-                    <p>&copy; {new Date().getFullYear()} Luné by Kelin. Todos los derechos reservados.</p>
-                </div>
-            </div>
-        </footer>
-    );
+        <div className="mt-8 border-t pt-8 text-center text-sm text-muted-foreground">
+          <p>
+            &copy; {new Date().getFullYear()} {salon.name}. Todos los derechos
+            reservados.
+          </p>
+        </div>
+      </div>
+    </footer>
+  );
 };
