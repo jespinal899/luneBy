@@ -1,10 +1,15 @@
-import { Body, Controller, Get, Header, Post } from '@nestjs/common';
+import { Body, Controller, Get, Header, Patch, Post } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 
 import { AuthService } from './auth.service';
 import { Auth, GetUser } from './decorators';
-import { CreateUserDto, LoginUserDto } from './dto';
+import {
+  ChangePasswordDto,
+  CreateUserDto,
+  LoginUserDto,
+  UpdateProfileDto,
+} from './dto';
 import { User } from './entities/user.entity';
 
 @ApiTags('Auth')
@@ -34,5 +39,22 @@ export class AuthController {
   @Header('Cache-Control', 'no-store')
   checkAuthStatus(@GetUser() user: User) {
     return this.authService.checkAuthStatus(user);
+  }
+
+  @Patch('profile')
+  @Auth()
+  @ApiBearerAuth()
+  @Header('Cache-Control', 'no-store')
+  updateProfile(@GetUser() user: User, @Body() dto: UpdateProfileDto) {
+    return this.authService.updateProfile(user, dto);
+  }
+
+  @Patch('password')
+  @Auth()
+  @ApiBearerAuth()
+  @Header('Cache-Control', 'no-store')
+  @Throttle({ default: { limit: 5, ttl: 60_000 } })
+  changePassword(@GetUser() user: User, @Body() dto: ChangePasswordDto) {
+    return this.authService.changePassword(user, dto);
   }
 }
