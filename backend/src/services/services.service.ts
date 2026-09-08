@@ -1,10 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  InternalServerErrorException,
-  Logger,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { isUUID } from 'class-validator';
 import { ILike, In, Repository } from 'typeorm';
@@ -14,23 +8,19 @@ import { CreateServiceDto, UpdateServiceDto } from './dto';
 import { Service } from './entities/service.entity';
 import { priceFilter } from './helpers/price-band.helper';
 
+// Los errores de constraint (nombre/slug duplicado) los traduce a 409 el
+// `DatabaseExceptionFilter` global.
 @Injectable()
 export class ServicesService {
-  private readonly logger = new Logger('ServicesService');
-
   constructor(
     @InjectRepository(Service)
     private readonly serviceRepository: Repository<Service>,
   ) {}
 
   async create(createServiceDto: CreateServiceDto) {
-    try {
-      const service = this.serviceRepository.create(createServiceDto);
-      await this.serviceRepository.save(service);
-      return service;
-    } catch (error) {
-      this.handleDBExceptions(error);
-    }
+    const service = this.serviceRepository.create(createServiceDto);
+    await this.serviceRepository.save(service);
+    return service;
   }
 
   async findAll(paginationDto: PaginationDto) {
@@ -91,24 +81,12 @@ export class ServicesService {
     if (!service)
       throw new NotFoundException(`Servicio con id ${id} no encontrado`);
 
-    try {
-      await this.serviceRepository.save(service);
-      return service;
-    } catch (error) {
-      this.handleDBExceptions(error);
-    }
+    await this.serviceRepository.save(service);
+    return service;
   }
 
   async remove(id: string) {
     const service = await this.findOne(id);
     await this.serviceRepository.remove(service);
-  }
-
-  private handleDBExceptions(error: { code?: string; detail?: string }): never {
-    if (error.code === '23505') throw new BadRequestException(error.detail);
-    this.logger.error(error);
-    throw new InternalServerErrorException(
-      'Error inesperado, revisa los logs del servidor',
-    );
   }
 }

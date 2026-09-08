@@ -1,10 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  InternalServerErrorException,
-  Logger,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -15,10 +9,10 @@ import { User } from './entities/user.entity';
 import { CreateUserDto, LoginUserDto } from './dto';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
 
+// El correo duplicado (`uq_users_email`) lo traduce a 409 el
+// `DatabaseExceptionFilter` global.
 @Injectable()
 export class AuthService {
-  private readonly logger = new Logger('AuthService');
-
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
@@ -26,19 +20,15 @@ export class AuthService {
   ) {}
 
   async register(createUserDto: CreateUserDto) {
-    try {
-      const { password, ...userData } = createUserDto;
+    const { password, ...userData } = createUserDto;
 
-      const user = this.userRepository.create({
-        ...userData,
-        password: bcrypt.hashSync(password, 10),
-      });
-      await this.userRepository.save(user);
+    const user = this.userRepository.create({
+      ...userData,
+      password: bcrypt.hashSync(password, 10),
+    });
+    await this.userRepository.save(user);
 
-      return this.buildAuthResponse(user);
-    } catch (error) {
-      this.handleDBErrors(error);
-    }
+    return this.buildAuthResponse(user);
   }
 
   async login({ email, password }: LoginUserDto) {
@@ -72,11 +62,5 @@ export class AuthService {
 
   private getJwtToken(payload: JwtPayload) {
     return this.jwtService.sign(payload);
-  }
-
-  private handleDBErrors(error: { code?: string; detail?: string }): never {
-    if (error.code === '23505') throw new BadRequestException(error.detail);
-    this.logger.error(error);
-    throw new InternalServerErrorException('Error inesperado, revisa los logs');
   }
 }

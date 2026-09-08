@@ -27,6 +27,21 @@ Este backend se construye de forma incremental, un commit por cambio.
 
 Detalle interactivo en `/api/docs`.
 
+### Idempotencia
+
+Toda operación de escritura (`POST` / `PATCH` / `DELETE`) acepta la cabecera
+**`Idempotency-Key`** (una cadena única por operación; el frontend manda un UUID).
+
+- Primera vez: se ejecuta y se guarda `{ statusCode, response }` bajo esa key.
+- Reintento con la misma key: se devuelve la respuesta guardada **sin volver a
+  ejecutar** (cabecera `Idempotency-Replayed: true`).
+- Dos peticiones a la vez con la misma key: la segunda recibe `409` hasta que la
+  primera termina.
+- Si la operación falla, la key se libera y se puede reintentar.
+
+Los errores de constraint de la base de datos se traducen a respuestas claras:
+duplicado → `409`, referencia inválida → `400` (nunca un `500` genérico).
+
 ---
 
 ## Stack
