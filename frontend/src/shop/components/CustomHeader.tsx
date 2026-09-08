@@ -1,6 +1,6 @@
-import { useRef, type KeyboardEvent } from 'react';
+import { useRef, useState, type KeyboardEvent } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router';
-import { Calculator, LogOut, Search, Sparkles } from 'lucide-react';
+import { Calculator, LogOut, Menu, Search, Sparkles } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,6 +9,7 @@ import { CustomLogo } from '@/components/Custom/CustomLogo';
 import { useAuth } from '@/auth/context/use-auth';
 import { useQuote } from '@/quote/use-quote';
 import { formatLps } from '@/shop/lib/format';
+import { MobileNav } from './MobileNav';
 
 const navLinks = [
   { to: '/', label: 'Inicio', match: (shop?: string) => !shop },
@@ -23,6 +24,7 @@ export const CustomHeader = () => {
   const navigate = useNavigate();
   const { status, user, isAdmin, logout } = useAuth();
   const quote = useQuote();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
   const query = searchParams.get('query') || '';
@@ -49,9 +51,18 @@ export const CustomHeader = () => {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-brand/10 bg-cream/95 backdrop-blur">
       <div className="container mx-auto px-4 lg:px-8">
-        <div className="flex h-16 items-center justify-between gap-6">
+        <div className="flex h-16 items-center justify-between gap-4">
           {/* Logo + navegación */}
-          <div className="flex items-center gap-8">
+          <div className="flex items-center gap-3 md:gap-8">
+            <button
+              type="button"
+              onClick={() => setMenuOpen(true)}
+              aria-label="Abrir menú"
+              className="-ml-1 rounded-lg p-1.5 text-brand-dark transition-colors hover:bg-brand/5 md:hidden"
+            >
+              <Menu className="h-6 w-6" />
+            </button>
+
             <CustomLogo className="max-h-14" />
 
             <nav className="hidden items-center gap-7 md:flex">
@@ -84,14 +95,6 @@ export const CustomHeader = () => {
               />
             </div>
 
-            <Button
-              variant="ghost"
-              size="icon"
-              className="rounded-full lg:hidden"
-            >
-              <Search className="h-5 w-5" />
-            </Button>
-
             {/* Cotización */}
             <button
               type="button"
@@ -111,7 +114,7 @@ export const CustomHeader = () => {
             </button>
 
             {status === 'authenticated' ? (
-              <div className="flex items-center gap-2">
+              <div className="hidden items-center gap-2 md:flex">
                 <span className="hidden text-sm font-medium text-brand-dark/70 xl:inline">
                   {user?.fullName}
                 </span>
@@ -140,7 +143,7 @@ export const CustomHeader = () => {
                 render={<Link to="/auth/login" />}
                 variant="outline"
                 size="sm"
-                className="h-9 rounded-full border-brand/25 px-5 text-brand-dark hover:bg-brand/5"
+                className="hidden h-9 rounded-full border-brand/25 px-5 text-brand-dark hover:bg-brand/5 md:inline-flex"
               >
                 Login
               </Button>
@@ -148,6 +151,12 @@ export const CustomHeader = () => {
           </div>
         </div>
       </div>
+
+      <MobileNav
+        open={menuOpen}
+        onClose={() => setMenuOpen(false)}
+        links={navLinks}
+      />
     </header>
   );
 };
