@@ -74,7 +74,8 @@ describe('App (e2e)', () => {
     const [a, b] = services;
 
     // 3. Disponibilidad para una fecha futura (duración = a + b).
-    const date = iso(new Date(Date.now() + 10 * 24 * 60 * 60 * 1000));
+    //    Lejos en el tiempo para no chocar con otras citas de la BD.
+    const date = iso(new Date(Date.now() + 45 * 24 * 60 * 60 * 1000));
     const slotsRes = await request(server)
       .get(
         `/api/appointments/availability?date=${date}` +

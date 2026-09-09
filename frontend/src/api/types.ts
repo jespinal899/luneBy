@@ -7,6 +7,8 @@ export interface User {
   email: string;
   fullName: string;
   phone?: string | null;
+  /** Foto de perfil de Google, si inició sesión con Google. */
+  avatarUrl?: string | null;
   isActive: boolean;
   roles: Role[];
 }

@@ -2,6 +2,7 @@ import { useMutation } from '@tanstack/react-query';
 import { Link, useLocation, useNavigate } from 'react-router';
 
 import { apiErrorMessage } from '@/api/errors';
+import { GoogleButton } from '@/auth/components/GoogleButton';
 import { CustomLogo } from '@/components/Custom/CustomLogo';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -10,13 +11,18 @@ import { Label } from '@/components/ui/label';
 import { useAuth } from '@/auth/context/use-auth';
 
 export const LoginPage = () => {
-    const { login } = useAuth();
+    const { login, loginWithGoogle } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
     const from = (location.state as { from?: string } | null)?.from ?? '/';
 
     const mutation = useMutation({
         mutationFn: login,
+        onSuccess: () => navigate(from, { replace: true }),
+    });
+
+    const googleMutation = useMutation({
+        mutationFn: loginWithGoogle,
         onSuccess: () => navigate(from, { replace: true }),
     });
 
@@ -91,15 +97,18 @@ export const LoginPage = () => {
                                     O ingresa con
                                 </span>
                             </div>
-                            <Button variant="outline" type="button" className="w-full">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                                    <path
-                                        d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z"
-                                        fill="currentColor"
-                                    />
-                                </svg>
-                                Ingresar con Google
-                            </Button>
+                            <GoogleButton
+                                text="signin_with"
+                                onCredential={(t) => googleMutation.mutate(t)}
+                            />
+                            {googleMutation.isError && (
+                                <p className="text-center text-sm text-destructive">
+                                    {apiErrorMessage(
+                                        googleMutation.error,
+                                        'No se pudo iniciar sesión con Google.',
+                                    )}
+                                </p>
+                            )}
                             <div className="text-center text-sm">
                                 ¿No tienes cuenta?{' '}
                                 <Link
