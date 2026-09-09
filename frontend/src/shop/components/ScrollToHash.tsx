@@ -2,14 +2,19 @@ import { useEffect } from 'react';
 import { useLocation } from 'react-router';
 
 /**
- * Cuando la URL trae un hash (p. ej. `/#servicios`), desplaza a esa sección.
- * react-router con `createBrowserRouter` no lo hace de forma automática.
+ * Controla el scroll al navegar:
+ * - Con hash (`/#servicios`) desplaza a esa sección (react-router con
+ *   `createBrowserRouter` no lo hace solo).
+ * - Sin hash, lleva la vista al inicio para no aterrizar a media página.
  */
 export const ScrollToHash = () => {
   const { pathname, hash, key } = useLocation();
 
   useEffect(() => {
-    if (!hash) return;
+    if (!hash) {
+      window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior });
+      return;
+    }
 
     const id = hash.slice(1);
     let tries = 0;
