@@ -156,7 +156,21 @@ export const PerfilPage = () => {
         </Button>
       </form>
 
-      {/* Cambiar contraseña */}
+      {/* Contraseña — solo si la cuenta tiene una (las de Google no) */}
+      {user.hasPassword === false && (
+        <div className="mt-6 rounded-2xl border border-brand/15 p-6">
+          <h2 className="flex items-center gap-2 font-display text-lg text-brand-dark">
+            <KeyRound className="h-5 w-5 text-brand" />
+            Contraseña
+          </h2>
+          <p className="mt-3 text-sm text-brand-dark/60">
+            Inicias sesión con Google, así que tu cuenta no tiene una
+            contraseña que gestionar aquí.
+          </p>
+        </div>
+      )}
+
+      {user.hasPassword !== false && (
       <form
         onSubmit={handlePassword}
         className="mt-6 rounded-2xl border border-brand/15 p-6"
@@ -215,6 +229,7 @@ export const PerfilPage = () => {
           {pwdState.saving ? 'Actualizando…' : 'Actualizar contraseña'}
         </Button>
       </form>
+      )}
     </div>
   );
 };

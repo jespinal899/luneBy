@@ -9,6 +9,8 @@ export interface User {
   phone?: string | null;
   /** Foto de perfil de Google, si inició sesión con Google. */
   avatarUrl?: string | null;
+  /** `false` si la cuenta solo inicia sesión con Google (no tiene contraseña local). */
+  hasPassword?: boolean;
   isActive: boolean;
   roles: Role[];
 }

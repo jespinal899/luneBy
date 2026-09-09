@@ -2,7 +2,7 @@ import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { IsNull, Not, Repository } from 'typeorm';
 
 import * as bcrypt from 'bcrypt';
 import { OAuth2Client } from 'google-auth-library';
@@ -162,10 +162,26 @@ export class AuthService {
     return { message: 'Contraseña actualizada' };
   }
 
-  /** Devuelve el usuario sin la contraseña junto a un token fresco. */
-  private buildAuthResponse(user: User) {
+  /**
+   * Devuelve el usuario (sin datos sensibles) y un token fresco.
+   * `hasPassword` indica si la cuenta tiene contraseña local (para ocultar el
+   * cambio de contraseña en las cuentas que solo usan Google).
+   */
+  private async buildAuthResponse(user: User) {
     const { password, googleId, ...safeUser } = user;
-    return { user: safeUser, token: this.getJwtToken({ id: user.id }) };
+
+    const hasPassword =
+      password !== undefined
+        ? password !== null
+        : (await this.userRepository.countBy({
+            id: user.id,
+            password: Not(IsNull()),
+          })) > 0;
+
+    return {
+      user: { ...safeUser, hasPassword },
+      token: this.getJwtToken({ id: user.id }),
+    };
   }
 
   private getJwtToken(payload: JwtPayload) {

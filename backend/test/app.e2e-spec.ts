@@ -66,6 +66,7 @@ describe('App (e2e)', () => {
 
     const token: string = register.body.token;
     expect(token).toBeTruthy();
+    expect(register.body.user.hasPassword).toBe(true);
 
     // 2. Dos servicios activos del catálogo.
     const services = (
