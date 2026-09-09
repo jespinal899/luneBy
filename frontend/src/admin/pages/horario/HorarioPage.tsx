@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { CalendarOff, Check, ChevronLeft, ChevronRight } from 'lucide-react';
 
 import { AdminTitle } from '@/admin/components/AdminTitle';
@@ -40,16 +40,19 @@ const formatLongDate = (dateStr: string) =>
 const WeeklySchedule = () => {
   const { data } = useSchedule();
   const save = useReplaceSchedule();
-  const [days, setDays] = useState<ScheduleDay[]>([]);
 
-  useEffect(() => {
-    if (data) setDays(data);
-  }, [data]);
+  // `draft` es null mientras no se edita: se muestra el horario del servidor.
+  // Al guardar con éxito se vuelve a poner en null para re-sincronizar.
+  const [draft, setDraft] = useState<ScheduleDay[] | null>(null);
+  const days = draft ?? data ?? [];
 
   const set = (weekday: number, patch: Partial<ScheduleDay>) =>
-    setDays((prev) =>
-      prev.map((d) => (d.weekday === weekday ? { ...d, ...patch } : d)),
+    setDraft(
+      days.map((d) => (d.weekday === weekday ? { ...d, ...patch } : d)),
     );
+
+  const guardar = () =>
+    save.mutate(days, { onSuccess: () => setDraft(null) });
 
   if (days.length === 0) return null;
 
@@ -113,11 +116,7 @@ const WeeklySchedule = () => {
         </p>
       )}
 
-      <Button
-        className="mt-4"
-        disabled={save.isPending}
-        onClick={() => save.mutate(days)}
-      >
+      <Button className="mt-4" disabled={save.isPending} onClick={guardar}>
         {save.isPending ? 'Guardando…' : 'Guardar horario'}
       </Button>
     </section>
