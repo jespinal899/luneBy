@@ -21,7 +21,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json --runInBand --forceExit"
   },
   "dependencies": {
     "@nestjs/cache-manager": "^2.3.0",

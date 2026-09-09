@@ -129,8 +129,13 @@ docker compose up db
 | Lint              | `npm run lint:ci`      | `npm run lint`           |
 | Verificar tipos   | `npm run typecheck`    | `npm run typecheck`      |
 | Tests unitarios   | `npm test`             | `npm run test:run`       |
+| Tests integración | `npm run test:e2e` \*  | —                        |
 | Cobertura         | `npm run test:cov`     | `npm run test:cov`       |
 | Build producción  | `npm run build`        | `npm run build`          |
+
+\* `test:e2e` necesita una base Postgres con las migraciones aplicadas y las
+variables `DB_*` apuntando a ella (`docker compose up db` + `psql -f` de
+`supabase/migrations/*.sql`, o reutilizar tu base local de desarrollo).
 
 ### 5. Imágenes Docker por separado
 ```bash
@@ -145,13 +150,18 @@ docker build -t luneby-web --build-arg VITE_API_URL=https://tu-api/api ./fronten
 El workflow [`.github/workflows/ci.yml`](.github/workflows/ci.yml) se ejecuta en cada
 `push` y `pull_request` a `main` y `develop`:
 
-1. **`changes`** — `dorny/paths-filter` detecta si cambió `backend/**` y/o
-   `frontend/**` (o el propio workflow).
-2. **`backend`** y **`frontend`** — se ejecutan en paralelo, y solo el que
-   corresponda según el paso anterior. Cada uno: checkout → Node.js 20 LTS con
-   caché de `npm` → `npm ci` → lint (ESLint / oxlint) → `tsc --noEmit` → tests
-   (Jest / Vitest) → build de producción.
-3. **`ci-ok`** — job final que pasa si ningún job falló (uno saltado por el
+1. **`changes`** — `dorny/paths-filter` detecta si cambió `backend/**`,
+   `supabase/migrations/**` y/o `frontend/**` (o el propio workflow).
+2. **`backend`** y **`frontend`** — en paralelo, solo el que corresponda según
+   el paso anterior. Cada uno: checkout → Node.js 20 LTS con caché de `npm` →
+   `npm ci` → lint (ESLint / oxlint) → `tsc --noEmit` → tests (Jest / Vitest) →
+   build de producción.
+3. **`backend_e2e`** — levanta un **Postgres real**, aplica las migraciones de
+   `supabase/migrations/` con `psql` y corre los tests de integración
+   (`test:e2e`): arranca la app y ejecuta el flujo real (registro →
+   disponibilidad → agendar con estilos). Es la red que verifica que las
+   entidades de TypeORM coinciden con el esquema SQL.
+4. **`ci-ok`** — job final que pasa si ningún job falló (uno saltado por el
    filtro cuenta como OK). Es el check a exigir en la protección de rama.
 
 El deploy es automático: **Render** reconstruye la API al hacer push a `main`
