@@ -1,0 +1,20 @@
+# Configuración de gitleaks (escaneo de secretos en CI).
+# Extiende el ruleset por defecto y añade una allowlist para falsos positivos
+# conocidos, todos verificados manualmente como NO sensibles.
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Falsos positivos verificados"
+paths = [
+  # Hashes `integrity` (sha512/base64) que contienen subcadenas tipo token.
+  '''package-lock\.json$''',
+  # Plantillas de entorno: solo llevan placeholders, nunca valores reales.
+  '''\.env\.example$''',
+]
+regexes = [
+  # Ref público del proyecto de Supabase (aparece en la URL pública de la API;
+  # no es una credencial). La CLI lo necesita en supabase/config.toml.
+  '''fxlttpayjkkbfomveavx''',
+]

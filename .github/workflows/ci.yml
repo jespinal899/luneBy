@@ -13,6 +13,22 @@ concurrency:
 
 jobs:
   # ─────────────────────────────────────────────────────────────
+  # Escaneo de secretos en el código y en TODO el historial de git.
+  secrets:
+    name: Escaneo de secretos
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout (historial completo)
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # ─────────────────────────────────────────────────────────────
   # Detecta qué parte del monorepo cambió para saltarse el job que no aplica.
   changes:
     name: Detectar cambios
@@ -178,15 +194,20 @@ jobs:
   ci-ok:
     name: CI OK
     if: always()
-    needs: [changes, backend, backend_e2e, frontend]
+    needs: [secrets, changes, backend, backend_e2e, frontend]
     runs-on: ubuntu-latest
     steps:
       - name: Comprobar resultados
         run: |
+          echo "secrets:      ${{ needs.secrets.result }}"
           echo "changes:      ${{ needs.changes.result }}"
           echo "backend:      ${{ needs.backend.result }}"
           echo "backend_e2e:  ${{ needs.backend_e2e.result }}"
           echo "frontend:     ${{ needs.frontend.result }}"
+          if [ "${{ needs.secrets.result }}" != "success" ]; then
+            echo "::error::El escaneo de secretos no pasó"
+            exit 1
+          fi
           if [ "${{ needs.changes.result }}" != "success" ]; then
             echo "::error::El job 'changes' no terminó bien"
             exit 1
