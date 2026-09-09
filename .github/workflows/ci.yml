@@ -13,8 +13,34 @@ concurrency:
 
 jobs:
   # ─────────────────────────────────────────────────────────────
+  # Detecta qué parte del monorepo cambió para saltarse el job que no aplica.
+  changes:
+    name: Detectar cambios
+    runs-on: ubuntu-latest
+    outputs:
+      backend: ${{ steps.filter.outputs.backend }}
+      frontend: ${{ steps.filter.outputs.frontend }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Filtrar por rutas
+        uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            backend:
+              - 'backend/**'
+              - '.github/workflows/ci.yml'
+            frontend:
+              - 'frontend/**'
+              - '.github/workflows/ci.yml'
+
+  # ─────────────────────────────────────────────────────────────
   backend:
     name: Backend (NestJS)
+    needs: changes
+    if: ${{ needs.changes.outputs.backend == 'true' }}
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -48,6 +74,8 @@ jobs:
   # ─────────────────────────────────────────────────────────────
   frontend:
     name: Frontend (React + Vite)
+    needs: changes
+    if: ${{ needs.changes.outputs.frontend == 'true' }}
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -79,3 +107,25 @@ jobs:
         run: npm run build
         env:
           VITE_API_URL: https://luneby-api.onrender.com/api
+
+  # ─────────────────────────────────────────────────────────────
+  # Gate único para exigir en la protección de rama: pasa si ningún job
+  # falló (un job saltado por paths-filter cuenta como OK).
+  ci-ok:
+    name: CI OK
+    if: always()
+    needs: [backend, frontend]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Comprobar resultados
+        run: |
+          echo "backend:  ${{ needs.backend.result }}"
+          echo "frontend: ${{ needs.frontend.result }}"
+          if [ "${{ needs.backend.result }}" = "failure" ] || \
+             [ "${{ needs.frontend.result }}" = "failure" ] || \
+             [ "${{ needs.backend.result }}" = "cancelled" ] || \
+             [ "${{ needs.frontend.result }}" = "cancelled" ]; then
+            echo "::error::Algún job de CI falló"
+            exit 1
+          fi
+          echo "Todo en orden."

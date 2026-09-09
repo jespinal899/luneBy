@@ -143,16 +143,16 @@ docker build -t luneby-web --build-arg VITE_API_URL=https://tu-api/api ./fronten
 ## 🔄 CI/CD (GitHub Actions)
 
 El workflow [`.github/workflows/ci.yml`](.github/workflows/ci.yml) se ejecuta en cada
-`push` y `pull_request` a `main` y `develop`. Tiene dos jobs en paralelo
-(**backend** y **frontend**), cada uno con:
+`push` y `pull_request` a `main` y `develop`:
 
-1. Checkout del repositorio.
-2. Node.js 20 LTS con caché de `npm`.
-3. Instalación limpia (`npm ci`).
-4. Lint (ESLint en backend, oxlint en frontend).
-5. Verificación de tipos (`tsc --noEmit`).
-6. Tests unitarios (Jest / Vitest).
-7. Build de producción.
+1. **`changes`** — `dorny/paths-filter` detecta si cambió `backend/**` y/o
+   `frontend/**` (o el propio workflow).
+2. **`backend`** y **`frontend`** — se ejecutan en paralelo, y solo el que
+   corresponda según el paso anterior. Cada uno: checkout → Node.js 20 LTS con
+   caché de `npm` → `npm ci` → lint (ESLint / oxlint) → `tsc --noEmit` → tests
+   (Jest / Vitest) → build de producción.
+3. **`ci-ok`** — job final que pasa si ningún job falló (uno saltado por el
+   filtro cuenta como OK). Es el check a exigir en la protección de rama.
 
 El deploy es automático: **Render** reconstruye la API al hacer push a `main`
 (`render.yaml`) y **Vercel** publica el frontend. El workflow
