@@ -19,6 +19,7 @@ describe('AuthService', () => {
     findOne: jest.fn(),
     update: jest.fn(),
     findOneByOrFail: jest.fn(),
+    countBy: jest.fn().mockResolvedValue(1),
   };
   const jwtService = { sign: jest.fn().mockReturnValue('signed.jwt.token') };
   const configService = { get: jest.fn().mockReturnValue('client-id') };
@@ -28,6 +29,7 @@ describe('AuthService', () => {
     jest.clearAllMocks();
     jwtService.sign.mockReturnValue('signed.jwt.token');
     configService.get.mockReturnValue('client-id');
+    userRepository.countBy.mockResolvedValue(1);
 
     const moduleRef = await Test.createTestingModule({
       providers: [
@@ -136,6 +138,7 @@ describe('AuthService', () => {
       expect(created.roles).toEqual(['client']);
       expect(res.user).not.toHaveProperty('password');
       expect(res.user).not.toHaveProperty('googleId');
+      expect(res.user.hasPassword).toBe(false);
       expect(res.token).toBe('signed.jwt.token');
     });
 
