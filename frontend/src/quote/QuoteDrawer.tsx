@@ -98,12 +98,7 @@ export const QuoteDrawer = () => {
                   <Button
                     size="sm"
                     className="flex-1"
-                    render={
-                      <Link
-                        to={`/shop/agendar?serviceId=${items[0].serviceId}`}
-                        onClick={close}
-                      />
-                    }
+                    render={<Link to="/shop/agendar" onClick={close} />}
                   >
                     <CalendarCheck className="h-4 w-4" />
                     Agendar

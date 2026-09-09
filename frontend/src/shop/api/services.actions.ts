@@ -9,8 +9,6 @@ export interface ServiceFilters {
   categorias?: string;
   /** Banda de precio: "any" | "0-50" | "50-100" | "100-200" | "200+". */
   price?: string;
-  /** Tipo de servicio: "base" | "estilo". */
-  kind?: 'base' | 'estilo';
 }
 
 /** Quita claves vacías / "any" para no ensuciar la query. */
@@ -45,8 +43,6 @@ export interface ServiceInput {
   description?: string;
   image?: string;
   isActive?: boolean;
-  /** 'base' = servicio principal; 'estilo' = complemento que suma a la cotización. */
-  kind?: 'base' | 'estilo';
 }
 
 /** Quita descripción/imagen vacías (la API valida `image` como URL). */
@@ -57,7 +53,6 @@ const toBody = (input: ServiceInput) => {
     category: input.category,
     durationMin: input.durationMin,
     isActive: input.isActive ?? true,
-    kind: input.kind ?? 'base',
   };
   if (input.description?.trim()) body.description = input.description.trim();
   if (input.image?.trim()) body.image = input.image.trim();

@@ -124,23 +124,11 @@ export const AdminAppointmentsPage = () => {
                                     </span>
                                 </TableCell>
                                 <TableCell>
-                                    {appt.service.name}
-                                    {(appt.items ?? []).some(
-                                        (i) => i.kind === 'estilo',
-                                    ) && (
-                                        <span className="block text-xs text-slate-400">
-                                            {(appt.items ?? [])
-                                                .filter((i) => i.kind === 'estilo')
-                                                .map(
-                                                    (i) =>
-                                                        i.nameAtBooking +
-                                                        (i.quantity > 1
-                                                            ? ` ×${i.quantity}`
-                                                            : ''),
-                                                )
-                                                .join(', ')}
-                                        </span>
-                                    )}
+                                    {(appt.items ?? []).length > 0
+                                        ? (appt.items ?? [])
+                                              .map((i) => i.nameAtBooking)
+                                              .join(' + ')
+                                        : appt.service.name}
                                     {appt.priceAtBooking != null && (
                                         <span className="block text-xs font-medium text-slate-500">
                                             {formatLps(appt.priceAtBooking)}

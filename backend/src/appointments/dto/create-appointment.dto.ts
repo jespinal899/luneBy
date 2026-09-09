@@ -1,33 +1,23 @@
-import { Type } from 'class-transformer';
 import {
   ArrayMaxSize,
+  ArrayMinSize,
+  ArrayUnique,
   IsArray,
   IsDateString,
-  IsInt,
   IsOptional,
   IsString,
   IsUUID,
   Matches,
-  Max,
-  Min,
-  ValidateNested,
 } from 'class-validator';
 
-export class AppointmentItemDto {
-  /** Servicio de tipo 'estilo'. */
-  @IsUUID()
-  serviceId: string;
-
-  @IsInt()
-  @Min(1)
-  @Max(20)
-  quantity: number;
-}
-
 export class CreateAppointmentDto {
-  /** Servicio base (manicura, acrílico…). */
-  @IsUUID()
-  serviceId: string;
+  /** Servicios elegidos para la cita (al menos uno, sin repetir). */
+  @IsArray()
+  @ArrayMinSize(1)
+  @ArrayMaxSize(20)
+  @ArrayUnique()
+  @IsUUID('all', { each: true })
+  serviceIds: string[];
 
   @IsDateString()
   date: string;
@@ -37,14 +27,6 @@ export class CreateAppointmentDto {
     message: 'startTime debe tener el formato HH:mm',
   })
   startTime: string;
-
-  /** Estilos elegidos para las uñas, cada uno con su cantidad. */
-  @IsOptional()
-  @IsArray()
-  @ArrayMaxSize(20)
-  @ValidateNested({ each: true })
-  @Type(() => AppointmentItemDto)
-  items?: AppointmentItemDto[];
 
   @IsOptional()
   @IsString()

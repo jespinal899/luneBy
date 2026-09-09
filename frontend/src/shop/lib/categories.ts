@@ -2,13 +2,12 @@
 export const SERVICE_CATEGORIES = [
   'Manicura',
   'Pedicura',
-  'Acrilico',
   'Semipermanente',
   'Nail Art',
+  'Diseño',
+  'Extensiones',
+  'Acrilico',
 ] as const;
-
-/** Categoría reservada para los complementos (servicios de tipo "estilo"). */
-export const ESTILO_CATEGORY = 'Estilo';
 
 export const PRICE_BANDS = [
   { value: 'any', label: 'Cualquier precio' },

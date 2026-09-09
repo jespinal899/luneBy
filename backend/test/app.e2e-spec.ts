@@ -47,30 +47,16 @@ describe('App (e2e)', () => {
     expect(res.body.status).toBe('ok');
   });
 
-  it('GET /api/services devuelve el catálogo de servicios base', async () => {
-    const res = await request(server)
-      .get('/api/services?kind=base&limit=50')
-      .expect(200);
+  it('GET /api/services devuelve el catálogo', async () => {
+    const res = await request(server).get('/api/services?limit=50').expect(200);
 
     expect(Array.isArray(res.body.products)).toBe(true);
-    expect(res.body.products.length).toBeGreaterThan(0);
     expect(
-      res.body.products.every((s: { kind: string }) => s.kind === 'base'),
+      res.body.products.some((s: { isActive: boolean }) => s.isActive),
     ).toBe(true);
   });
 
-  it('GET /api/services?kind=estilo devuelve los estilos', async () => {
-    const res = await request(server)
-      .get('/api/services?kind=estilo&limit=50')
-      .expect(200);
-
-    expect(res.body.products.length).toBeGreaterThan(0);
-    expect(
-      res.body.products.every((s: { kind: string }) => s.kind === 'estilo'),
-    ).toBe(true);
-  });
-
-  it('flujo completo: registro → disponibilidad → agendar con estilos', async () => {
+  it('flujo completo: registro → disponibilidad → agendar varios servicios', async () => {
     // 1. Registro de una clienta nueva.
     const email = `e2e_${Date.now()}@test.com`;
     const register = await request(server)
@@ -81,26 +67,18 @@ describe('App (e2e)', () => {
     const token: string = register.body.token;
     expect(token).toBeTruthy();
 
-    // 2. Servicio base + un estilo.
-    const bases = (
-      await request(server).get('/api/services?kind=base&limit=50').expect(200)
-    ).body.products;
-    const styles = (
-      await request(server)
-        .get('/api/services?kind=estilo&limit=50')
-        .expect(200)
-    ).body.products;
+    // 2. Dos servicios activos del catálogo.
+    const services = (
+      await request(server).get('/api/services?limit=50').expect(200)
+    ).body.products.filter((s: { isActive: boolean }) => s.isActive);
+    const [a, b] = services;
 
-    const base = bases[0];
-    const style = styles[0];
-
-    // 3. Disponibilidad para una fecha futura.
+    // 3. Disponibilidad para una fecha futura (duración = a + b).
     const date = iso(new Date(Date.now() + 10 * 24 * 60 * 60 * 1000));
-    const extraMinutes = style.durationMin * 2;
     const slotsRes = await request(server)
       .get(
         `/api/appointments/availability?date=${date}` +
-          `&serviceId=${base.id}&extraMinutes=${extraMinutes}`,
+          `&serviceId=${a.id}&extraMinutes=${b.durationMin}`,
       )
       .expect(200);
 
@@ -108,23 +86,16 @@ describe('App (e2e)', () => {
     expect(slotsRes.body.length).toBeGreaterThan(0);
     const startTime: string = slotsRes.body[0];
 
-    // 4. Agendar con el estilo repetido x2.
+    // 4. Agendar con los dos servicios.
     const created = await request(server)
       .post('/api/appointments')
       .set('Authorization', `Bearer ${token}`)
-      .send({
-        serviceId: base.id,
-        date,
-        startTime,
-        items: [{ serviceId: style.id, quantity: 2 }],
-      })
+      .send({ serviceIds: [a.id, b.id], date, startTime })
       .expect(201);
 
-    expect(created.body.priceAtBooking).toBe(base.price + style.price * 2);
-    expect(created.body.durationMin).toBe(
-      base.durationMin + style.durationMin * 2,
-    );
-    expect(created.body.items).toHaveLength(2); // base + estilo
+    expect(created.body.priceAtBooking).toBe(a.price + b.price);
+    expect(created.body.durationMin).toBe(a.durationMin + b.durationMin);
+    expect(created.body.items).toHaveLength(2);
 
     // 5. La cita aparece en "mis citas".
     const mine = await request(server)
@@ -133,7 +104,7 @@ describe('App (e2e)', () => {
       .expect(200);
 
     expect(
-      mine.body.some((a: { id: string }) => a.id === created.body.id),
+      mine.body.some((appt: { id: string }) => appt.id === created.body.id),
     ).toBe(true);
   });
 });

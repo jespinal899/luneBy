@@ -10,7 +10,7 @@ import {
 import { Service } from '../../services/entities/service.entity';
 import { Appointment } from './appointment.entity';
 
-/** Línea de cotización congelada de una cita (servicio base o estilo). */
+/** Línea de la cotización congelada de una cita: un servicio elegido. */
 @Entity({ name: 'appointment_items' })
 @Index(['appointment'])
 export class AppointmentItem {
@@ -34,13 +34,6 @@ export class AppointmentItem {
 
   @Column('float', { name: 'priceAtBooking', default: 0 })
   priceAtBooking: number;
-
-  /** 'base' | 'estilo' */
-  @Column('text', { default: 'estilo' })
-  kind: string;
-
-  @Column('int', { default: 1 })
-  quantity: number;
 
   @CreateDateColumn()
   createdAt: Date;

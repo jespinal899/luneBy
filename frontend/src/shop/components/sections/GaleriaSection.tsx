@@ -8,7 +8,7 @@ import { serviceImage } from '@/shop/lib/service-image';
 
 /** Sección "Galería". Se usa en el home (ancla #galeria) y en /galeria. */
 export const GaleriaSection = () => {
-  const { data, isLoading } = useServices({ limit: 30, kind: 'base' });
+  const { data, isLoading } = useServices({ limit: 30 });
   const items = (data?.products ?? []).filter((s) => s.isActive);
 
   return (

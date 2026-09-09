@@ -42,7 +42,6 @@ export class ServicesService {
       price,
       minPrice,
       maxPrice,
-      kind,
     } = paginationDto;
 
     const categories = categorias
@@ -54,10 +53,6 @@ export class ServicesService {
       price: priceFilter({ price, minPrice, maxPrice }),
       category: categories?.length ? In(categories) : undefined,
       name: q ? ILike(`%${q}%`) : undefined,
-      kind:
-        kind === 'base' || kind === 'estilo'
-          ? (kind as 'base' | 'estilo')
-          : undefined,
     };
 
     const [services, count] = await this.serviceRepository.findAndCount({

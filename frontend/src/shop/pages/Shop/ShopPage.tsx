@@ -23,7 +23,6 @@ export const ShopPage = () => {
         q: params.get('query') ?? undefined,
         categorias: params.get('categorias') ?? undefined,
         price: params.get('price') ?? undefined,
-        kind: 'base',
     });
 
     const services = (data?.products ?? []).filter((s) => s.isActive);

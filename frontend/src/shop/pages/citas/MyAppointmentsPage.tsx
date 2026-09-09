@@ -49,23 +49,13 @@ export const MyAppointmentsPage = () => {
                                 className="flex flex-wrap items-center gap-4 rounded-xl border border-slate-200 bg-white p-5"
                             >
                                 <div className="flex-1">
-                                    <p className="font-medium">{appt.service.name}</p>
-                                    {(appt.items ?? []).some(
-                                        (i) => i.kind === 'estilo',
-                                    ) && (
-                                        <p className="text-xs text-muted-foreground">
-                                            {(appt.items ?? [])
-                                                .filter((i) => i.kind === 'estilo')
-                                                .map(
-                                                    (i) =>
-                                                        i.nameAtBooking +
-                                                        (i.quantity > 1
-                                                            ? ` ×${i.quantity}`
-                                                            : ''),
-                                                )
-                                                .join(', ')}
-                                        </p>
-                                    )}
+                                    <p className="font-medium">
+                                        {(appt.items ?? []).length > 0
+                                            ? (appt.items ?? [])
+                                                  .map((i) => i.nameAtBooking)
+                                                  .join(' + ')
+                                            : appt.service.name}
+                                    </p>
                                     <p className="text-sm text-muted-foreground">
                                         {appt.date} · {appt.startTime}–{appt.endTime}
                                         {appt.priceAtBooking != null &&

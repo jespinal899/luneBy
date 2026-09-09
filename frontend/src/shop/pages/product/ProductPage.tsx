@@ -12,7 +12,7 @@ export const ProductPage = () => {
     const { idSlug } = useParams();
     const { data: service, isLoading, isError } = useService(idSlug);
 
-    const { data: related } = useServices({ limit: 4, kind: 'base' });
+    const { data: related } = useServices({ limit: 4 });
     const relatedServices = (related?.products ?? []).filter(
         (s) => s.isActive && s.id !== service?.id && s.category === service?.category,
     );

@@ -1,7 +1,7 @@
 import { http } from '@/api/http';
 import type { Appointment } from '@/api/types';
 
-/** Horas de inicio libres ("HH:mm") para una fecha, un servicio base y sus estilos. */
+/** Horas de inicio libres ("HH:mm") para una fecha y una duración total. */
 export const getAvailability = async (
   date: string,
   serviceId: string,
@@ -13,16 +13,11 @@ export const getAvailability = async (
   return data;
 };
 
-export interface AppointmentItemInput {
-  serviceId: string;
-  quantity: number;
-}
-
 export interface CreateAppointmentInput {
-  serviceId: string;
+  /** Servicios elegidos, en el orden en que se añadieron. */
+  serviceIds: string[];
   date: string;
   startTime: string;
-  items?: AppointmentItemInput[];
   notes?: string;
 }
 

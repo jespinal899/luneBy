@@ -101,48 +101,33 @@ export class AppointmentsService {
     return [...slots].sort();
   }
 
-  /** Agenda una cita (servicio base + estilos) en un slot libre. */
+  /** Agenda una cita con los servicios elegidos en un slot libre. */
   async create(dto: CreateAppointmentDto, user: User) {
-    const { serviceId, date, startTime, notes, items = [] } = dto;
+    const { serviceIds, date, startTime, notes } = dto;
 
-    const service = await this.serviceRepository.findOneBy({ id: serviceId });
-    if (!service) throw new NotFoundException('Servicio no encontrado');
-    if (service.kind !== 'base')
-      throw new BadRequestException('Debes elegir un servicio base');
+    const ids = [...new Set(serviceIds)];
+    const found = await this.serviceRepository.findBy({ id: In(ids) });
+    if (found.length !== ids.length)
+      throw new NotFoundException('Alguno de los servicios no existe');
 
-    // Resolver los estilos y agrupar cantidades por servicio.
-    const quantityByStyle = new Map<string, number>();
-    for (const item of items) {
-      quantityByStyle.set(
-        item.serviceId,
-        (quantityByStyle.get(item.serviceId) ?? 0) + item.quantity,
+    // Respeta el orden en que la clienta los eligió.
+    const services = ids.map((id) => found.find((s) => s.id === id)!);
+    const inactive = services.find((s) => !s.isActive);
+    if (inactive)
+      throw new BadRequestException(
+        `"${inactive.name}" no está disponible para agendar`,
       );
-    }
 
-    const styleIds = [...quantityByStyle.keys()];
-    const styles = styleIds.length
-      ? await this.serviceRepository.findBy({ id: In(styleIds) })
-      : [];
-    if (styles.length !== styleIds.length)
-      throw new NotFoundException('Alguno de los estilos no existe');
-    for (const style of styles) {
-      if (style.kind !== 'estilo' || !style.isActive)
-        throw new BadRequestException(`"${style.name}" no es un estilo válido`);
-    }
+    const [primary] = services;
+    const durationMin = services.reduce((sum, s) => sum + s.durationMin, 0);
+    const totalPrice = services.reduce((sum, s) => sum + s.price, 0);
+    const extraMinutes = durationMin - primary.durationMin;
 
-    const extraMinutes = styles.reduce(
-      (sum, s) => sum + s.durationMin * (quantityByStyle.get(s.id) ?? 0),
-      0,
+    const available = await this.getAvailability(
+      date,
+      primary.id,
+      extraMinutes,
     );
-    const stylesTotal = styles.reduce(
-      (sum, s) => sum + s.price * (quantityByStyle.get(s.id) ?? 0),
-      0,
-    );
-
-    const durationMin = service.durationMin + extraMinutes;
-    const totalPrice = service.price + stylesTotal;
-
-    const available = await this.getAvailability(date, serviceId, extraMinutes);
     if (!available.includes(startTime))
       throw new BadRequestException('Ese horario ya no está disponible');
 
@@ -153,29 +138,18 @@ export class AppointmentsService {
       startTime,
       endTime,
       notes,
-      service,
+      service: primary,
       user,
       status: AppointmentStatus.pending,
       priceAtBooking: totalPrice,
       durationMin,
-      items: [
+      items: services.map((s) =>
         this.itemRepository.create({
-          service,
-          nameAtBooking: service.name,
-          priceAtBooking: service.price,
-          kind: 'base',
-          quantity: 1,
+          service: s,
+          nameAtBooking: s.name,
+          priceAtBooking: s.price,
         }),
-        ...styles.map((s) =>
-          this.itemRepository.create({
-            service: s,
-            nameAtBooking: s.name,
-            priceAtBooking: s.price,
-            kind: 'estilo',
-            quantity: quantityByStyle.get(s.id) ?? 1,
-          }),
-        ),
-      ],
+      ),
     });
 
     try {

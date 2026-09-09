@@ -8,8 +8,6 @@ import { ContactoSection } from '@/shop/components/sections/ContactoSection';
 import { GaleriaSection } from '@/shop/components/sections/GaleriaSection';
 import { NosotrosSection } from '@/shop/components/sections/NosotrosSection';
 import { useServices } from '@/shop/hooks/use-services';
-import { formatLps } from '@/shop/lib/format';
-import { serviceImage } from '@/shop/lib/service-image';
 import heroImage from '@/assets/hero-nailart.webp';
 
 const steps = [
@@ -31,11 +29,8 @@ const steps = [
 ];
 
 export const HomePage = () => {
-  const { data, isLoading } = useServices({ limit: 6, kind: 'base' });
+  const { data, isLoading } = useServices({ limit: 6 });
   const services = (data?.products ?? []).filter((s) => s.isActive);
-
-  const { data: styleData } = useServices({ limit: 8, kind: 'estilo' });
-  const styles = (styleData?.products ?? []).filter((s) => s.isActive);
 
   return (
     <>
@@ -171,56 +166,6 @@ export const HomePage = () => {
           )}
         </div>
       </section>
-
-      {/* Estilos que puedes añadir */}
-      {styles.length > 0 && (
-        <section id="estilos" className="scroll-mt-20 border-t bg-cream py-16">
-          <div className="container mx-auto px-4 lg:px-8">
-            <div className="mb-10 flex items-end justify-between gap-4">
-              <div>
-                <h2 className="font-montserrat text-3xl tracking-tight text-brand-dark">
-                  Estilos que puedes añadir
-                </h2>
-                <p className="mt-2 text-brand-dark/70">
-                  Suma el acabado que quieras a tu servicio al agendar tu cita.
-                </p>
-              </div>
-              <Button
-                variant="outline"
-                render={<Link to="/shop/agendar" />}
-                className="hidden border-brand/25 bg-transparent text-brand-dark hover:bg-brand/5 sm:inline-flex"
-              >
-                Agendar
-              </Button>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-              {styles.map((style) => (
-                <Link
-                  key={style.id}
-                  to="/shop/agendar"
-                  className="group overflow-hidden rounded-2xl border border-brand/10 bg-background shadow-sm transition-shadow hover:shadow-md"
-                >
-                  <img
-                    src={serviceImage(style.image, style.category)}
-                    alt={style.name}
-                    loading="lazy"
-                    className="aspect-square w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                  />
-                  <div className="p-3">
-                    <p className="truncate text-sm font-medium text-brand-dark">
-                      {style.name}
-                    </p>
-                    <p className="mt-0.5 text-xs text-brand-dark/60">
-                      + desde {formatLps(style.price)}
-                    </p>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
 
       {/* Galería */}
       <GaleriaSection />

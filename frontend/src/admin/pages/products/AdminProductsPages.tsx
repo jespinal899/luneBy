@@ -91,11 +91,6 @@ export const AdminProductsPage = () => {
                                     </TableCell>
                                     <TableCell className="font-medium">
                                         {service.name}
-                                        {service.kind === 'estilo' && (
-                                            <span className="ml-2 rounded-full bg-brand/10 px-2 py-0.5 text-xs font-medium text-brand-dark">
-                                                Estilo
-                                            </span>
-                                        )}
                                     </TableCell>
                                     <TableCell>
                                         <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-700">
