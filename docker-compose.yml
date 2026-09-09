@@ -1,0 +1,74 @@
+# ─────────────────────────────────────────────────────────────
+# Stack completo de Luné by Kelin para desarrollo local aislado:
+#   db  → PostgreSQL 16
+#   api → NestJS (backend/Dockerfile)
+#   web → React build servido con Nginx (frontend/Dockerfile)
+#
+#   docker compose up --build
+#   web  → http://localhost:8080
+#   api  → http://localhost:3001/api
+#
+# El esquema y los datos base se aplican con las migraciones de
+# `supabase/migrations` (Supabase CLI) o cargándolas a mano en la BD.
+# ─────────────────────────────────────────────────────────────
+name: luneby
+
+services:
+  db:
+    image: postgres:16.3
+    container_name: luneby-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USERNAME:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+      POSTGRES_DB: ${DB_NAME:-luneby}
+    ports:
+      - '5432:5432'
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${DB_USERNAME:-postgres} -d ${DB_NAME:-luneby}']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: luneby-api
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      STAGE: dev
+      PORT: 3001
+      FRONTEND_URL: http://localhost:8080
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME:-luneby}
+      DB_USERNAME: ${DB_USERNAME:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-postgres}
+      JWT_SECRET: ${JWT_SECRET:-dev-secret-cambia-esto}
+      JWT_EXPIRES_IN: 2h
+      HOST_API: http://localhost:3001/api
+    ports:
+      - '3001:3001'
+
+  web:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        # El navegador habla directo con la API publicada en localhost:3001.
+        VITE_API_URL: http://localhost:3001/api
+    container_name: luneby-web
+    restart: unless-stopped
+    depends_on:
+      - api
+    ports:
+      - '8080:80'
+
+volumes:
+  db-data:

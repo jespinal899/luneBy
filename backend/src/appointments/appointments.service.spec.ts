@@ -25,8 +25,18 @@ describe('AppointmentsService · getAvailability', () => {
     isActive: true,
     durationMin,
   });
-  // Miércoles.
+  // Miércoles. Congelamos "hoy" al día anterior para que el filtro de horas
+  // pasadas no dependa de la fecha real en la que corran los tests.
   const WEDNESDAY = '2026-09-09';
+
+  beforeAll(() => {
+    jest.useFakeTimers();
+    jest.setSystemTime(new Date('2026-09-08T08:00:00Z'));
+  });
+
+  afterAll(() => {
+    jest.useRealTimers();
+  });
 
   beforeEach(async () => {
     jest.clearAllMocks();

@@ -8,10 +8,11 @@ postgres/
 static/services/*
 !static/services/.gitkeep
 
-# Variables de entorno: NUNCA versionar (ni plantillas).
-# Las variables necesarias están documentadas en README.md
+# Variables de entorno: NUNCA versionar el `.env` real.
+# La plantilla `.env.example` (sin secretos) sí se versiona.
 .env
 .env.*
+!.env.example
 
 
 # Logs

@@ -11,10 +11,13 @@ node_modules
 dist
 dist-ssr
 *.local
+coverage
 
-# Variables de entorno (documentadas en README)
+# Variables de entorno: NUNCA versionar el `.env` real.
+# La plantilla `.env.example` (sin secretos) sí se versiona.
 .env
 .env.*
+!.env.example
 
 # Editor directories and files
 .vscode/*

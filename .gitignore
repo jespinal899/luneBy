@@ -1,2 +1,18 @@
 # Referencia local del backend ya terminado (no versionar)
 backend_ref/
+
+# Dependencias y artefactos de build (cada app tiene su .gitignore,
+# esto es una red de seguridad a nivel monorepo)
+**/node_modules/
+**/dist/
+**/coverage/
+
+# Variables de entorno reales (las plantillas .env.example sí se versionan)
+**/.env
+**/.env.*
+!**/.env.example
+
+# Logs y basura del SO / editores
+*.log
+.DS_Store
+Thumbs.db

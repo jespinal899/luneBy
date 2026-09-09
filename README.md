@@ -57,11 +57,12 @@ ProyectoCitas/
 
 ---
 
-## ⚙️ Instrucciones de Instalación y Ejecución
+## ⚙️ Instalación y Ejecución
 
-### Requisitos Previos
-* Tener instalado **Node.js** (versión 18 o superior recomendada).
-* Tener instalado **Git**.
+### Requisitos previos
+* **Node.js 20 LTS** y **npm** (para el flujo con npm).
+* **Docker** y **Docker Compose** (para el flujo con contenedores).
+* **Git**.
 
 ### 1. Clonar el repositorio
 ```bash
@@ -69,23 +70,100 @@ git clone https://github.com/jespinal899/luneBy.git
 cd luneBy
 ```
 
-### 2. Ejecutar el Frontend
-Navega a la carpeta del frontend, instala las dependencias e inicia el servidor de desarrollo:
-```bash
-cd frontend
-npm install
-npm run dev
-```
-El frontend estará disponible en tu navegador local (normalmente en `http://localhost:5173`).
+### 2. Variables de entorno
+Cada app trae una plantilla `.env.example`. Cópiala a `.env` y ajusta los valores
+(los `.env` reales están en `.gitignore` y **nunca** se versionan):
 
-### 3. Compilación para Producción (Build)
-Para compilar la aplicación para producción (despliegue en plataformas como Vercel o Netlify):
 ```bash
-npm run build
+cp backend/.env.example  backend/.env
+cp frontend/.env.example frontend/.env
+```
+
+| App        | Variable            | Para qué |
+| ---------- | ------------------- | -------- |
+| backend    | `STAGE`             | `dev` local · `prod` en servidor (activa SSL de Postgres) |
+| backend    | `PORT`              | Puerto de la API (por defecto `3001`) |
+| backend    | `FRONTEND_URL`      | Origen(es) permitido(s) por CORS (coma-separados) |
+| backend    | `DB_*`              | Conexión a Postgres local |
+| backend    | `DATABASE_URL`      | Alternativa a `DB_*`: connection string (Supabase / Postgres gestionado). Tiene prioridad |
+| backend    | `JWT_SECRET`        | Secreto para firmar los JWT — `openssl rand -base64 48` |
+| backend    | `JWT_EXPIRES_IN`    | Vigencia del token (ej. `2h`) |
+| backend    | `SUPABASE_*`        | *(opcional)* subir imágenes a Supabase Storage en vez de disco local |
+| frontend   | `VITE_API_URL`      | URL base de la API, con el sufijo `/api` |
+
+### 3a. Ejecutar con Docker (stack completo)
+Levanta base de datos + API + frontend en contenedores aislados:
+
+```bash
+docker compose up --build
+```
+
+* Frontend → <http://localhost:8080>
+* API      → <http://localhost:3001/api>
+* Swagger  → <http://localhost:3001/api/docs>
+* Postgres → `localhost:5432`
+
+El esquema y los datos base se aplican con las migraciones de `supabase/migrations`
+(ver [`supabase/README.md`](supabase/README.md)).
+
+### 3b. Ejecutar con npm (desarrollo)
+En dos terminales:
+
+```bash
+# API
+cd backend && npm ci && npm run start:dev      # http://localhost:3001/api
+
+# Frontend
+cd frontend && npm ci && npm run dev            # http://localhost:5173
+```
+
+Para la base de datos en local sin el stack completo:
+```bash
+docker compose up db
+```
+
+### 4. Scripts útiles
+
+| Acción            | Backend (`cd backend`) | Frontend (`cd frontend`) |
+| ----------------- | ---------------------- | ------------------------ |
+| Lint              | `npm run lint:ci`      | `npm run lint`           |
+| Verificar tipos   | `npm run typecheck`    | `npm run typecheck`      |
+| Tests unitarios   | `npm test`             | `npm run test:run`       |
+| Cobertura         | `npm run test:cov`     | `npm run test:cov`       |
+| Build producción  | `npm run build`        | `npm run build`          |
+
+### 5. Imágenes Docker por separado
+```bash
+docker build -t luneby-api ./backend
+docker build -t luneby-web --build-arg VITE_API_URL=https://tu-api/api ./frontend
 ```
 
 ---
 
-## 🔒 Buenas Prácticas de Seguridad
-* El proyecto **no contiene secretos versionados** (.env, llaves de API o tokens).
-* Toda la configuración sensible se gestiona de forma segura a través de variables de entorno directamente en el hosting (Vercel).
+## 🔄 CI/CD (GitHub Actions)
+
+El workflow [`.github/workflows/ci.yml`](.github/workflows/ci.yml) se ejecuta en cada
+`push` y `pull_request` a `main` y `develop`. Tiene dos jobs en paralelo
+(**backend** y **frontend**), cada uno con:
+
+1. Checkout del repositorio.
+2. Node.js 20 LTS con caché de `npm`.
+3. Instalación limpia (`npm ci`).
+4. Lint (ESLint en backend, oxlint en frontend).
+5. Verificación de tipos (`tsc --noEmit`).
+6. Tests unitarios (Jest / Vitest).
+7. Build de producción.
+
+El deploy es automático: **Render** reconstruye la API al hacer push a `main`
+(`render.yaml`) y **Vercel** publica el frontend. El workflow
+[`keep-alive.yml`](.github/workflows/keep-alive.yml) hace ping a la API cada 10 min
+para que el plan free de Render no la duerma.
+
+Ver el estado del pipeline en la pestaña **Actions** del repositorio.
+
+---
+
+## 🔒 Buenas prácticas de seguridad
+* **Sin secretos versionados**: los `.env` reales están en `.gitignore`; solo se versionan las plantillas `.env.example` (sin valores reales).
+* La configuración sensible vive en las variables de entorno del hosting (Render / Vercel / Supabase).
+* La imagen Docker de la API corre como usuario sin privilegios (`node`) y con `tini` como PID 1.
