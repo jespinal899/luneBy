@@ -54,8 +54,9 @@ describe('App (e2e)', () => {
 
     expect(Array.isArray(res.body.products)).toBe(true);
     expect(res.body.products.length).toBeGreaterThan(0);
-    expect(res.body.products.every((s: { kind: string }) => s.kind === 'base'))
-      .toBe(true);
+    expect(
+      res.body.products.every((s: { kind: string }) => s.kind === 'base'),
+    ).toBe(true);
   });
 
   it('GET /api/services?kind=estilo devuelve los estilos', async () => {
@@ -120,7 +121,9 @@ describe('App (e2e)', () => {
       .expect(201);
 
     expect(created.body.priceAtBooking).toBe(base.price + style.price * 2);
-    expect(created.body.durationMin).toBe(base.durationMin + style.durationMin * 2);
+    expect(created.body.durationMin).toBe(
+      base.durationMin + style.durationMin * 2,
+    );
     expect(created.body.items).toHaveLength(2); // base + estilo
 
     // 5. La cita aparece en "mis citas".
@@ -129,8 +132,8 @@ describe('App (e2e)', () => {
       .set('Authorization', `Bearer ${token}`)
       .expect(200);
 
-    expect(mine.body.some((a: { id: string }) => a.id === created.body.id)).toBe(
-      true,
-    );
+    expect(
+      mine.body.some((a: { id: string }) => a.id === created.body.id),
+    ).toBe(true);
   });
 });
