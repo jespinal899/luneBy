@@ -14,9 +14,10 @@ import { MobileNav } from './MobileNav';
 
 export const navLinks = [
   { to: '/', label: 'Inicio', end: true },
-  { to: '/shop', label: 'Servicios' },
+  // `/shop` no debe marcarse activo dentro de `/shop/agendar`.
+  { to: '/shop', label: 'Servicios', end: true },
   { to: '/galeria', label: 'Galería' },
-  { to: '/shop/agendar', label: 'Agendar' },
+  { to: '/shop/agendar', label: 'Agendar', end: true },
   { to: '/nosotros', label: 'Nosotros' },
   { to: '/contacto', label: 'Contacto' },
 ];
