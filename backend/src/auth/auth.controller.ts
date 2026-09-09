@@ -7,6 +7,7 @@ import { Auth, GetUser } from './decorators';
 import {
   ChangePasswordDto,
   CreateUserDto,
+  GoogleLoginDto,
   LoginUserDto,
   UpdateProfileDto,
 } from './dto';
@@ -31,6 +32,14 @@ export class AuthController {
   @Throttle({ default: { limit: 5, ttl: 60_000 } })
   login(@Body() loginUserDto: LoginUserDto) {
     return this.authService.login(loginUserDto);
+  }
+
+  /** Inicia sesión o crea la cuenta con el ID token de Google. */
+  @Post('google')
+  @Header('Cache-Control', 'no-store')
+  @Throttle({ default: { limit: 10, ttl: 60_000 } })
+  loginWithGoogle(@Body() dto: GoogleLoginDto) {
+    return this.authService.loginWithGoogle(dto.idToken);
   }
 
   @Get('check-status')

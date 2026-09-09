@@ -19,6 +19,8 @@ services:
         value: 2h
       - key: JWT_SECRET
         generateValue: true
+      - key: GOOGLE_CLIENT_ID # Client ID de OAuth (público)
+        value: 600770790651-scb8ugh5ic5ni7ora0ovdd341nkel5pt.apps.googleusercontent.com
       # Estas se rellenan a mano en Render al crear el Blueprint:
       - key: DATABASE_URL # Session pooler de Supabase:
         # postgresql://postgres.<ref>:<pwd>@aws-0-<region>.pooler.supabase.com:5432/postgres

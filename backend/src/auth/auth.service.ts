@@ -1,9 +1,11 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import * as bcrypt from 'bcrypt';
+import { OAuth2Client } from 'google-auth-library';
 
 import { User } from './entities/user.entity';
 import {
@@ -12,6 +14,7 @@ import {
   LoginUserDto,
   UpdateProfileDto,
 } from './dto';
+import { GOOGLE_OAUTH_CLIENT } from './google-oauth.provider';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
 
 // El correo duplicado (`uq_users_email`) lo traduce a 409 el
@@ -22,6 +25,9 @@ export class AuthService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     private readonly jwtService: JwtService,
+    private readonly configService: ConfigService,
+    @Inject(GOOGLE_OAUTH_CLIENT)
+    private readonly googleClient: OAuth2Client,
   ) {}
 
   async register(createUserDto: CreateUserDto) {
@@ -49,8 +55,68 @@ export class AuthService {
       },
     });
 
-    if (!user || !bcrypt.compareSync(password, user.password))
+    if (!user) throw new UnauthorizedException('Credenciales no válidas');
+    if (!user.password)
+      throw new UnauthorizedException('Esta cuenta inicia sesión con Google');
+    if (!bcrypt.compareSync(password, user.password))
       throw new UnauthorizedException('Credenciales no válidas');
+
+    return this.buildAuthResponse(user);
+  }
+
+  /**
+   * Inicia sesión (o crea la cuenta) con el ID token de Google.
+   * Si el correo ya existe con contraseña, se enlaza el `googleId` a esa cuenta.
+   */
+  async loginWithGoogle(idToken: string) {
+    const clientId = this.configService.get<string>('GOOGLE_CLIENT_ID');
+    let payload;
+    try {
+      const ticket = await this.googleClient.verifyIdToken({
+        idToken,
+        audience: clientId,
+      });
+      payload = ticket.getPayload();
+    } catch {
+      throw new UnauthorizedException('El token de Google no es válido');
+    }
+
+    if (!payload?.email || !payload.email_verified)
+      throw new UnauthorizedException(
+        'La cuenta de Google no tiene un correo verificado',
+      );
+
+    const email = payload.email.toLowerCase().trim();
+    const googleId = payload.sub;
+
+    let user =
+      (await this.userRepository.findOne({ where: { googleId } })) ??
+      (await this.userRepository.findOne({ where: { email } }));
+
+    if (user) {
+      // Enlaza / actualiza los datos de Google en la cuenta existente.
+      if (user.googleId !== googleId || !user.avatarUrl) {
+        await this.userRepository.update(user.id, {
+          googleId,
+          avatarUrl: user.avatarUrl ?? payload.picture ?? null,
+        });
+        user = await this.userRepository.findOneByOrFail({ id: user.id });
+      }
+    } else {
+      user = this.userRepository.create({
+        email,
+        fullName: payload.name ?? email.split('@')[0],
+        googleId,
+        avatarUrl: payload.picture ?? null,
+        password: null,
+        roles: ['client'],
+        isActive: true,
+      });
+      await this.userRepository.save(user);
+    }
+
+    if (!user.isActive)
+      throw new UnauthorizedException('Esta cuenta está desactivada');
 
     return this.buildAuthResponse(user);
   }
@@ -80,7 +146,12 @@ export class AuthService {
       select: { id: true, password: true },
     });
 
-    if (!row || !bcrypt.compareSync(dto.currentPassword, row.password)) {
+    if (!row?.password) {
+      throw new UnauthorizedException(
+        'Esta cuenta inicia sesión con Google y no tiene contraseña',
+      );
+    }
+    if (!bcrypt.compareSync(dto.currentPassword, row.password)) {
       throw new UnauthorizedException('La contraseña actual no es correcta');
     }
 
@@ -93,7 +164,7 @@ export class AuthService {
 
   /** Devuelve el usuario sin la contraseña junto a un token fresco. */
   private buildAuthResponse(user: User) {
-    const { password, ...safeUser } = user;
+    const { password, googleId, ...safeUser } = user;
     return { user: safeUser, token: this.getJwtToken({ id: user.id }) };
   }
 

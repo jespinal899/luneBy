@@ -17,14 +17,23 @@ export class User {
   @Column('text', { unique: true })
   email: string;
 
-  @Column('text', { select: false })
-  password: string;
+  /** Nulo para cuentas que solo inician sesión con Google. */
+  @Column('text', { select: false, nullable: true })
+  password: string | null;
 
   @Column('text')
   fullName: string;
 
   @Column('text', { nullable: true })
   phone: string;
+
+  /** `sub` del ID token de Google. Presente si la cuenta usa Google. */
+  @Column('text', { nullable: true, unique: true })
+  googleId: string | null;
+
+  /** Foto de perfil de Google (opcional). */
+  @Column('text', { nullable: true })
+  avatarUrl: string | null;
 
   @Column('bool', { default: true })
   isActive: boolean;

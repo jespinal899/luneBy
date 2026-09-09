@@ -4,6 +4,7 @@ import { tokenStorage } from '@/api/http';
 import type { AuthResponse, User } from '@/api/types';
 import {
   checkStatusRequest,
+  googleLoginRequest,
   loginRequest,
   registerRequest,
   updateProfileRequest,
@@ -45,6 +46,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     applyAuth(await registerRequest(payload));
   };
 
+  const loginWithGoogle = async (idToken: string) => {
+    applyAuth(await googleLoginRequest(idToken));
+  };
+
   const updateProfile = async (payload: UpdateProfilePayload) => {
     applyAuth(await updateProfileRequest(payload));
   };
@@ -57,6 +62,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         isAdmin: user?.roles.includes('admin') ?? false,
         login,
         register,
+        loginWithGoogle,
         updateProfile,
         logout: clearAuth,
       }}

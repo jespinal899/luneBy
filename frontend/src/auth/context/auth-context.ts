@@ -15,6 +15,7 @@ export interface AuthContextValue {
   isAdmin: boolean;
   login: (payload: LoginPayload) => Promise<void>;
   register: (payload: RegisterPayload) => Promise<void>;
+  loginWithGoogle: (idToken: string) => Promise<void>;
   updateProfile: (payload: UpdateProfilePayload) => Promise<void>;
   logout: () => void;
 }

@@ -17,4 +17,7 @@ regexes = [
   # Ref público del proyecto de Supabase (aparece en la URL pública de la API;
   # no es una credencial). La CLI lo necesita en supabase/config.toml.
   '''fxlttpayjkkbfomveavx''',
+  # Client ID de OAuth de Google: es público por diseño (va en el bundle del
+  # frontend). El secret del cliente NO se usa en este proyecto.
+  '''[0-9]+-[a-z0-9]+\.apps\.googleusercontent\.com''',
 ]

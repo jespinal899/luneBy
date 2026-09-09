@@ -23,6 +23,12 @@ export const registerRequest = async (payload: RegisterPayload) => {
   return data;
 };
 
+/** Inicia sesión o crea la cuenta con el ID token de Google. */
+export const googleLoginRequest = async (idToken: string) => {
+  const { data } = await http.post<AuthResponse>('/auth/google', { idToken });
+  return data;
+};
+
 /** Revalida el token guardado y devuelve el usuario + un token fresco. */
 export const checkStatusRequest = async () => {
   const { data } = await http.get<AuthResponse>('/auth/check-status');
