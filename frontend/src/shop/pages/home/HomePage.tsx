@@ -4,6 +4,9 @@ import { Button } from '@/components/ui/button';
 import { Sparkle } from '@/components/Sparkle';
 import { ProductsGrid } from '@/shop/components/ProductsGrid';
 import { ProductsGridSkeleton } from '@/shop/components/ProductsGridSkeleton';
+import { ContactoSection } from '@/shop/components/sections/ContactoSection';
+import { GaleriaSection } from '@/shop/components/sections/GaleriaSection';
+import { NosotrosSection } from '@/shop/components/sections/NosotrosSection';
 import { useServices } from '@/shop/hooks/use-services';
 import { formatLps } from '@/shop/lib/format';
 import { serviceImage } from '@/shop/lib/service-image';
@@ -145,7 +148,7 @@ export const HomePage = () => {
       </section>
 
       {/* Catálogo */}
-      <section className="py-16">
+      <section id="servicios" className="scroll-mt-20 py-16">
         <div className="container mx-auto px-4 lg:px-8">
           <div className="mb-10 flex items-end justify-between gap-4">
             <div>
@@ -171,7 +174,7 @@ export const HomePage = () => {
 
       {/* Estilos que puedes añadir */}
       {styles.length > 0 && (
-        <section className="border-t bg-cream py-16">
+        <section id="estilos" className="scroll-mt-20 border-t bg-cream py-16">
           <div className="container mx-auto px-4 lg:px-8">
             <div className="mb-10 flex items-end justify-between gap-4">
               <div>
@@ -218,6 +221,15 @@ export const HomePage = () => {
           </div>
         </section>
       )}
+
+      {/* Galería */}
+      <GaleriaSection />
+
+      {/* Nosotros */}
+      <NosotrosSection />
+
+      {/* Contacto */}
+      <ContactoSection />
 
       {/* CTA final */}
       <section className="bg-brand-dark text-brand-foreground">

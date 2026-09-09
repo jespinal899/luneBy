@@ -1,5 +1,5 @@
 import { useRef, useState, type KeyboardEvent } from 'react';
-import { Link, NavLink, useSearchParams } from 'react-router';
+import { Link, useLocation, useSearchParams } from 'react-router';
 import { Calculator, Menu, Search } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -12,21 +12,46 @@ import { useQuote } from '@/quote/use-quote';
 import { formatLps } from '@/shop/lib/format';
 import { MobileNav } from './MobileNav';
 
+/**
+ * El sitio público es una sola página: el header desplaza a las secciones
+ * ancla del home. "Agendar" es la excepción: abre el flujo de reserva.
+ */
 export const navLinks = [
-  { to: '/', label: 'Inicio', end: true },
-  // `/shop` no debe marcarse activo dentro de `/shop/agendar`.
-  { to: '/shop', label: 'Servicios', end: true },
-  { to: '/galeria', label: 'Galería' },
-  { to: '/shop/agendar', label: 'Agendar', end: true },
-  { to: '/nosotros', label: 'Nosotros' },
-  { to: '/contacto', label: 'Contacto' },
+  { to: '/', label: 'Inicio' },
+  { to: '/#servicios', label: 'Servicios' },
+  { to: '/#galeria', label: 'Galería' },
+  { to: '/shop/agendar', label: 'Agendar' },
+  { to: '/#nosotros', label: 'Nosotros' },
+  { to: '/#contacto', label: 'Contacto' },
 ];
 
 export const CustomHeader = () => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const { pathname, hash } = useLocation();
   const { status } = useAuth();
   const quote = useQuote();
   const [menuOpen, setMenuOpen] = useState(false);
+
+  // Marca activo el enlace del header (rutas normales y anclas del home).
+  const isNavActive = (to: string) => {
+    const anchor = to.split('#')[1];
+    if (anchor) return pathname === '/' && hash === `#${anchor}`;
+    if (to === '/') return pathname === '/' && !hash;
+    return pathname === to || pathname.startsWith(`${to}/`);
+  };
+
+  // Si ya estás en el destino, vuelve a desplazar (Link no re-navega a la
+  // misma URL, así que el scroll automático no se dispararía).
+  const handleAnchorClick = (to: string) => {
+    const anchor = to.split('#')[1];
+    if (to === '/' && pathname === '/' && !hash) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else if (anchor && pathname === '/' && hash === `#${anchor}`) {
+      document
+        .getElementById(anchor)
+        ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
 
   const inputRef = useRef<HTMLInputElement>(null);
   const query = searchParams.get('query') || '';
@@ -39,7 +64,7 @@ export const CustomHeader = () => {
     setSearchParams(next);
   };
 
-  const linkClass = ({ isActive }: { isActive: boolean }) =>
+  const linkClass = (isActive: boolean) =>
     cn(
       'text-sm font-medium text-brand-dark/75 transition-colors hover:text-brand',
       isActive &&
@@ -65,19 +90,22 @@ export const CustomHeader = () => {
 
             <nav className="hidden items-center gap-6 lg:flex">
               {navLinks.map((l) => (
-                <NavLink
+                <Link
                   key={l.to}
                   to={l.to}
-                  end={l.end}
-                  className={linkClass}
+                  onClick={() => handleAnchorClick(l.to)}
+                  className={linkClass(isNavActive(l.to))}
                 >
                   {l.label}
-                </NavLink>
+                </Link>
               ))}
               {status === 'authenticated' && (
-                <NavLink to="/mis-citas" className={linkClass}>
+                <Link
+                  to="/mis-citas"
+                  className={linkClass(isNavActive('/mis-citas'))}
+                >
                   Mis citas
-                </NavLink>
+                </Link>
               )}
             </nav>
           </div>
