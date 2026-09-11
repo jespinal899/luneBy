@@ -29,7 +29,9 @@ export class ResendMailSender implements MailSender {
     if (error) {
       // No se relanza: un correo que falla no debe tumbar la operación que
       // lo disparó (ej. agendar una cita). Queda registrado para revisar.
-      this.logger.error(`No se pudo enviar el correo a ${message.to}: ${error.message}`);
+      this.logger.error(
+        `No se pudo enviar el correo a ${message.to}: ${error.message}`,
+      );
     }
   }
 }
