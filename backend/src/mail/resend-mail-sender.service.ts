@@ -8,17 +8,27 @@ import { MailMessage, MailSender } from './interfaces/mail-sender.interface';
 @Injectable()
 export class ResendMailSender implements MailSender {
   private readonly logger = new Logger('ResendMailSender');
-  private readonly resend: Resend;
+  // `new Resend(undefined)` lanza en el constructor del SDK: sin key no se
+  // crea el cliente (entornos sin correo configurado, como CI, no truenan).
+  private readonly resend: Resend | null;
   private readonly from: string;
 
   constructor(private readonly config: ConfigService) {
-    this.resend = new Resend(this.config.get<string>('RESEND_API_KEY'));
+    const apiKey = this.config.get<string>('RESEND_API_KEY');
+    this.resend = apiKey ? new Resend(apiKey) : null;
     this.from =
       this.config.get<string>('MAIL_FROM') ??
       'Luné by Kelin <onboarding@resend.dev>';
   }
 
   async send(message: MailMessage): Promise<void> {
+    if (!this.resend) {
+      this.logger.warn(
+        `RESEND_API_KEY no está configurada: no se envió el correo a ${message.to}`,
+      );
+      return;
+    }
+
     const { error } = await this.resend.emails.send({
       from: this.from,
       to: message.to,
