@@ -26,6 +26,12 @@ export class ScheduleDayDto {
   @Matches(HHMM, { message: 'La hora de cierre debe tener el formato HH:mm' })
   endTime: string;
 
+  /** Cada cuántos minutos empieza un turno (ej. 60 = citas en punto). */
+  @IsInt()
+  @Min(5)
+  @Max(240)
+  slotIntervalMin: number;
+
   @IsBoolean()
   isActive: boolean;
 }
