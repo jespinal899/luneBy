@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { CacheModule } from '@nestjs/cache-manager';
 import { APP_GUARD } from '@nestjs/core';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 
@@ -11,6 +12,7 @@ import { AuthModule } from './auth/auth.module';
 import { ServicesModule } from './services/services.module';
 import { AppointmentsModule } from './appointments/appointments.module';
 import { FilesModule } from './files/files.module';
+import { MailModule } from './mail/mail.module';
 
 const buildDbOptions = (config: ConfigService): TypeOrmModuleOptions => {
   const common: TypeOrmModuleOptions = {
@@ -51,6 +53,10 @@ const buildDbOptions = (config: ConfigService): TypeOrmModuleOptions => {
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
 
+    // Eventos de dominio (ej. "se creó una cita") desacoplados de quien
+    // los emite: AppointmentsService no sabe que existe el correo.
+    EventEmitterModule.forRoot(),
+
     // 100 peticiones por minuto y por IP (global).
     ThrottlerModule.forRoot([{ ttl: 60_000, limit: 100 }]),
 
@@ -68,6 +74,7 @@ const buildDbOptions = (config: ConfigService): TypeOrmModuleOptions => {
     ServicesModule,
     AppointmentsModule,
     FilesModule,
+    MailModule,
   ],
   controllers: [HealthController],
   providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],

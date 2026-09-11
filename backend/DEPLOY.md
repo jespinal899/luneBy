@@ -50,11 +50,16 @@ frontend en **Vercel**.
    - `HOST_API` → `https://luneby-api.onrender.com/api`
    - `SUPABASE_URL` → `https://<ref>.supabase.co`
    - `SUPABASE_SERVICE_ROLE_KEY` → *Project Settings → API → `service_role`*
+   - `RESEND_API_KEY` → creada en https://resend.com/api-keys
+   - `ADMIN_EMAIL` → correo de la administradora (recibe el aviso de cada cita nueva)
    - `JWT_SECRET` lo genera Render automáticamente.
 
    Con `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY` las imágenes de servicios se
    suben a Supabase Storage (bucket público `service-images`, creado solo); sin
    ellas, se guardan en el disco de Render (efímero).
+
+   Sin `RESEND_API_KEY` o `ADMIN_EMAIL`, la API sigue funcionando normal:
+   simplemente no se envía el correo de cita nueva.
 3. **Apply**. La API solo se conecta a la base; no crea tablas ni datos. El
    esquema y los datos base los pusiste con `supabase db push` (paso 1.3).
 
