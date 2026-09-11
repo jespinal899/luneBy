@@ -21,13 +21,24 @@ export class MailService {
     const adminEmail = this.config.get<string>('ADMIN_EMAIL');
     if (!adminEmail) return; // sin configurar: no hay a quién avisar
 
-    const frontendUrl =
-      this.config.get<string>('FRONTEND_URL') ?? 'http://localhost:5173';
     const { subject, html } = buildNewAppointmentEmail(
       appointment,
-      `${frontendUrl}/admin/citas`,
+      this.buildAdminPanelUrl(),
     );
 
     await this.sender.send({ to: adminEmail, subject, html });
+  }
+
+  /**
+   * Enlace al panel de citas admin. `FRONTEND_URL` puede traer varios
+   * orígenes separados por coma (mismo formato que usa el CORS de main.ts) y
+   * a veces una barra final — se toma el primero y se arma la ruta con
+   * `URL` para no terminar con dobles barras ni la coma incluida.
+   */
+  private buildAdminPanelUrl(): string {
+    const raw =
+      this.config.get<string>('FRONTEND_URL') ?? 'http://localhost:5173';
+    const base = raw.split(',')[0].trim();
+    return new URL('/admin/citas', base).toString();
   }
 }
