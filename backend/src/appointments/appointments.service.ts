@@ -3,6 +3,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Not, QueryFailedError, Repository } from 'typeorm';
 
@@ -10,6 +11,10 @@ import { User } from '../auth/entities/user.entity';
 import { Service } from '../services/entities/service.entity';
 import { CreateAppointmentDto } from './dto';
 import { Appointment, AppointmentItem, AppointmentStatus } from './entities';
+import {
+  APPOINTMENT_CREATED_EVENT,
+  AppointmentCreatedEvent,
+} from './events/appointment-created.event';
 import { overlaps, toHHMM, toMinutes } from './helpers/time.helper';
 import { ScheduleService } from './schedule.service';
 import { TimeOffService } from './time-off.service';
@@ -30,6 +35,7 @@ export class AppointmentsService {
     private readonly itemRepository: Repository<AppointmentItem>,
     private readonly scheduleService: ScheduleService,
     private readonly timeOffService: TimeOffService,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   /**
@@ -154,6 +160,11 @@ export class AppointmentsService {
       }
       throw error;
     }
+
+    this.eventEmitter.emit(
+      APPOINTMENT_CREATED_EVENT,
+      new AppointmentCreatedEvent(appointment),
+    );
 
     return appointment;
   }

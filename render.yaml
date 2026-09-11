@@ -29,3 +29,7 @@ services:
         sync: false
       - key: HOST_API # https://luneby-api.onrender.com/api
         sync: false
+      - key: RESEND_API_KEY # https://resend.com/api-keys
+        sync: false
+      - key: ADMIN_EMAIL # a quién le llega el aviso de cita nueva
+        sync: false

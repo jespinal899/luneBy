@@ -1,4 +1,5 @@
 import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
@@ -16,6 +17,7 @@ describe('AppointmentsService · getAvailability', () => {
   const itemRepository = { create: jest.fn((x) => x) };
   const scheduleService = { getActiveRulesForWeekday: jest.fn() };
   const timeOffService = { getTimeOffForDate: jest.fn() };
+  const eventEmitter = { emit: jest.fn() };
 
   const activeService = (durationMin = 60) => ({
     id: 's1',
@@ -55,6 +57,7 @@ describe('AppointmentsService · getAvailability', () => {
         },
         { provide: ScheduleService, useValue: scheduleService },
         { provide: TimeOffService, useValue: timeOffService },
+        { provide: EventEmitter2, useValue: eventEmitter },
       ],
     }).compile();
 
