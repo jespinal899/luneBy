@@ -14,9 +14,12 @@ export const CustomLogo = ({ className }: Props) => {
                 src={logoby}
                 alt="Logo"
                 width={480}
-                height={480}
+                height={240}
                 fetchPriority="high"
-                className={cn('w-auto object-contain', className ?? 'h-40')}
+                className={cn(
+                    'w-auto max-w-full object-contain',
+                    className ?? 'h-16',
+                )}
             />
         </Link>
     );
