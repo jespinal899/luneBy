@@ -4,21 +4,18 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { Service } from '../services/entities/service.entity';
 import { AppointmentsService } from './appointments.service';
-import {
-  Appointment,
-  AppointmentItem,
-  AvailabilityRule,
-  TimeOff,
-} from './entities';
+import { Appointment, AppointmentItem } from './entities';
+import { ScheduleService } from './schedule.service';
+import { TimeOffService } from './time-off.service';
 
 describe('AppointmentsService · getAvailability', () => {
   let service: AppointmentsService;
 
   const appointmentRepository = { find: jest.fn() };
-  const ruleRepository = { find: jest.fn() };
-  const timeOffRepository = { find: jest.fn() };
   const serviceRepository = { findOneBy: jest.fn(), findBy: jest.fn() };
   const itemRepository = { create: jest.fn((x) => x) };
+  const scheduleService = { getActiveRulesForWeekday: jest.fn() };
+  const timeOffService = { getTimeOffForDate: jest.fn() };
 
   const activeService = (durationMin = 60) => ({
     id: 's1',
@@ -41,8 +38,8 @@ describe('AppointmentsService · getAvailability', () => {
   beforeEach(async () => {
     jest.clearAllMocks();
     appointmentRepository.find.mockResolvedValue([]);
-    ruleRepository.find.mockResolvedValue([]);
-    timeOffRepository.find.mockResolvedValue([]);
+    scheduleService.getActiveRulesForWeekday.mockResolvedValue([]);
+    timeOffService.getTimeOffForDate.mockResolvedValue([]);
 
     const moduleRef = await Test.createTestingModule({
       providers: [
@@ -51,16 +48,13 @@ describe('AppointmentsService · getAvailability', () => {
           provide: getRepositoryToken(Appointment),
           useValue: appointmentRepository,
         },
-        {
-          provide: getRepositoryToken(AvailabilityRule),
-          useValue: ruleRepository,
-        },
-        { provide: getRepositoryToken(TimeOff), useValue: timeOffRepository },
         { provide: getRepositoryToken(Service), useValue: serviceRepository },
         {
           provide: getRepositoryToken(AppointmentItem),
           useValue: itemRepository,
         },
+        { provide: ScheduleService, useValue: scheduleService },
+        { provide: TimeOffService, useValue: timeOffService },
       ],
     }).compile();
 
@@ -86,13 +80,13 @@ describe('AppointmentsService · getAvailability', () => {
 
   it('devuelve [] si no hay regla de disponibilidad para ese día', async () => {
     serviceRepository.findOneBy.mockResolvedValue(activeService());
-    ruleRepository.find.mockResolvedValue([]);
+    scheduleService.getActiveRulesForWeekday.mockResolvedValue([]);
     expect(await service.getAvailability(WEDNESDAY, 's1')).toEqual([]);
   });
 
   it('genera slots dentro de la franja respetando la duración', async () => {
     serviceRepository.findOneBy.mockResolvedValue(activeService(60));
-    ruleRepository.find.mockResolvedValue([
+    scheduleService.getActiveRulesForWeekday.mockResolvedValue([
       { startTime: '09:00', endTime: '12:00', slotIntervalMin: 30 },
     ]);
     // 09:00..12:00, duración 60, cada 30 => 09:00, 09:30, 10:00, 10:30, 11:00
@@ -107,7 +101,7 @@ describe('AppointmentsService · getAvailability', () => {
 
   it('descarta los slots que se solapan con una cita existente', async () => {
     serviceRepository.findOneBy.mockResolvedValue(activeService(60));
-    ruleRepository.find.mockResolvedValue([
+    scheduleService.getActiveRulesForWeekday.mockResolvedValue([
       { startTime: '09:00', endTime: '12:00', slotIntervalMin: 30 },
     ]);
     appointmentRepository.find.mockResolvedValue([
@@ -122,10 +116,10 @@ describe('AppointmentsService · getAvailability', () => {
 
   it('devuelve [] si hay un bloqueo de día completo', async () => {
     serviceRepository.findOneBy.mockResolvedValue(activeService(60));
-    ruleRepository.find.mockResolvedValue([
+    scheduleService.getActiveRulesForWeekday.mockResolvedValue([
       { startTime: '09:00', endTime: '18:00', slotIntervalMin: 30 },
     ]);
-    timeOffRepository.find.mockResolvedValue([
+    timeOffService.getTimeOffForDate.mockResolvedValue([
       { startTime: null, endTime: null },
     ]);
     expect(await service.getAvailability(WEDNESDAY, 's1')).toEqual([]);

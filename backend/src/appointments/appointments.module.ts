@@ -11,10 +11,12 @@ import {
   AvailabilityRule,
   TimeOff,
 } from './entities';
+import { ScheduleService } from './schedule.service';
+import { TimeOffService } from './time-off.service';
 
 @Module({
   controllers: [AppointmentsController],
-  providers: [AppointmentsService],
+  providers: [AppointmentsService, ScheduleService, TimeOffService],
   imports: [
     TypeOrmModule.forFeature([
       Appointment,
@@ -25,6 +27,11 @@ import {
     ServicesModule,
     AuthModule,
   ],
-  exports: [AppointmentsService, TypeOrmModule],
+  exports: [
+    AppointmentsService,
+    ScheduleService,
+    TimeOffService,
+    TypeOrmModule,
+  ],
 })
 export class AppointmentsModule {}

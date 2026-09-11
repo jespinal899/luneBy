@@ -25,11 +25,17 @@ import {
   UpdateScheduleDto,
 } from './dto';
 import { AppointmentStatus } from './entities';
+import { ScheduleService } from './schedule.service';
+import { TimeOffService } from './time-off.service';
 
 @ApiTags('Appointments')
 @Controller('appointments')
 export class AppointmentsController {
-  constructor(private readonly appointmentsService: AppointmentsService) {}
+  constructor(
+    private readonly appointmentsService: AppointmentsService,
+    private readonly scheduleService: ScheduleService,
+    private readonly timeOffService: TimeOffService,
+  ) {}
 
   /** Horas libres para una fecha y un servicio. */
   @Get('availability')
@@ -76,7 +82,7 @@ export class AppointmentsController {
   @ApiBearerAuth()
   @Header('Cache-Control', 'private, no-cache')
   getSchedule() {
-    return this.appointmentsService.getSchedule();
+    return this.scheduleService.getSchedule();
   }
 
   /** Reemplaza el horario semanal completo. */
@@ -84,7 +90,7 @@ export class AppointmentsController {
   @Auth(ValidRoles.admin)
   @ApiBearerAuth()
   replaceSchedule(@Body() dto: UpdateScheduleDto) {
-    return this.appointmentsService.replaceSchedule(dto.days);
+    return this.scheduleService.replaceSchedule(dto.days);
   }
 
   /** Días cerrados (desde hoy, o entre ?from= y ?to=). */
@@ -93,7 +99,7 @@ export class AppointmentsController {
   @ApiBearerAuth()
   @Header('Cache-Control', 'private, no-cache')
   listTimeOff(@Query('from') from?: string, @Query('to') to?: string) {
-    return this.appointmentsService.listTimeOff(from, to);
+    return this.timeOffService.listTimeOff(from, to);
   }
 
   /** Cierra un día completo. */
@@ -101,7 +107,7 @@ export class AppointmentsController {
   @Auth(ValidRoles.admin)
   @ApiBearerAuth()
   addTimeOff(@Body() dto: CreateTimeOffDto) {
-    return this.appointmentsService.addTimeOff(dto);
+    return this.timeOffService.addTimeOff(dto);
   }
 
   /** Reabre un día cerrado. */
@@ -109,7 +115,7 @@ export class AppointmentsController {
   @Auth(ValidRoles.admin)
   @ApiBearerAuth()
   removeTimeOff(@Param('id', ParseUUIDPipe) id: string) {
-    return this.appointmentsService.removeTimeOff(id);
+    return this.timeOffService.removeTimeOff(id);
   }
 
   // ---- Administración: citas ----
