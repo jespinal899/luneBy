@@ -72,3 +72,11 @@ export interface Appointment {
   user: User;
   createdAt: string;
 }
+
+/** Un día del horario semanal de atención. */
+export interface WeeklyScheduleDay {
+  weekday: number; // 0 = domingo ... 6 = sábado
+  startTime: string; // HH:mm
+  endTime: string; // HH:mm
+  isActive: boolean;
+}

@@ -1,6 +1,9 @@
 /**
  * Datos del estudio en un solo sitio (los usan el footer y la página de
  * contacto). Actualízalos aquí cuando tengas la info definitiva.
+ *
+ * El horario de atención NO vive aquí: es dinámico y lo define el admin en
+ * /admin/horario. Se consulta con `useSalonSchedule` + `formatScheduleLines`.
  */
 export const salon = {
   name: 'Luné by Kelin',
@@ -11,11 +14,6 @@ export const salon = {
   whatsapp: '50425252525',
   email: 'hola@lunebykelin.com',
   instagram: 'lune.bykelin',
-  hours: [
-    { days: 'Lunes a viernes', time: '5:30 p. m. – 10:00 p. m.' },
-    { days: 'Sábados', time: '5:30 p. m. – 10:00 p. m.' },
-    { days: 'Domingos', time: 'Solo con cita previa' },
-  ],
 } as const;
 
 export const whatsappLink = (message?: string) =>
