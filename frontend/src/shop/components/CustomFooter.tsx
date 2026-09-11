@@ -32,11 +32,6 @@ export const CustomFooter = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/galeria" className="hover:text-foreground">
-                  Galería
-                </Link>
-              </li>
-              <li>
                 <Link to="/nosotros" className="hover:text-foreground">
                   Nosotros
                 </Link>

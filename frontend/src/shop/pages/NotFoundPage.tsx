@@ -14,7 +14,7 @@ export const NotFoundPage = () => {
 
   return (
     <div className="flex min-h-svh flex-col items-center justify-center gap-4 bg-cream px-6 text-center">
-      <p className="font-display text-6xl text-gold">{is404 ? '404' : 'Ups'}</p>
+      <p className="font-display text-6xl text-brand">{is404 ? '404' : 'Ups'}</p>
       <h1 className="font-display text-2xl text-brand-dark">
         {is404 ? 'Página no encontrada' : 'Algo salió mal'}
       </h1>

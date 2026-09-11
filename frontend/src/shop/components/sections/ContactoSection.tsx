@@ -2,7 +2,6 @@ import { Link } from 'react-router';
 import { AtSign, CalendarCheck, Clock, MapPin, Phone } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import { Sparkle } from '@/components/Sparkle';
 import { formatScheduleLines } from '@/shop/lib/format-schedule';
 import { salon, whatsappLink } from '@/shop/lib/salon';
 import { useSalonSchedule } from '@/shop/hooks/use-salon-schedule';
@@ -15,8 +14,7 @@ export const ContactoSection = () => {
   return (
     <section id="contacto" className="scroll-mt-20 bg-cream">
       <div className="container mx-auto px-4 py-16 lg:px-8 lg:py-20">
-        <p className="flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.28em] text-brand/70">
-          <Sparkle className="h-3.5 w-3.5" />
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand">
           Contacto
         </p>
         <h2 className="mt-4 font-display text-4xl text-brand-dark sm:text-5xl">

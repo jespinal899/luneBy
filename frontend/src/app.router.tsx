@@ -14,7 +14,6 @@ import { NotFoundPage } from './shop/pages/NotFoundPage';
 import { AgendarPage } from './shop/pages/agendar/AgendarPage';
 import { MyAppointmentsPage } from './shop/pages/citas/MyAppointmentsPage';
 import { ContactoPage } from './shop/pages/contacto/ContactoPage';
-import { GaleriaPage } from './shop/pages/galeria/GaleriaPage';
 import { HomePage } from './shop/pages/home/HomePage';
 import { NosotrosPage } from './shop/pages/nosotros/NosotrosPage';
 import { PerfilPage } from './shop/pages/perfil/PerfilPage';
@@ -36,7 +35,6 @@ export const appRouter = createBrowserRouter([
       { path: 'shop/agendar', element: <AgendarPage /> },
       { path: 'shop', element: <ShopPage /> },
       { path: 'shop/:shop', element: <ShopPage /> },
-      { path: 'galeria', element: <GaleriaPage /> },
       { path: 'nosotros', element: <NosotrosPage /> },
       { path: 'contacto', element: <ContactoPage /> },
       {

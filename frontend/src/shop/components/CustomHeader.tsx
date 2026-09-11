@@ -19,7 +19,6 @@ import { MobileNav } from './MobileNav';
 export const navLinks = [
   { to: '/', label: 'Inicio' },
   { to: '/#servicios', label: 'Servicios' },
-  { to: '/#galeria', label: 'Galería' },
   { to: '/shop/agendar', label: 'Agendar' },
   { to: '/#nosotros', label: 'Nosotros' },
   { to: '/#contacto', label: 'Contacto' },
@@ -67,8 +66,7 @@ export const CustomHeader = () => {
   const linkClass = (isActive: boolean) =>
     cn(
       'text-sm font-medium text-brand-dark/75 transition-colors hover:text-brand',
-      isActive &&
-        'text-brand underline decoration-gold decoration-2 underline-offset-[6px]',
+      isActive && 'text-brand underline underline-offset-[6px]',
     );
 
   return (
