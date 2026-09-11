@@ -24,6 +24,14 @@ const DAY_NAMES = [
 ];
 const DAY_SHORT = ['D', 'L', 'M', 'M', 'J', 'V', 'S'];
 
+const INTERVAL_OPTIONS = [
+  { value: 15, label: 'Cada 15 min' },
+  { value: 30, label: 'Cada 30 min' },
+  { value: 60, label: 'Cada hora en punto' },
+  { value: 90, label: 'Cada 1h 30min' },
+  { value: 120, label: 'Cada 2 horas' },
+];
+
 const iso = (d: Date) =>
   `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(
     d.getDate(),
@@ -60,8 +68,9 @@ const WeeklySchedule = () => {
     <section className="rounded-xl border border-gray-200 bg-white p-6">
       <h2 className="text-lg font-semibold text-gray-900">Horario semanal</h2>
       <p className="mt-1 text-sm text-gray-500">
-        Marca los días que atiendes y sus horas. Las clientas solo verán
-        horarios dentro de estos rangos.
+        Marca los días que atiendes, el rango de horas y cada cuánto empieza
+        un turno (ej. cada hora en punto: 6:00 pm, 7:00 pm, 8:00 pm…). Las
+        clientas solo verán esas horas exactas como disponibles.
       </p>
 
       <div className="mt-5 space-y-2">
@@ -97,6 +106,21 @@ const WeeklySchedule = () => {
                 className="rounded-md border border-gray-300 px-2 py-1 disabled:opacity-40"
               />
             </div>
+
+            <select
+              value={d.slotIntervalMin}
+              disabled={!d.isActive}
+              onChange={(e) =>
+                set(d.weekday, { slotIntervalMin: Number(e.target.value) })
+              }
+              className="rounded-md border border-gray-300 px-2 py-1 text-sm disabled:opacity-40"
+            >
+              {INTERVAL_OPTIONS.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
 
             {!d.isActive && (
               <span className="text-xs text-gray-400">Cerrado</span>

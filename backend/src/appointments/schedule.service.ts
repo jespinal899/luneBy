@@ -23,6 +23,7 @@ export class ScheduleService {
         weekday,
         startTime: rule?.startTime ?? '17:30',
         endTime: rule?.endTime ?? '22:00',
+        slotIntervalMin: rule?.slotIntervalMin ?? 60,
         isActive: rule?.isActive ?? false,
       };
     });
@@ -31,9 +32,15 @@ export class ScheduleService {
   /** Reemplaza el horario semanal completo. */
   async replaceSchedule(days: ScheduleDayDto[]) {
     for (const d of days) {
-      if (d.isActive && toMinutes(d.startTime) >= toMinutes(d.endTime)) {
+      if (!d.isActive) continue;
+      if (toMinutes(d.startTime) >= toMinutes(d.endTime)) {
         throw new BadRequestException(
           'La hora de apertura debe ser anterior a la de cierre',
+        );
+      }
+      if (toMinutes(d.endTime) - toMinutes(d.startTime) < d.slotIntervalMin) {
+        throw new BadRequestException(
+          'El rango de atención es menor que el intervalo entre turnos',
         );
       }
     }
@@ -47,7 +54,7 @@ export class ScheduleService {
           weekday: d.weekday,
           startTime: d.startTime,
           endTime: d.endTime,
-          slotIntervalMin: 30,
+          slotIntervalMin: d.slotIntervalMin,
           isActive: true,
         }),
       );

@@ -4,6 +4,8 @@ export interface ScheduleDay {
   weekday: number; // 0 = domingo ... 6 = sábado
   startTime: string; // HH:mm
   endTime: string; // HH:mm
+  /** Cada cuántos minutos empieza un turno (ej. 60 = citas en punto). */
+  slotIntervalMin: number;
   isActive: boolean;
 }
 
