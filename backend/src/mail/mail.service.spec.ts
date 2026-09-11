@@ -53,4 +53,21 @@ describe('MailService', () => {
     expect(message.subject).toContain('Valentina Ríos');
     expect(message.html).toContain('Manicura rusa');
   });
+
+  it('arma el link del panel aunque FRONTEND_URL traiga varios orígenes o barra final', async () => {
+    config.get.mockImplementation((key: string) => {
+      if (key === 'ADMIN_EMAIL') return 'kelin@luneby.com';
+      if (key === 'FRONTEND_URL')
+        return 'https://www.jespinal03.casa/,https://otro.vercel.app';
+      return undefined;
+    });
+
+    await buildService().sendNewAppointmentNotification(appointment);
+
+    const [message] = (sender.send as jest.Mock).mock.calls[0];
+    expect(message.html).toContain(
+      'href="https://www.jespinal03.casa/admin/citas"',
+    );
+    expect(message.html).not.toContain('otro.vercel.app');
+  });
 });
