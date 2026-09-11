@@ -22,9 +22,7 @@ export class AppointmentCreatedListener {
   @OnEvent(APPOINTMENT_CREATED_EVENT)
   async handle(event: AppointmentCreatedEvent) {
     try {
-      await this.mailService.sendNewAppointmentNotification(
-        event.appointment,
-      );
+      await this.mailService.sendNewAppointmentNotification(event.appointment);
     } catch (error) {
       // Un fallo aquí nunca debe afectar la reserva: ya se guardó antes de
       // emitir el evento. Solo se registra para revisarlo.
