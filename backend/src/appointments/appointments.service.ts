@@ -4,41 +4,32 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import {
-  Between,
-  In,
-  IsNull,
-  MoreThanOrEqual,
-  Not,
-  QueryFailedError,
-  Repository,
-} from 'typeorm';
+import { In, Not, QueryFailedError, Repository } from 'typeorm';
 
 import { User } from '../auth/entities/user.entity';
 import { Service } from '../services/entities/service.entity';
-import { CreateAppointmentDto, CreateTimeOffDto, ScheduleDayDto } from './dto';
-import {
-  Appointment,
-  AppointmentItem,
-  AppointmentStatus,
-  AvailabilityRule,
-  TimeOff,
-} from './entities';
+import { CreateAppointmentDto } from './dto';
+import { Appointment, AppointmentItem, AppointmentStatus } from './entities';
 import { overlaps, toHHMM, toMinutes } from './helpers/time.helper';
+import { ScheduleService } from './schedule.service';
+import { TimeOffService } from './time-off.service';
 
+/**
+ * Reservas: disponibilidad, creación, y gestión propia/administrativa de
+ * citas. El horario semanal y los bloqueos de agenda viven en
+ * `ScheduleService` y `TimeOffService`; esta clase solo los consulta.
+ */
 @Injectable()
 export class AppointmentsService {
   constructor(
     @InjectRepository(Appointment)
     private readonly appointmentRepository: Repository<Appointment>,
-    @InjectRepository(AvailabilityRule)
-    private readonly ruleRepository: Repository<AvailabilityRule>,
-    @InjectRepository(TimeOff)
-    private readonly timeOffRepository: Repository<TimeOff>,
     @InjectRepository(Service)
     private readonly serviceRepository: Repository<Service>,
     @InjectRepository(AppointmentItem)
     private readonly itemRepository: Repository<AppointmentItem>,
+    private readonly scheduleService: ScheduleService,
+    private readonly timeOffService: TimeOffService,
   ) {}
 
   /**
@@ -61,9 +52,7 @@ export class AppointmentsService {
     const duration = service.durationMin + Math.max(0, extraMinutes);
     const weekday = new Date(`${date}T00:00:00`).getDay();
 
-    const rules = await this.ruleRepository.find({
-      where: { weekday, isActive: true },
-    });
+    const rules = await this.scheduleService.getActiveRulesForWeekday(weekday);
     if (rules.length === 0) return [];
 
     const busy: Array<[number, number]> = [];
@@ -75,7 +64,7 @@ export class AppointmentsService {
       busy.push([toMinutes(appt.startTime), toMinutes(appt.endTime)]);
     }
 
-    const timeOffs = await this.timeOffRepository.find({ where: { date } });
+    const timeOffs = await this.timeOffService.getTimeOffForDate(date);
     for (const off of timeOffs) {
       if (!off.startTime || !off.endTime) return []; // día completo bloqueado
       busy.push([toMinutes(off.startTime), toMinutes(off.endTime)]);
@@ -209,84 +198,5 @@ export class AppointmentsService {
     const appointment = await this.findOne(id);
     appointment.status = status;
     return this.appointmentRepository.save(appointment);
-  }
-
-  // ---- Horario de trabajo (admin) ----
-
-  /** Los 7 días de la semana; los que no tienen regla van desactivados. */
-  async getSchedule() {
-    const rules = await this.ruleRepository.find();
-    return Array.from({ length: 7 }, (_, weekday) => {
-      const rule = rules.find((r) => r.weekday === weekday);
-      return {
-        weekday,
-        startTime: rule?.startTime ?? '17:30',
-        endTime: rule?.endTime ?? '22:00',
-        isActive: rule?.isActive ?? false,
-      };
-    });
-  }
-
-  /** Reemplaza el horario semanal completo. */
-  async replaceSchedule(days: ScheduleDayDto[]) {
-    for (const d of days) {
-      if (d.isActive && toMinutes(d.startTime) >= toMinutes(d.endTime)) {
-        throw new BadRequestException(
-          'La hora de apertura debe ser anterior a la de cierre',
-        );
-      }
-    }
-
-    await this.ruleRepository.deleteAll();
-
-    const rows = days
-      .filter((d) => d.isActive)
-      .map((d) =>
-        this.ruleRepository.create({
-          weekday: d.weekday,
-          startTime: d.startTime,
-          endTime: d.endTime,
-          slotIntervalMin: 30,
-          isActive: true,
-        }),
-      );
-    if (rows.length) await this.ruleRepository.save(rows);
-
-    return this.getSchedule();
-  }
-
-  // ---- Días cerrados (admin) ----
-
-  listTimeOff(from?: string, to?: string) {
-    const where =
-      from && to
-        ? { date: Between(from, to) }
-        : from
-          ? { date: MoreThanOrEqual(from) }
-          : {};
-    return this.timeOffRepository.find({ where, order: { date: 'ASC' } });
-  }
-
-  /** Cierra un día completo. Si ya estaba cerrado, devuelve el registro. */
-  async addTimeOff(dto: CreateTimeOffDto) {
-    const existing = await this.timeOffRepository.findOneBy({
-      date: dto.date,
-      startTime: IsNull(),
-    });
-    if (existing) return existing;
-
-    return this.timeOffRepository.save(
-      this.timeOffRepository.create({
-        date: dto.date,
-        reason: dto.reason,
-        startTime: null,
-        endTime: null,
-      }),
-    );
-  }
-
-  async removeTimeOff(id: string) {
-    const result = await this.timeOffRepository.delete(id);
-    if (!result.affected) throw new NotFoundException('Bloqueo no encontrado');
   }
 }

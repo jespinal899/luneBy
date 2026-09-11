@@ -10,6 +10,7 @@ import {
 import { useUploadImage } from '@/admin/hooks/use-upload-image';
 import { apiErrorMessage } from '@/api/errors';
 import { Button } from '@/components/ui/button';
+import { formInputClass as inputClass } from '@/lib/form-styles';
 import type { ServiceInput } from '@/shop/api/services.actions';
 import { useService } from '@/shop/hooks/use-services';
 import { SERVICE_CATEGORIES } from '@/shop/lib/categories';
@@ -23,9 +24,6 @@ const emptyForm: ServiceInput = {
     image: '',
     isActive: true,
 };
-
-const inputClass =
-    'w-full rounded-lg border border-slate-300 px-4 py-2.5 transition-all focus:border-transparent focus:ring-2 focus:ring-slate-900/20';
 
 export const AdminProductPage = () => {
     const { id } = useParams();

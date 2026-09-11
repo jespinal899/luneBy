@@ -5,6 +5,7 @@ import { Link, useLocation, useNavigate, useSearchParams } from 'react-router';
 import { apiErrorMessage } from '@/api/errors';
 import { useAuth } from '@/auth/context/use-auth';
 import { Button } from '@/components/ui/button';
+import { formInputClass as inputClass } from '@/lib/form-styles';
 import { toQuoteItem } from '@/quote/quote-context';
 import { useQuote } from '@/quote/use-quote';
 import {
@@ -13,9 +14,6 @@ import {
 } from '@/shop/hooks/use-appointments';
 import { useServices } from '@/shop/hooks/use-services';
 import { formatDuration, formatLps } from '@/shop/lib/format';
-
-const inputClass =
-    'w-full rounded-lg border border-slate-300 px-4 py-2.5 focus:border-transparent focus:ring-2 focus:ring-slate-900/20';
 
 export const AgendarPage = () => {
     const [params] = useSearchParams();
