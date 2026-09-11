@@ -7,7 +7,6 @@ import {
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import { Sparkle } from '@/components/Sparkle';
 import heroImage from '@/assets/hero-nailart.webp';
 
 const valores = [
@@ -34,8 +33,7 @@ export const NosotrosSection = () => {
     <section id="nosotros" className="scroll-mt-20 bg-cream">
       <div className="container mx-auto grid items-center gap-12 px-4 py-16 lg:grid-cols-2 lg:px-8 lg:py-20">
         <div>
-          <p className="flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.28em] text-brand/70">
-            <Sparkle className="h-3.5 w-3.5" />
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand">
             Nosotros
           </p>
           <h2 className="mt-4 font-display text-4xl text-brand-dark sm:text-5xl">
@@ -57,7 +55,8 @@ export const NosotrosSection = () => {
           <img
             src={heroImage}
             alt="Trabajo de uñas de Luné by Kelin"
-            className="aspect-[4/5] w-full rounded-[42%_58%_62%_38%/48%_42%_58%_52%] object-cover shadow-xl shadow-brand/15"
+            loading="lazy"
+            className="aspect-[4/5] w-full rounded-2xl object-cover shadow-lg"
           />
         </div>
       </div>
