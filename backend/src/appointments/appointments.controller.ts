@@ -74,6 +74,14 @@ export class AppointmentsController {
     return this.appointmentsService.cancelOwn(id, user);
   }
 
+  /** Horario semanal vigente, para mostrar en el sitio (footer, contacto). */
+  @Get('schedule/public')
+  // Casi no cambia: caché de 5 minutos.
+  @Header('Cache-Control', 'public, max-age=300')
+  getPublicSchedule() {
+    return this.scheduleService.getSchedule();
+  }
+
   // ---- Administración: horario de trabajo ----
 
   /** Horario semanal (7 días). */

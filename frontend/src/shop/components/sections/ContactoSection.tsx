@@ -3,10 +3,15 @@ import { AtSign, CalendarCheck, Clock, MapPin, Phone } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Sparkle } from '@/components/Sparkle';
+import { formatScheduleLines } from '@/shop/lib/format-schedule';
 import { salon, whatsappLink } from '@/shop/lib/salon';
+import { useSalonSchedule } from '@/shop/hooks/use-salon-schedule';
 
 /** Sección "Contacto". Se usa en el home (ancla #contacto) y en /contacto. */
 export const ContactoSection = () => {
+  const { data: schedule } = useSalonSchedule();
+  const scheduleLines = schedule ? formatScheduleLines(schedule) : [];
+
   return (
     <section id="contacto" className="scroll-mt-20 bg-cream">
       <div className="container mx-auto px-4 py-16 lg:px-8 lg:py-20">
@@ -66,7 +71,7 @@ export const ContactoSection = () => {
             <div>
               <p className="font-semibold text-brand-dark">Horario</p>
               <ul className="mt-1 space-y-0.5 text-sm text-brand-dark/60">
-                {salon.hours.map((h) => (
+                {scheduleLines.map((h) => (
                   <li key={h.days}>
                     {h.days}: {h.time}
                   </li>

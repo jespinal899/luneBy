@@ -1,8 +1,13 @@
 import { Link } from 'react-router';
 
+import { formatScheduleLines } from '@/shop/lib/format-schedule';
 import { salon } from '@/shop/lib/salon';
+import { useSalonSchedule } from '@/shop/hooks/use-salon-schedule';
 
 export const CustomFooter = () => {
+  const { data: schedule } = useSalonSchedule();
+  const scheduleLines = schedule ? formatScheduleLines(schedule) : [];
+
   return (
     <footer className="mt-16 border-t px-4 py-12 lg:px-8">
       <div className="container mx-auto">
@@ -52,7 +57,7 @@ export const CustomFooter = () => {
           <div>
             <h4 className="mb-4 font-medium">Horario</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              {salon.hours.map((h) => (
+              {scheduleLines.map((h) => (
                 <li key={h.days}>
                   {h.days}: {h.time}
                 </li>
