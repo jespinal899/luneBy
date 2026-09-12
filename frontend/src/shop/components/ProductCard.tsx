@@ -1,9 +1,8 @@
+import { ArrowRight, Clock } from 'lucide-react';
 import { Link } from 'react-router';
 
 import type { CatalogItem } from '@/api/types';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { formatLps } from '../lib/format';
+import { formatDuration, formatLps } from '../lib/format';
 import { serviceImage } from '../lib/service-image';
 
 interface Props {
@@ -14,53 +13,45 @@ export const ProductCard = ({ item }: Props) => {
     const to = `/product/${item.id}`;
 
     return (
-        <Card className="group border-0 shadow-none product-card-hover">
-            <CardContent className="p-0">
-                <Link to={to} className="block">
-                    <div className="relative aspect-square overflow-hidden bg-muted rounded-lg">
-                        <img
-                            src={serviceImage(item.image, item.category)}
-                            alt={item.name}
-                            loading="lazy"
-                            decoding="async"
-                            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                        />
-                        <div className="image-overlay" />
-                    </div>
-                </Link>
+        <Link
+            to={to}
+            className="group flex flex-col overflow-hidden rounded-2xl border border-brand/10 bg-background transition-all duration-300 hover:-translate-y-0.5 hover:border-brand/25 hover:shadow-lg hover:shadow-brand/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
+        >
+            <div className="relative aspect-[4/3] overflow-hidden bg-muted">
+                <img
+                    src={serviceImage(item.image, item.category)}
+                    alt={item.name}
+                    loading="lazy"
+                    decoding="async"
+                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+                <span className="absolute left-3 top-3 rounded-full bg-background/90 px-2.5 py-1 text-[11px] font-medium uppercase tracking-wide text-brand-dark backdrop-blur">
+                    {item.category}
+                </span>
+            </div>
 
-                <div className="pt-6 px-4 pb-4 space-y-3">
-                    <div className="space-y-1">
-                        <Link to={to}>
-                            <h3 className="font-medium text-sm tracking-tight hover:underline">
-                                {item.name}
-                            </h3>
-                        </Link>
-                        <p className="text-xs text-muted-foreground uppercase">
-                            {item.category}
+            <div className="flex flex-1 flex-col gap-3 p-5">
+                <h3 className="font-medium leading-snug text-brand-dark">
+                    {item.name}
+                </h3>
+
+                <div className="mt-auto flex items-end justify-between gap-3 border-t border-brand/10 pt-4">
+                    <div>
+                        <p className="text-xl font-semibold text-brand-dark">
+                            {formatLps(item.price)}
+                        </p>
+                        <p className="mt-0.5 flex items-center gap-1.5 text-xs text-muted-foreground">
+                            <Clock className="h-3.5 w-3.5" />
+                            {formatDuration(item.durationMin)}
                         </p>
                     </div>
 
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <p className="font-semibold text-lg">
-                                {formatLps(item.price)}
-                            </p>
-                            <p className="text-xs text-muted-foreground">
-                                {item.durationMin} min
-                            </p>
-                        </div>
-                        <Button
-                            size="sm"
-                            variant="outline"
-                            render={<Link to={to} />}
-                            className="text-xs px-4 py-2 h-8"
-                        >
-                            Reservar
-                        </Button>
-                    </div>
+                    <span className="inline-flex items-center gap-1.5 text-sm font-medium text-brand transition-transform duration-300 group-hover:translate-x-0.5">
+                        Reservar
+                        <ArrowRight className="h-4 w-4" />
+                    </span>
                 </div>
-            </CardContent>
-        </Card>
+            </div>
+        </Link>
     );
 };

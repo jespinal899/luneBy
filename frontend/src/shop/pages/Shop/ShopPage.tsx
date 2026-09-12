@@ -36,12 +36,21 @@ export const ShopPage = () => {
     return (
         <section className="px-4 py-12 lg:px-8">
             <div className="container mx-auto">
-                <div className="mb-8 flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                        <h1 className="text-3xl font-light">Servicios</h1>
-                        {data && (
-                            <span className="text-muted-foreground">({data.count})</span>
-                        )}
+                <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
+                    <div>
+                        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand">
+                            Catálogo
+                        </p>
+                        <div className="mt-3 flex items-baseline gap-3">
+                            <h1 className="font-display text-4xl leading-tight text-brand-dark">
+                                Nuestros diseños
+                            </h1>
+                            {data && (
+                                <span className="text-muted-foreground">
+                                    ({data.count})
+                                </span>
+                            )}
+                        </div>
                     </div>
 
                     <div className="flex items-center gap-2">

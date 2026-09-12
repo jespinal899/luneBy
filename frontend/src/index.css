@@ -77,7 +77,9 @@ html {
   --secondary: oklch(0.96 0.02 300);
   --secondary-foreground: oklch(0.4 0.1 300);
   --muted: oklch(0.972 0.012 300);
-  --muted-foreground: oklch(0.53 0.03 300);
+  /* Texto secundario: se oscureció para que el cuerpo tenga contraste real
+     sobre blanco (antes quedaba lavado y costaba leerlo). */
+  --muted-foreground: oklch(0.46 0.035 300);
   --accent: oklch(0.93 0.07 95);
   --accent-foreground: oklch(0.42 0.06 90);
   --destructive: oklch(0.577 0.245 27.325);
