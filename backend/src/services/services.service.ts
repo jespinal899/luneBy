@@ -33,7 +33,17 @@ export class ServicesService {
     return service;
   }
 
-  async findAll(paginationDto: PaginationDto) {
+  /**
+   * Listado del catálogo. Por defecto solo devuelve los servicios visibles
+   * (`isActive`): los ocultos no deben salir en el sitio público ni gastar
+   * lugares del `limit` (antes se filtraban en el frontend DESPUÉS de
+   * paginar, así que un servicio visible podía quedar fuera de la página).
+   * El panel de administración pide `includeHidden` para verlos todos.
+   */
+  async findAll(
+    paginationDto: PaginationDto,
+    { includeHidden = false }: { includeHidden?: boolean } = {},
+  ) {
     const {
       page = 1,
       limit = 12,
@@ -54,6 +64,7 @@ export class ServicesService {
       price: priceFilter({ price, minPrice, maxPrice }),
       category: categories?.length ? In(categories) : undefined,
       name: q ? ILike(`%${q}%`) : undefined,
+      isActive: includeHidden ? undefined : true,
     };
 
     // `ORDER BY "name"` de Postgres es sensible a mayúsculas (las minúsculas

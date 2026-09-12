@@ -25,7 +25,8 @@ export const ShopPage = () => {
         price: params.get('price') ?? undefined,
     });
 
-    const services = (data?.products ?? []).filter((s) => s.isActive);
+    // El endpoint público ya devuelve solo los visibles (`isActive`).
+    const services = data?.products ?? [];
 
     const setViewMode = (mode: 'grid' | 'list') => {
         params.set('viewMode', mode);

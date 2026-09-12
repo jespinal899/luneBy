@@ -35,6 +35,17 @@ export const getService = async (term: string) => {
   return data;
 };
 
+/**
+ * Listado para el panel admin: incluye los servicios ocultos
+ * (`isActive: false`), que el endpoint público no devuelve.
+ */
+export const getServicesForAdmin = async (filters: ServiceFilters = {}) => {
+  const { data } = await http.get<ServicesPage>('/services/admin/all', {
+    params: toParams(filters),
+  });
+  return data;
+};
+
 // --- Administración ---
 
 export interface ServiceInput {

@@ -2,6 +2,7 @@ import { Pencil, PlusIcon, Trash2 } from 'lucide-react';
 import { Link, useSearchParams } from 'react-router';
 
 import { AdminTitle } from '@/admin/components/AdminTitle';
+import { useAdminServices } from '@/admin/hooks/use-admin-services';
 import { useDeleteService } from '@/admin/hooks/use-service-mutations';
 import { formatLps } from '@/shop/lib/format';
 import { CustomPagination } from '@/components/Custom/CustomPagination';
@@ -14,7 +15,6 @@ import {
     TableBody,
     TableCell,
 } from '@/components/ui/table';
-import { useServices } from '@/shop/hooks/use-services';
 import { serviceImage } from '@/shop/lib/service-image';
 
 const PAGE_SIZE = 10;
@@ -29,7 +29,10 @@ export const AdminProductsPage = () => {
     const [params] = useSearchParams();
     const page = Math.max(1, Number(params.get('page')) || 1);
 
-    const { data, isLoading, isError } = useServices({ page, limit: PAGE_SIZE });
+    const { data, isLoading, isError } = useAdminServices({
+        page,
+        limit: PAGE_SIZE,
+    });
     const deleteService = useDeleteService();
 
     const handleDelete = (id: string, name: string) => {

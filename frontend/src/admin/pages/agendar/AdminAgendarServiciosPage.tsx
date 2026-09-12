@@ -1,8 +1,8 @@
 import { CalendarCheck, CalendarX } from 'lucide-react';
 
 import { AdminTitle } from '@/admin/components/AdminTitle';
+import { useAdminServices } from '@/admin/hooks/use-admin-services';
 import { useUpdateServiceById } from '@/admin/hooks/use-service-mutations';
-import { useServices } from '@/shop/hooks/use-services';
 import { formatDuration, formatLps } from '@/shop/lib/format';
 
 /**
@@ -11,7 +11,7 @@ import { formatDuration, formatLps } from '@/shop/lib/format';
  * referencia; este módulo controla solo si se pueden agendar.
  */
 export const AdminAgendarServiciosPage = () => {
-    const { data, isLoading, isError } = useServices({ limit: 100 });
+    const { data, isLoading, isError } = useAdminServices({ limit: 100 });
     const toggle = useUpdateServiceById();
 
     const services = (data?.products ?? []).filter((s) => s.isActive);
