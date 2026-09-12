@@ -15,6 +15,16 @@ import {
 import { useServices } from '@/shop/hooks/use-services';
 import { formatDuration, formatLps } from '@/shop/lib/format';
 
+/** Encabezado numerado de cada paso del formulario de reserva. */
+const StepHeading = ({ number, title }: { number: number; title: string }) => (
+    <div className="flex items-center gap-3">
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand text-sm font-semibold text-brand-foreground">
+            {number}
+        </span>
+        <h2 className="font-display text-xl text-brand-dark">{title}</h2>
+    </div>
+);
+
 export const AgendarPage = () => {
     const [params] = useSearchParams();
     const navigate = useNavigate();
@@ -77,22 +87,25 @@ export const AgendarPage = () => {
     };
 
     return (
-        <div className="container mx-auto px-4 py-12 lg:px-8">
-            <h1 className="font-montserrat text-3xl tracking-tight">Agendar cita</h1>
-            <p className="mt-2 text-muted-foreground">
+        <div className="container mx-auto px-4 py-14 lg:px-8">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand">
+                Reserva en línea
+            </p>
+            <h1 className="mt-3 font-display text-4xl leading-tight text-brand-dark sm:text-5xl">
+                Agendar cita
+            </h1>
+            <p className="mt-4 max-w-xl text-lg leading-relaxed text-muted-foreground">
                 Elige los servicios que quieres, revisa tu cotización y reserva
                 una hora.
             </p>
 
-            <div className="mt-10 grid gap-10 lg:grid-cols-3">
+            <div className="mt-14 grid gap-12 lg:grid-cols-3">
                 {/* Formulario */}
-                <div className="space-y-8 lg:col-span-2">
+                <div className="space-y-12 lg:col-span-2">
                     {/* 1 · Servicios */}
                     <section>
-                        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-                            1 · Servicios
-                        </h2>
-                        <div className="grid gap-3 sm:grid-cols-2">
+                        <StepHeading number={1} title="Elige tus servicios" />
+                        <div className="mt-5 grid gap-3 sm:grid-cols-2">
                             {services.map((s) => {
                                 const selected = quote.isInQuote(s.id);
                                 return (
@@ -103,14 +116,14 @@ export const AgendarPage = () => {
                                             quote.toggle(toQuoteItem(s));
                                             setSlot('');
                                         }}
-                                        className={`flex items-start justify-between gap-3 rounded-xl border p-4 text-left transition-colors ${
+                                        className={`flex items-start justify-between gap-3 rounded-xl border p-4 text-left transition-all ${
                                             selected
                                                 ? 'border-brand bg-brand/5 ring-1 ring-brand'
-                                                : 'border-slate-200 hover:border-slate-300'
+                                                : 'border-brand/15 hover:border-brand/40 hover:bg-brand/5'
                                         }`}
                                     >
                                         <span className="min-w-0">
-                                            <span className="block font-medium">
+                                            <span className="block font-medium text-brand-dark">
                                                 {s.name}
                                             </span>
                                             <span className="mt-1 block text-sm text-muted-foreground">
@@ -119,10 +132,10 @@ export const AgendarPage = () => {
                                             </span>
                                         </span>
                                         <span
-                                            className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border ${
+                                            className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border transition-colors ${
                                                 selected
                                                     ? 'border-brand bg-brand text-brand-foreground'
-                                                    : 'border-slate-300 text-slate-400'
+                                                    : 'border-brand/30 text-brand/50'
                                             }`}
                                         >
                                             {selected ? (
@@ -138,12 +151,11 @@ export const AgendarPage = () => {
                     </section>
 
                     {/* 2 · Fecha y hora */}
-                    <section className="space-y-4">
-                        <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-                            2 · Fecha y hora
-                        </h2>
-                        <div>
-                            <label className="mb-2 block text-sm font-medium">
+                    <section>
+                        <StepHeading number={2} title="Fecha y hora" />
+                        <div className="mt-5 space-y-6">
+                        <div className="max-w-xs">
+                            <label className="mb-2 block text-sm font-medium text-brand-dark">
                                 Fecha
                             </label>
                             <input
@@ -159,16 +171,16 @@ export const AgendarPage = () => {
                         </div>
 
                         <div>
-                            <label className="mb-2 block text-sm font-medium">
+                            <label className="mb-2 block text-sm font-medium text-brand-dark">
                                 Horarios disponibles
                             </label>
                             {quote.count === 0 || !date ? (
-                                <p className="text-sm text-muted-foreground">
+                                <p className="rounded-xl border border-dashed border-brand/20 px-4 py-6 text-center text-sm text-muted-foreground">
                                     Elige al menos un servicio y una fecha para ver
                                     los horarios.
                                 </p>
                             ) : loadingSlots ? (
-                                <p className="text-sm text-muted-foreground">
+                                <p className="rounded-xl border border-dashed border-brand/20 px-4 py-6 text-center text-sm text-muted-foreground">
                                     Buscando horarios…
                                 </p>
                             ) : slotsError ? (
@@ -176,31 +188,32 @@ export const AgendarPage = () => {
                                     No se pudieron cargar los horarios.
                                 </p>
                             ) : (slots?.length ?? 0) === 0 ? (
-                                <p className="text-sm text-muted-foreground">
+                                <p className="rounded-xl border border-dashed border-brand/20 px-4 py-6 text-center text-sm text-muted-foreground">
                                     No hay horarios libres ese día. Prueba con otra
                                     fecha.
                                 </p>
                             ) : (
-                                <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
+                                <div className="grid grid-cols-3 gap-2 sm:grid-cols-5">
                                     {slots?.map((s) => (
-                                        <Button
+                                        <button
                                             key={s}
                                             type="button"
-                                            variant={
-                                                slot === s ? 'default' : 'outline'
-                                            }
-                                            size="sm"
                                             onClick={() => setSlot(s)}
+                                            className={`rounded-lg border py-2.5 text-sm font-medium transition-all ${
+                                                slot === s
+                                                    ? 'border-brand bg-brand text-brand-foreground'
+                                                    : 'border-brand/15 text-brand-dark hover:border-brand/40 hover:bg-brand/5'
+                                            }`}
                                         >
                                             {s}
-                                        </Button>
+                                        </button>
                                     ))}
                                 </div>
                             )}
                         </div>
 
                         <div>
-                            <label className="mb-2 block text-sm font-medium">
+                            <label className="mb-2 block text-sm font-medium text-brand-dark">
                                 Notas (opcional)
                             </label>
                             <textarea
@@ -211,19 +224,22 @@ export const AgendarPage = () => {
                                 placeholder="Referencias de diseño, alergias, etc."
                             />
                         </div>
+                        </div>
                     </section>
                 </div>
 
                 {/* Cotización */}
-                <div className="h-fit rounded-2xl border border-slate-200 bg-white p-6 shadow-sm lg:sticky lg:top-24">
-                    <h2 className="text-lg font-semibold">Tu cotización</h2>
+                <div className="h-fit rounded-2xl border border-brand/15 bg-cream p-7 lg:sticky lg:top-24">
+                    <h2 className="font-display text-xl text-brand-dark">
+                        Tu cotización
+                    </h2>
 
                     {quote.count === 0 ? (
                         <p className="mt-4 text-sm text-muted-foreground">
                             Aún no has elegido servicios.
                         </p>
                     ) : (
-                        <div className="mt-4 space-y-2 text-sm">
+                        <div className="mt-5 space-y-2 text-sm">
                             {quote.items.map((it) => (
                                 <div
                                     key={it.serviceId}
@@ -249,7 +265,7 @@ export const AgendarPage = () => {
                                 </div>
                             ))}
 
-                            <div className="mt-3 flex justify-between border-t border-slate-200 pt-3 text-base font-semibold">
+                            <div className="mt-4 flex justify-between border-t border-brand/15 pt-4 text-lg font-semibold text-brand-dark">
                                 <span>Total</span>
                                 <span>{formatLps(quote.total)}</span>
                             </div>
