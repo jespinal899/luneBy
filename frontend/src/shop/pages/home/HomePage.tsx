@@ -27,7 +27,7 @@ const steps = [
 ];
 
 export const HomePage = () => {
-  const { data, isLoading } = useServices({ limit: 6 });
+  const { data, isLoading } = useServices({ limit: 6, sort: 'recent' });
   const services = (data?.products ?? []).filter((s) => s.isActive);
 
   return (

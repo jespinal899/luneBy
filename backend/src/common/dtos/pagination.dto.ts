@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsOptional, IsPositive, IsString, Min } from 'class-validator';
+import { IsIn, IsOptional, IsPositive, IsString, Min } from 'class-validator';
 
 /**
  * Parámetros de paginación y filtrado que comparten los listados.
@@ -40,4 +40,13 @@ export class PaginationDto {
   @Min(0)
   @Type(() => Number)
   maxPrice?: number;
+
+  /**
+   * Orden del listado: "name" (alfabético, default — para navegar el
+   * catálogo completo) o "recent" (más nuevos primero — para vistas previas
+   * tipo "lo último que agregamos").
+   */
+  @IsOptional()
+  @IsIn(['name', 'recent'])
+  sort?: 'name' | 'recent';
 }

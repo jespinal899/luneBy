@@ -42,6 +42,7 @@ export class ServicesService {
       price,
       minPrice,
       maxPrice,
+      sort = 'name',
     } = paginationDto;
 
     const categories = categorias
@@ -56,15 +57,21 @@ export class ServicesService {
     };
 
     // `ORDER BY "name"` de Postgres es sensible a mayúsculas (las minúsculas
-    // ordenan después de TODAS las mayúsculas), así que un servicio escrito
-    // en minúscula caía al final y se salía de la vista previa del home. Se
-    // ordena en memoria con `localeCompare` (case-insensitive) en vez de
-    // pedirle el orden a la base; el catálogo es chico, así que paginar acá
-    // sale más barato que armar el `ORDER BY LOWER(name)` con QueryBuilder.
+    // ordenan después de TODAS las mayúsculas); se ordena en memoria con
+    // `localeCompare` en vez de pedirle el orden a la base. El catálogo es
+    // chico, así que paginar acá sale más barato que un QueryBuilder.
+    //
+    // Aun así, alfabético siempre deja afuera de un `limit` chico (la vista
+    // previa del home) lo último del abecedario, sin importar qué tan nuevo
+    // sea — por eso existe `sort=recent`: created más nueva primero.
     const all = await this.serviceRepository.find({ where });
-    all.sort((a, b) =>
-      a.name.localeCompare(b.name, 'es', { sensitivity: 'base' }),
-    );
+    if (sort === 'recent') {
+      all.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+    } else {
+      all.sort((a, b) =>
+        a.name.localeCompare(b.name, 'es', { sensitivity: 'base' }),
+      );
+    }
 
     const count = all.length;
     const start = (page - 1) * limit;
