@@ -1,63 +1,71 @@
 import { useState } from 'react';
-import { Clock, SaveAll, Upload, X } from 'lucide-react';
+import { SaveAll, Upload, X } from 'lucide-react';
 import { Link, useNavigate, useParams } from 'react-router';
 
 import { AdminTitle } from '@/admin/components/AdminTitle';
 import {
-    useCreateService,
-    useUpdateService,
-} from '@/admin/hooks/use-service-mutations';
+    useAdminCatalog,
+    useCreateCatalogItem,
+    useUpdateCatalogItem,
+} from '@/admin/hooks/use-catalog-admin';
+import { useAdminServices } from '@/admin/hooks/use-admin-services';
 import { useUploadImage } from '@/admin/hooks/use-upload-image';
 import { apiErrorMessage } from '@/api/errors';
 import { Button } from '@/components/ui/button';
 import { formInputClass as inputClass } from '@/lib/form-styles';
-import type { ServiceInput } from '@/shop/api/services.actions';
-import { useService } from '@/shop/hooks/use-services';
-import { SERVICE_CATEGORIES } from '@/shop/lib/categories';
+import type { CatalogItemInput } from '@/shop/api/catalog.actions';
+import { formatDuration, formatLps } from '@/shop/lib/format';
 
-const emptyForm: ServiceInput = {
-    name: '',
-    price: 0,
-    durationMin: 60,
-    category: SERVICE_CATEGORIES[0],
+const emptyForm: CatalogItemInput = {
+    serviceId: '',
     description: '',
     image: '',
     isActive: true,
-    isBookable: true,
 };
 
+/**
+ * Alta/edición de una entrada del catálogo. El nombre no se escribe: se
+ * elige un servicio agendable del desplegable (los que se cargan en
+ * /admin/agendar) y de ahí se heredan nombre, precio y duración.
+ */
 export const AdminProductPage = () => {
     const { id } = useParams();
     const isNew = id === 'new';
     const navigate = useNavigate();
 
-    const { data: existing, isLoading } = useService(isNew ? undefined : id);
+    // Servicios agendables disponibles para el desplegable.
+    const { data: servicesData } = useAdminServices({ limit: 100 });
+    const services = servicesData?.products ?? [];
 
-    const [form, setForm] = useState<ServiceInput>(emptyForm);
+    // El detalle de la entrada a editar sale del mismo listado del panel.
+    const { data: catalogData, isLoading } = useAdminCatalog({ limit: 100 });
+    const existing = isNew
+        ? undefined
+        : catalogData?.products.find((i) => i.id === id);
+
+    const [form, setForm] = useState<CatalogItemInput>(emptyForm);
     const [hydratedFrom, setHydratedFrom] = useState<string | null>(null);
 
-    // Cuando llega el servicio a editar, se vuelca al formulario una sola vez.
+    // Cuando llega la entrada a editar, se vuelca al formulario una sola vez.
     if (existing && existing.id !== hydratedFrom) {
         setHydratedFrom(existing.id);
         setForm({
-            name: existing.name,
-            price: existing.price,
-            durationMin: existing.durationMin,
-            category: existing.category,
+            serviceId: existing.serviceId,
             description: existing.description ?? '',
             image: existing.image ?? '',
             isActive: existing.isActive,
-            isBookable: existing.isBookable,
         });
     }
 
-    const createMutation = useCreateService();
-    const updateMutation = useUpdateService(id ?? '');
+    const createMutation = useCreateCatalogItem();
+    const updateMutation = useUpdateCatalogItem(id ?? '');
     const mutation = isNew ? createMutation : updateMutation;
     const upload = useUploadImage();
 
-    const set = <K extends keyof ServiceInput>(field: K, value: ServiceInput[K]) =>
-        setForm((prev) => ({ ...prev, [field]: value }));
+    const set = <K extends keyof CatalogItemInput>(
+        field: K,
+        value: CatalogItemInput[K],
+    ) => setForm((prev) => ({ ...prev, [field]: value }));
 
     const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
@@ -72,13 +80,15 @@ export const AdminProductPage = () => {
         });
     };
 
-    const title = isNew ? 'Nuevo servicio' : 'Editar servicio';
+    const selected = services.find((s) => s.id === form.serviceId);
+
+    const title = isNew ? 'Nuevo diseño' : 'Editar diseño';
     const subtitle = isNew
-        ? 'Crea un servicio de uñas que tus clientas podrán agendar.'
-        : 'Actualiza la información de este servicio.';
+        ? 'Agrega un diseño al catálogo que ven tus clientas.'
+        : 'Actualiza la foto o el texto de este diseño.';
 
     if (!isNew && isLoading) {
-        return <p className="py-16 text-center text-slate-500">Cargando servicio…</p>;
+        return <p className="py-16 text-center text-slate-500">Cargando diseño…</p>;
     }
 
     return (
@@ -103,100 +113,73 @@ export const AdminProductPage = () => {
 
             {mutation.isError && (
                 <p className="mb-6 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">
-                    {apiErrorMessage(mutation.error, 'No se pudo guardar el servicio.')}
+                    {apiErrorMessage(mutation.error, 'No se pudo guardar el diseño.')}
                 </p>
             )}
 
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-                {/* Formulario principal */}
                 <div className="space-y-6 lg:col-span-2">
                     <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
                         <h2 className="mb-6 text-lg font-semibold text-slate-800">
-                            Información del servicio
+                            Información del diseño
                         </h2>
 
                         <div className="space-y-6">
                             <div>
                                 <label className="mb-2 block text-sm font-medium text-slate-700">
-                                    Nombre del servicio
-                                </label>
-                                <input
-                                    type="text"
-                                    required
-                                    value={form.name}
-                                    onChange={(e) => set('name', e.target.value)}
-                                    className={inputClass}
-                                    placeholder="Ej: Manicura Rusa Premium"
-                                />
-                            </div>
-
-                            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                                <div>
-                                    <label className="mb-2 block text-sm font-medium text-slate-700">
-                                        Precio (L.)
-                                    </label>
-                                    <div className="relative">
-                                        <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm font-medium text-slate-400">
-                                            L.
-                                        </span>
-                                        <input
-                                            type="number"
-                                            min={0}
-                                            step="1"
-                                            required
-                                            value={form.price}
-                                            onChange={(e) =>
-                                                set('price', parseFloat(e.target.value) || 0)
-                                            }
-                                            className={`${inputClass} pl-9`}
-                                            placeholder="0"
-                                        />
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <label className="mb-2 block text-sm font-medium text-slate-700">
-                                        Duración (minutos)
-                                    </label>
-                                    <div className="relative">
-                                        <Clock className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-                                        <input
-                                            type="number"
-                                            min={5}
-                                            step={5}
-                                            required
-                                            value={form.durationMin}
-                                            onChange={(e) =>
-                                                set(
-                                                    'durationMin',
-                                                    parseInt(e.target.value) || 0,
-                                                )
-                                            }
-                                            className={`${inputClass} pl-9`}
-                                            placeholder="60"
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div>
-                                <label className="mb-2 block text-sm font-medium text-slate-700">
-                                    Categoría
+                                    Servicio
                                 </label>
                                 <select
-                                    value={form.category}
-                                    onChange={(e) =>
-                                        set('category', e.target.value)
-                                    }
+                                    required
+                                    value={form.serviceId}
+                                    onChange={(e) => set('serviceId', e.target.value)}
                                     className={inputClass}
                                 >
-                                    {SERVICE_CATEGORIES.map((c) => (
-                                        <option key={c} value={c}>
-                                            {c}
+                                    <option value="" disabled>
+                                        Elige un servicio…
+                                    </option>
+                                    {services.map((s) => (
+                                        <option key={s.id} value={s.id}>
+                                            {s.name}
+                                            {s.isActive ? '' : ' (no agendable)'}
                                         </option>
                                     ))}
                                 </select>
+                                <p className="mt-2 text-xs text-slate-400">
+                                    Los servicios salen de{' '}
+                                    <Link
+                                        to="/admin/agendar"
+                                        className="underline hover:text-slate-600"
+                                    >
+                                        Agendar
+                                    </Link>
+                                    . De ahí se heredan el nombre, el precio y la
+                                    duración.
+                                </p>
                             </div>
+
+                            {selected && (
+                                <div className="flex flex-wrap gap-x-6 gap-y-1 rounded-lg bg-slate-50 p-3 text-sm text-slate-600">
+                                    <span>
+                                        Categoría:{' '}
+                                        <strong className="text-slate-800">
+                                            {selected.category}
+                                        </strong>
+                                    </span>
+                                    <span>
+                                        Precio:{' '}
+                                        <strong className="text-slate-800">
+                                            {formatLps(selected.price)}
+                                        </strong>
+                                    </span>
+                                    <span>
+                                        Duración:{' '}
+                                        <strong className="text-slate-800">
+                                            {formatDuration(selected.durationMin)}
+                                        </strong>
+                                    </span>
+                                </div>
+                            )}
 
                             <div>
                                 <label className="mb-2 block text-sm font-medium text-slate-700">
@@ -207,18 +190,17 @@ export const AdminProductPage = () => {
                                     onChange={(e) => set('description', e.target.value)}
                                     rows={5}
                                     className={`${inputClass} resize-none`}
-                                    placeholder="Describe en qué consiste el servicio y qué incluye."
+                                    placeholder="Describe este diseño en particular. Si lo dejas vacío se usa la descripción del servicio."
                                 />
                             </div>
                         </div>
                     </div>
                 </div>
 
-                {/* Barra lateral */}
                 <div className="space-y-6">
                     <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
                         <h2 className="mb-4 text-lg font-semibold text-slate-800">
-                            Imagen del servicio
+                            Foto del diseño
                         </h2>
 
                         {form.image ? (
@@ -249,7 +231,7 @@ export const AdminProductPage = () => {
                                 <p className="mt-2 text-sm font-medium text-slate-700">
                                     {upload.isPending
                                         ? 'Subiendo…'
-                                        : 'Sube una foto del resultado'}
+                                        : 'Sube la foto del diseño'}
                                 </p>
                                 <p className="text-xs text-slate-400">
                                     JPG, PNG o WEBP · hasta 5 MB
@@ -272,44 +254,25 @@ export const AdminProductPage = () => {
 
                     <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
                         <h2 className="mb-4 text-lg font-semibold text-slate-800">
-                            Disponibilidad
+                            Visibilidad
                         </h2>
 
-                        <div className="space-y-3">
-                            <label className="flex items-center justify-between rounded-lg bg-slate-50 p-3">
-                                <div>
-                                    <p className="text-sm font-medium text-slate-700">
-                                        Visible en el catálogo
-                                    </p>
-                                    <p className="text-xs text-slate-400">
-                                        Las clientas lo ven como referencia de diseño
-                                    </p>
-                                </div>
-                                <input
-                                    type="checkbox"
-                                    checked={form.isActive}
-                                    onChange={(e) => set('isActive', e.target.checked)}
-                                    className="h-5 w-5 accent-slate-900"
-                                />
-                            </label>
-
-                            <label className="flex items-center justify-between rounded-lg bg-slate-50 p-3">
-                                <div>
-                                    <p className="text-sm font-medium text-slate-700">
-                                        Disponible en Agendar
-                                    </p>
-                                    <p className="text-xs text-slate-400">
-                                        Las clientas pueden reservarlo en /shop/agendar
-                                    </p>
-                                </div>
-                                <input
-                                    type="checkbox"
-                                    checked={form.isBookable}
-                                    onChange={(e) => set('isBookable', e.target.checked)}
-                                    className="h-5 w-5 accent-slate-900"
-                                />
-                            </label>
-                        </div>
+                        <label className="flex items-center justify-between rounded-lg bg-slate-50 p-3">
+                            <div>
+                                <p className="text-sm font-medium text-slate-700">
+                                    Visible en el catálogo
+                                </p>
+                                <p className="text-xs text-slate-400">
+                                    Aparece en la página de servicios
+                                </p>
+                            </div>
+                            <input
+                                type="checkbox"
+                                checked={form.isActive}
+                                onChange={(e) => set('isActive', e.target.checked)}
+                                className="h-5 w-5 accent-slate-900"
+                            />
+                        </label>
                     </div>
                 </div>
             </div>
