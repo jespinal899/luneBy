@@ -1,3 +1,4 @@
+import { Transform } from 'class-transformer';
 import {
   IsBoolean,
   IsInt,
@@ -20,7 +21,7 @@ export class CreateServiceDto {
 
   @IsOptional()
   @IsString()
-  description?: string;
+  description?: string | null;
 
   @IsString()
   @MinLength(1)
@@ -30,9 +31,12 @@ export class CreateServiceDto {
   @IsPositive()
   durationMin: number;
 
+  // El admin puede quitar la imagen (el frontend manda "" para limpiarla);
+  // se normaliza a null antes de validar para no chocar con @IsUrl().
   @IsOptional()
   @IsUrl()
-  image?: string;
+  @Transform(({ value }) => (value === '' ? null : value))
+  image?: string | null;
 
   @IsOptional()
   @IsString()
