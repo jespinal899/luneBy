@@ -50,7 +50,7 @@ export class AppointmentsService {
   ): Promise<string[]> {
     const service = await this.serviceRepository.findOneBy({ id: serviceId });
     if (!service) throw new NotFoundException('Servicio no encontrado');
-    if (!service.isActive || !service.isBookable)
+    if (!service.isActive)
       throw new BadRequestException(
         'Ese servicio no está disponible para agendar',
       );
@@ -107,7 +107,7 @@ export class AppointmentsService {
 
     // Respeta el orden en que la clienta los eligió.
     const services = ids.map((id) => found.find((s) => s.id === id)!);
-    const inactive = services.find((s) => !s.isActive || !s.isBookable);
+    const inactive = services.find((s) => !s.isActive);
     if (inactive)
       throw new BadRequestException(
         `"${inactive.name}" no está disponible para agendar`,

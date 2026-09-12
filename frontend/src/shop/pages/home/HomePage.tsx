@@ -5,7 +5,7 @@ import { ProductsGrid } from '@/shop/components/ProductsGrid';
 import { ProductsGridSkeleton } from '@/shop/components/ProductsGridSkeleton';
 import { ContactoSection } from '@/shop/components/sections/ContactoSection';
 import { NosotrosSection } from '@/shop/components/sections/NosotrosSection';
-import { useServices } from '@/shop/hooks/use-services';
+import { useCatalog } from '@/shop/hooks/use-catalog';
 import heroImage from '@/assets/hero-nailart.webp';
 
 const steps = [
@@ -27,9 +27,9 @@ const steps = [
 ];
 
 export const HomePage = () => {
-  const { data, isLoading } = useServices({ limit: 6, sort: 'recent' });
-  // El endpoint público ya devuelve solo los visibles (`isActive`).
-  const services = data?.products ?? [];
+  const { data, isLoading } = useCatalog({ limit: 6, sort: 'recent' });
+  // El endpoint público ya devuelve solo las entradas visibles.
+  const items = data?.products ?? [];
 
   return (
     <>
@@ -140,7 +140,7 @@ export const HomePage = () => {
           {isLoading ? (
             <ProductsGridSkeleton />
           ) : (
-            <ProductsGrid services={services} />
+            <ProductsGrid items={items} />
           )}
         </div>
       </section>

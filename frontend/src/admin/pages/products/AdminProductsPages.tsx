@@ -2,9 +2,10 @@ import { Pencil, PlusIcon, Trash2 } from 'lucide-react';
 import { Link, useSearchParams } from 'react-router';
 
 import { AdminTitle } from '@/admin/components/AdminTitle';
-import { useAdminServices } from '@/admin/hooks/use-admin-services';
-import { useDeleteService } from '@/admin/hooks/use-service-mutations';
-import { formatLps } from '@/shop/lib/format';
+import {
+    useAdminCatalog,
+    useDeleteCatalogItem,
+} from '@/admin/hooks/use-catalog-admin';
 import { CustomPagination } from '@/components/Custom/CustomPagination';
 import { Button } from '@/components/ui/button';
 import {
@@ -15,34 +16,31 @@ import {
     TableBody,
     TableCell,
 } from '@/components/ui/table';
+import { formatLps } from '@/shop/lib/format';
 import { serviceImage } from '@/shop/lib/service-image';
 
 const PAGE_SIZE = 10;
 
-const formatDuration = (min: number) => {
-    const h = Math.floor(min / 60);
-    const m = min % 60;
-    return h ? `${h}h${m ? ` ${m}min` : ''}` : `${m} min`;
-};
-
+/**
+ * Catálogo: los diseños que se ven en /shop y en #servicios. Cada entrada
+ * apunta a un servicio agendable (de ahí saca nombre, precio y duración) y
+ * aporta su propia foto y descripción.
+ */
 export const AdminProductsPage = () => {
     const [params] = useSearchParams();
     const page = Math.max(1, Number(params.get('page')) || 1);
 
-    const { data, isLoading, isError } = useAdminServices({
+    const { data, isLoading, isError } = useAdminCatalog({
         page,
         limit: PAGE_SIZE,
     });
-    const deleteService = useDeleteService();
+    const deleteItem = useDeleteCatalogItem();
 
     const handleDelete = (id: string, name: string) => {
-        if (!window.confirm(`¿Eliminar el servicio "${name}"?`)) return;
-        deleteService.mutate(id, {
-            onError: () =>
-                window.alert(
-                    'No se pudo eliminar. Puede tener citas asociadas; ' +
-                        'márcalo como oculto en su lugar.',
-                ),
+        if (!window.confirm(`¿Eliminar este diseño de "${name}" del catálogo?`))
+            return;
+        deleteItem.mutate(id, {
+            onError: () => window.alert('No se pudo eliminar el diseño.'),
         });
     };
 
@@ -50,76 +48,77 @@ export const AdminProductsPage = () => {
         <>
             <div className="flex items-center justify-between">
                 <AdminTitle
-                    title="Servicios"
-                    subtitle="Administra los servicios de uñas que tus clientas pueden agendar."
+                    title="Catálogo"
+                    subtitle="Los diseños que ven tus clientas en la página de servicios. Cada uno apunta a un servicio agendable y hereda su nombre, precio y duración."
                 />
 
                 <div className="mb-10 flex justify-end gap-4">
                     <Button render={<Link to="/admin/products/new" />}>
                         <PlusIcon />
-                        Nuevo servicio
+                        Nuevo diseño
                     </Button>
                 </div>
             </div>
 
             {isLoading ? (
-                <p className="py-16 text-center text-slate-500">Cargando servicios…</p>
+                <p className="py-16 text-center text-slate-500">Cargando catálogo…</p>
             ) : isError ? (
                 <p className="py-16 text-center text-red-600">
-                    No se pudieron cargar los servicios.
+                    No se pudo cargar el catálogo.
+                </p>
+            ) : data && data.products.length === 0 ? (
+                <p className="py-16 text-center text-slate-500">
+                    Todavía no hay diseños en el catálogo. Creá el primero con
+                    “Nuevo diseño”.
                 </p>
             ) : (
                 <>
-                    <Table className="mb-10 border border-gray-200 bg-white p-10 shadow-xs">
+                    <Table className="mb-10 border border-gray-200 bg-white shadow-xs">
                         <TableHeader>
                             <TableRow>
-                                <TableHead>Imagen</TableHead>
+                                <TableHead>Foto</TableHead>
                                 <TableHead>Servicio</TableHead>
                                 <TableHead>Categoría</TableHead>
-                                <TableHead>Duración</TableHead>
                                 <TableHead>Precio</TableHead>
                                 <TableHead>Estado</TableHead>
                                 <TableHead className="text-right">Acciones</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {data?.products.map((service) => (
-                                <TableRow key={service.id}>
+                            {data?.products.map((item) => (
+                                <TableRow key={item.id}>
                                     <TableCell>
                                         <img
-                                            src={serviceImage(service.image, service.category)}
-                                            alt={service.name}
+                                            src={serviceImage(item.image, item.category)}
+                                            alt={item.name}
                                             className="h-16 w-16 rounded-md object-cover"
                                         />
                                     </TableCell>
                                     <TableCell className="font-medium">
-                                        {service.name}
+                                        {item.name}
                                     </TableCell>
                                     <TableCell>
                                         <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-700">
-                                            {service.category}
+                                            {item.category}
                                         </span>
                                     </TableCell>
-                                    <TableCell>
-                                        {formatDuration(service.durationMin)}
-                                    </TableCell>
-                                    <TableCell>{formatLps(service.price)}</TableCell>
+                                    <TableCell>{formatLps(item.price)}</TableCell>
                                     <TableCell>
                                         <span
                                             className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${
-                                                service.isActive
+                                                item.isActive
                                                     ? 'bg-emerald-50 text-emerald-700'
                                                     : 'bg-slate-100 text-slate-500'
                                             }`}
                                         >
                                             <span
                                                 className={`h-1.5 w-1.5 rounded-full ${
-                                                    service.isActive
+                                                    item.isActive
                                                         ? 'bg-emerald-500'
                                                         : 'bg-slate-400'
                                                 }`}
                                             />
-                                            {service.isActive ? 'Disponible' : 'Oculto'}
+                                            {item.isActive ? 'Visible' : 'Oculto'}
                                         </span>
                                     </TableCell>
                                     <TableCell className="text-right">
@@ -127,7 +126,7 @@ export const AdminProductsPage = () => {
                                             variant="ghost"
                                             size="sm"
                                             render={
-                                                <Link to={`/admin/products/${service.id}`} />
+                                                <Link to={`/admin/products/${item.id}`} />
                                             }
                                         >
                                             <Pencil className="h-4 w-4" />
@@ -137,9 +136,9 @@ export const AdminProductsPage = () => {
                                             variant="ghost"
                                             size="sm"
                                             className="text-red-600 hover:text-red-700"
-                                            disabled={deleteService.isPending}
+                                            disabled={deleteItem.isPending}
                                             onClick={() =>
-                                                handleDelete(service.id, service.name)
+                                                handleDelete(item.id, item.name)
                                             }
                                         >
                                             <Trash2 className="h-4 w-4" />

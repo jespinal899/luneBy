@@ -14,7 +14,7 @@ export interface ServiceFilters {
 }
 
 /** Quita claves vacías / "any" para no ensuciar la query. */
-const toParams = (filters: ServiceFilters) => {
+export const toParams = (filters: ServiceFilters) => {
   const params: Record<string, string | number> = {};
   for (const [key, value] of Object.entries(filters)) {
     if (value === undefined || value === '' || value === 'any') continue;
@@ -54,14 +54,13 @@ export interface ServiceInput {
   category: string;
   durationMin: number;
   description?: string;
-  image?: string;
   isActive?: boolean;
-  isBookable?: boolean;
 }
 
 /**
- * `description`/`image` vacíos se mandan como `null` (no se omiten): así el
- * backend los limpia de verdad en vez de dejar el valor anterior intacto.
+ * `description` vacía se manda como `null` (no se omite): así el backend la
+ * limpia de verdad en vez de dejar el valor anterior intacto. La foto no va
+ * acá — vive en las entradas del catálogo.
  */
 const toBody = (input: ServiceInput) => ({
   name: input.name,
@@ -69,9 +68,7 @@ const toBody = (input: ServiceInput) => ({
   category: input.category,
   durationMin: input.durationMin,
   isActive: input.isActive ?? true,
-  isBookable: input.isBookable ?? true,
   description: input.description?.trim() || null,
-  image: input.image?.trim() || null,
 });
 
 export const createService = async (input: ServiceInput) => {

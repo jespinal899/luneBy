@@ -11,6 +11,7 @@ import { CommonModule } from './common/common.module';
 import { AuthModule } from './auth/auth.module';
 import { ServicesModule } from './services/services.module';
 import { AppointmentsModule } from './appointments/appointments.module';
+import { CatalogModule } from './catalog/catalog.module';
 import { FilesModule } from './files/files.module';
 import { MailModule } from './mail/mail.module';
 
@@ -73,6 +74,7 @@ const buildDbOptions = (config: ConfigService): TypeOrmModuleOptions => {
     AuthModule,
     ServicesModule,
     AppointmentsModule,
+    CatalogModule,
     FilesModule,
     MailModule,
   ],

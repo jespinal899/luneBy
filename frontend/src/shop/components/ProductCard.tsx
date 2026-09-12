@@ -1,17 +1,17 @@
-import { Link } from "react-router";
+import { Link } from 'react-router';
 
-import type { Service } from "@/api/types";
-import { Card, CardContent } from "@/components/ui/card";
-import { AddToQuoteButton } from "@/quote/AddToQuoteButton";
-import { formatLps } from "../lib/format";
-import { serviceImage } from "../lib/service-image";
+import type { CatalogItem } from '@/api/types';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { formatLps } from '../lib/format';
+import { serviceImage } from '../lib/service-image';
 
 interface Props {
-    service: Service;
+    item: CatalogItem;
 }
 
-export const ProductCard = ({ service }: Props) => {
-    const to = `/product/${service.slug}`;
+export const ProductCard = ({ item }: Props) => {
+    const to = `/product/${item.id}`;
 
     return (
         <Card className="group border-0 shadow-none product-card-hover">
@@ -19,8 +19,8 @@ export const ProductCard = ({ service }: Props) => {
                 <Link to={to} className="block">
                     <div className="relative aspect-square overflow-hidden bg-muted rounded-lg">
                         <img
-                            src={serviceImage(service.image, service.category)}
-                            alt={service.name}
+                            src={serviceImage(item.image, item.category)}
+                            alt={item.name}
                             loading="lazy"
                             decoding="async"
                             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
@@ -33,35 +33,31 @@ export const ProductCard = ({ service }: Props) => {
                     <div className="space-y-1">
                         <Link to={to}>
                             <h3 className="font-medium text-sm tracking-tight hover:underline">
-                                {service.name}
+                                {item.name}
                             </h3>
                         </Link>
                         <p className="text-xs text-muted-foreground uppercase">
-                            {service.category}
+                            {item.category}
                         </p>
                     </div>
 
-                    <div className="flex items-end justify-between">
+                    <div className="flex items-center justify-between">
                         <div>
                             <p className="font-semibold text-lg">
-                                {formatLps(service.price)}
+                                {formatLps(item.price)}
                             </p>
                             <p className="text-xs text-muted-foreground">
-                                {service.durationMin} min
+                                {item.durationMin} min
                             </p>
                         </div>
-                        <div className="flex flex-col items-end gap-1.5">
-                            <AddToQuoteButton
-                                service={service}
-                                className="h-8 px-3 text-xs"
-                            />
-                            <Link
-                                to={to}
-                                className="text-xs text-muted-foreground hover:underline"
-                            >
-                                Ver detalle
-                            </Link>
-                        </div>
+                        <Button
+                            size="sm"
+                            variant="outline"
+                            render={<Link to={to} />}
+                            className="text-xs px-4 py-2 h-8"
+                        >
+                            Reservar
+                        </Button>
                     </div>
                 </div>
             </CardContent>

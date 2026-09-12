@@ -30,10 +30,37 @@ export interface Service {
   durationMin: number;
   image: string | null;
   slug: string;
-  /** Visible en el catálogo público (referencia de diseños). */
+  /** Disponible para agendar en /shop/agendar. */
   isActive: boolean;
-  /** Aparece como opción para agendar en /shop/agendar. */
-  isBookable: boolean;
+}
+
+/**
+ * Una entrada del catálogo (/shop y #servicios): la foto de un diseño con
+ * los datos del servicio agendable al que corresponde ya mezclados — el
+ * backend los aplana, acá no hay que ir a buscarlos por separado.
+ */
+export interface CatalogItem {
+  /** Id de la entrada del catálogo (no del servicio). */
+  id: string;
+  /** Servicio agendable al que corresponde. */
+  serviceId: string;
+  name: string;
+  price: number;
+  durationMin: number;
+  category: string;
+  slug: string;
+  image: string | null;
+  description: string | null;
+  isActive: boolean;
+  createdAt: string;
+}
+
+/** Respuesta paginada de GET /catalog (la lista va bajo `products`). */
+export interface CatalogPage {
+  count: number;
+  page: number;
+  pages: number;
+  products: CatalogItem[];
 }
 
 /** Respuesta paginada de GET /services (el listado va bajo `products`). */

@@ -21,21 +21,20 @@ export const AgendarPage = () => {
     const location = useLocation();
     const { status } = useAuth();
 
+    // El endpoint público ya devuelve solo los servicios disponibles.
     const { data: servicesData } = useServices({ limit: 100 });
-    // El endpoint público ya filtra los ocultos (`isActive`); acá solo queda
-    // quedarse con los que el admin marcó como agendables.
-    const services = (servicesData?.products ?? []).filter((s) => s.isBookable);
+    const services = servicesData?.products ?? [];
 
     const quote = useQuote();
 
-    // Enlace antiguo /shop/agendar?serviceId=… → lo añade a la cotización.
+    // Enlace /shop/agendar?serviceId=… (desde el detalle de un diseño) → lo
+    // añade a la cotización.
     const preselectId = params.get('serviceId');
     const { add, isInQuote } = quote;
     useEffect(() => {
         if (!preselectId || !servicesData) return;
         const svc = servicesData.products.find((s) => s.id === preselectId);
-        if (svc && svc.isBookable && !isInQuote(svc.id))
-            add(toQuoteItem(svc));
+        if (svc && !isInQuote(svc.id)) add(toQuoteItem(svc));
     }, [preselectId, servicesData, add, isInQuote]);
 
     const [date, setDate] = useState('');

@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { CustomPagination } from '@/components/Custom/CustomPagination';
 import { FilterSidebar } from '@/shop/components/FilterSidebar';
 import { ProductsGrid } from '@/shop/components/ProductsGrid';
-import { useServices } from '@/shop/hooks/use-services';
+import { useCatalog } from '@/shop/hooks/use-catalog';
 
 const PAGE_SIZE = 9;
 
@@ -17,7 +17,7 @@ export const ShopPage = () => {
     const page = Math.max(1, Number(params.get('page')) || 1);
     const viewMode = params.get('viewMode') === 'list' ? 'list' : 'grid';
 
-    const { data, isLoading, isError } = useServices({
+    const { data, isLoading, isError } = useCatalog({
         page,
         limit: PAGE_SIZE,
         q: params.get('query') ?? undefined,
@@ -25,8 +25,8 @@ export const ShopPage = () => {
         price: params.get('price') ?? undefined,
     });
 
-    // El endpoint público ya devuelve solo los visibles (`isActive`).
-    const services = data?.products ?? [];
+    // El endpoint público ya devuelve solo las entradas visibles.
+    const items = data?.products ?? [];
 
     const setViewMode = (mode: 'grid' | 'list') => {
         params.set('viewMode', mode);
@@ -104,11 +104,11 @@ export const ShopPage = () => {
                             </p>
                         ) : isError ? (
                             <p className="py-16 text-center text-destructive">
-                                No se pudieron cargar los servicios.
+                                No se pudo cargar el catálogo.
                             </p>
                         ) : (
                             <>
-                                <ProductsGrid services={services} viewMode={viewMode} />
+                                <ProductsGrid items={items} viewMode={viewMode} />
                                 {data && data.pages > 1 && (
                                     <div className="mt-12">
                                         <CustomPagination totalPages={data.pages} />

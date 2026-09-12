@@ -1,25 +1,21 @@
 import { Check, Plus } from 'lucide-react';
 
-import type { Service } from '@/api/types';
+import type { CatalogItem } from '@/api/types';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { toQuoteItem } from './quote-context';
+import { catalogItemToQuoteItem } from './quote-context';
 import { useQuote } from './use-quote';
 
 interface Props {
-  service: Service;
+  item: CatalogItem;
   className?: string;
   size?: 'sm' | 'lg' | 'default';
 }
 
-/** Botón que añade / quita un servicio de la cotización. */
-export const AddToQuoteButton = ({
-  service,
-  className,
-  size = 'sm',
-}: Props) => {
+/** Botón que añade / quita de la cotización el servicio de un diseño. */
+export const AddToQuoteButton = ({ item, className, size = 'sm' }: Props) => {
   const { isInQuote, toggle, open } = useQuote();
-  const inQuote = isInQuote(service.id);
+  const inQuote = isInQuote(item.serviceId);
 
   return (
     <Button
@@ -27,7 +23,7 @@ export const AddToQuoteButton = ({
       size={size}
       variant={inQuote ? 'secondary' : 'outline'}
       onClick={() => {
-        toggle(toQuoteItem(service));
+        toggle(catalogItemToQuoteItem(item));
         if (!inQuote) open();
       }}
       className={cn(className)}

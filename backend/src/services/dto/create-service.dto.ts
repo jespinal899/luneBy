@@ -42,13 +42,8 @@ export class CreateServiceDto {
   @IsString()
   slug?: string;
 
-  /** Visible en el catálogo público (referencia de diseños). */
+  /** Disponible para agendar en /shop/agendar. */
   @IsOptional()
   @IsBoolean()
   isActive?: boolean;
-
-  /** Aparece como opción para agendar en /shop/agendar. */
-  @IsOptional()
-  @IsBoolean()
-  isBookable?: boolean;
 }
