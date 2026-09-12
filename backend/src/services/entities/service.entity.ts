@@ -37,9 +37,13 @@ export class Service {
   @Column('text', { unique: true })
   slug: string;
 
-  /** Si el servicio se puede agendar. */
+  /** Si el servicio se muestra en el catálogo público (referencia de diseños). */
   @Column('bool', { default: true })
   isActive: boolean;
+
+  /** Si el servicio aparece como opción para agendar en /shop/agendar. */
+  @Column('bool', { name: 'isBookable', default: true })
+  isBookable: boolean;
 
   @OneToMany(() => Appointment, (appointment) => appointment.service)
   appointments: Appointment[];

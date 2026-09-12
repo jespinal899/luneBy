@@ -4,6 +4,7 @@ import { createBrowserRouter, Navigate } from 'react-router';
 import { ProtectedRoute } from './auth/components/ProtectedRoute';
 import { LoginPage } from './auth/layouts/pages/login/LoginPage';
 import { RegisterPage } from './auth/layouts/pages/register/RegisterPage';
+import { AdminAgendarServiciosPage } from './admin/pages/agendar/AdminAgendarServiciosPage';
 import { AdminAppointmentsPage } from './admin/pages/appointments/AdminAppointmentsPage';
 import { AdminProductPage } from './admin/pages/product/AdminProductPage';
 import { AdminProductsPage } from './admin/pages/products/AdminProductsPages';
@@ -77,6 +78,7 @@ export const appRouter = createBrowserRouter([
       { index: true, element: <DashboardPage /> },
       { path: 'products', element: <AdminProductsPage /> },
       { path: 'products/:id', element: <AdminProductPage /> },
+      { path: 'agendar', element: <AdminAgendarServiciosPage /> },
       { path: 'citas', element: <AdminAppointmentsPage /> },
       { path: 'horario', element: <HorarioPage /> },
     ],

@@ -23,6 +23,7 @@ const emptyForm: ServiceInput = {
     description: '',
     image: '',
     isActive: true,
+    isBookable: true,
 };
 
 export const AdminProductPage = () => {
@@ -46,6 +47,7 @@ export const AdminProductPage = () => {
             description: existing.description ?? '',
             image: existing.image ?? '',
             isActive: existing.isActive,
+            isBookable: existing.isBookable,
         });
     }
 
@@ -273,22 +275,41 @@ export const AdminProductPage = () => {
                             Disponibilidad
                         </h2>
 
-                        <label className="flex items-center justify-between rounded-lg bg-slate-50 p-3">
-                            <div>
-                                <p className="text-sm font-medium text-slate-700">
-                                    Visible para agendar
-                                </p>
-                                <p className="text-xs text-slate-400">
-                                    Las clientas podrán reservar este servicio
-                                </p>
-                            </div>
-                            <input
-                                type="checkbox"
-                                checked={form.isActive}
-                                onChange={(e) => set('isActive', e.target.checked)}
-                                className="h-5 w-5 accent-slate-900"
-                            />
-                        </label>
+                        <div className="space-y-3">
+                            <label className="flex items-center justify-between rounded-lg bg-slate-50 p-3">
+                                <div>
+                                    <p className="text-sm font-medium text-slate-700">
+                                        Visible en el catálogo
+                                    </p>
+                                    <p className="text-xs text-slate-400">
+                                        Las clientas lo ven como referencia de diseño
+                                    </p>
+                                </div>
+                                <input
+                                    type="checkbox"
+                                    checked={form.isActive}
+                                    onChange={(e) => set('isActive', e.target.checked)}
+                                    className="h-5 w-5 accent-slate-900"
+                                />
+                            </label>
+
+                            <label className="flex items-center justify-between rounded-lg bg-slate-50 p-3">
+                                <div>
+                                    <p className="text-sm font-medium text-slate-700">
+                                        Disponible en Agendar
+                                    </p>
+                                    <p className="text-xs text-slate-400">
+                                        Las clientas pueden reservarlo en /shop/agendar
+                                    </p>
+                                </div>
+                                <input
+                                    type="checkbox"
+                                    checked={form.isBookable}
+                                    onChange={(e) => set('isBookable', e.target.checked)}
+                                    className="h-5 w-5 accent-slate-900"
+                                />
+                            </label>
+                        </div>
                     </div>
                 </div>
             </div>

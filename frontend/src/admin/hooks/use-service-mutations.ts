@@ -38,3 +38,17 @@ export const useDeleteService = () => {
     onSuccess: invalidate,
   });
 };
+
+/**
+ * Como `useUpdateService`, pero el id viaja en cada llamada en vez de fijarse
+ * al crear el hook — útil para listas donde se edita una fila entre varias
+ * (ej. el módulo de servicios agendables).
+ */
+export const useUpdateServiceById = () => {
+  const invalidate = useInvalidateServices();
+  return useMutation({
+    mutationFn: ({ id, input }: { id: string; input: ServiceInput }) =>
+      updateService(id, input),
+    onSuccess: invalidate,
+  });
+};

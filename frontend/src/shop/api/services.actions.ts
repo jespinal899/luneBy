@@ -43,6 +43,7 @@ export interface ServiceInput {
   description?: string;
   image?: string;
   isActive?: boolean;
+  isBookable?: boolean;
 }
 
 /**
@@ -55,6 +56,7 @@ const toBody = (input: ServiceInput) => ({
   category: input.category,
   durationMin: input.durationMin,
   isActive: input.isActive ?? true,
+  isBookable: input.isBookable ?? true,
   description: input.description?.trim() || null,
   image: input.image?.trim() || null,
 });
