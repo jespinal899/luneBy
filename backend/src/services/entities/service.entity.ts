@@ -2,6 +2,7 @@ import {
   BeforeInsert,
   BeforeUpdate,
   Column,
+  CreateDateColumn,
   Entity,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -47,6 +48,9 @@ export class Service {
 
   @OneToMany(() => Appointment, (appointment) => appointment.service)
   appointments: Appointment[];
+
+  @CreateDateColumn()
+  createdAt: Date;
 
   @BeforeInsert()
   generateSlugOnInsert() {

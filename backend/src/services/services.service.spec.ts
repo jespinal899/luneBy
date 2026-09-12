@@ -63,6 +63,17 @@ describe('ServicesService', () => {
       ]);
     });
 
+    it('con sort=recent ordena por createdAt descendente (aunque sea último alfabético)', async () => {
+      serviceRepository.find.mockResolvedValue([
+        { id: '1', name: 'Diseños', createdAt: new Date('2026-01-01') },
+        { id: '2', name: 'manicure', createdAt: new Date('2026-09-10') },
+      ]);
+
+      const res = await service.findAll({ limit: 10, sort: 'recent' });
+
+      expect(res.products.map((s) => s.name)).toEqual(['manicure', 'Diseños']);
+    });
+
     it('filtra por categorías (CSV) con un operador In', async () => {
       serviceRepository.find.mockResolvedValue([]);
 
