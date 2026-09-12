@@ -10,7 +10,7 @@ describe('ServicesService', () => {
   let service: ServicesService;
 
   const serviceRepository = {
-    findAndCount: jest.fn(),
+    find: jest.fn(),
     findOneBy: jest.fn(),
   };
   const cache = { reset: jest.fn() };
@@ -32,27 +32,43 @@ describe('ServicesService', () => {
 
   describe('findAll', () => {
     it('pagina y devuelve { count, page, pages, products }', async () => {
-      serviceRepository.findAndCount.mockResolvedValue([[{ id: '1' }], 25]);
+      const rows = Array.from({ length: 25 }, (_, i) => ({
+        id: String(i),
+        name: `Servicio ${String(i).padStart(2, '0')}`,
+      }));
+      serviceRepository.find.mockResolvedValue(rows);
 
       const res = await service.findAll({ page: 2, limit: 10 });
 
-      expect(serviceRepository.findAndCount).toHaveBeenCalledWith(
-        expect.objectContaining({ take: 10, skip: 10 }),
-      );
-      expect(res).toEqual({
-        count: 25,
-        page: 2,
-        pages: 3,
-        products: [{ id: '1' }],
-      });
+      expect(res.count).toBe(25);
+      expect(res.page).toBe(2);
+      expect(res.pages).toBe(3);
+      expect(res.products).toHaveLength(10);
+      expect(res.products[0]).toEqual(rows[10]);
+    });
+
+    it('ordena sin distinguir mayúsculas/minúsculas', async () => {
+      serviceRepository.find.mockResolvedValue([
+        { id: '1', name: 'manicure' },
+        { id: '2', name: 'Diseños' },
+        { id: '3', name: 'Esmaltado' },
+      ]);
+
+      const res = await service.findAll({ limit: 10 });
+
+      expect(res.products.map((s) => s.name)).toEqual([
+        'Diseños',
+        'Esmaltado',
+        'manicure',
+      ]);
     });
 
     it('filtra por categorías (CSV) con un operador In', async () => {
-      serviceRepository.findAndCount.mockResolvedValue([[], 0]);
+      serviceRepository.find.mockResolvedValue([]);
 
       await service.findAll({ categorias: 'Manicura, Pedicura' });
 
-      const where = serviceRepository.findAndCount.mock.calls[0][0].where;
+      const where = serviceRepository.find.mock.calls[0][0].where;
       expect(where.category.type).toBe('in');
       expect(where.category.value).toEqual(['Manicura', 'Pedicura']);
     });

@@ -55,12 +55,20 @@ export class ServicesService {
       name: q ? ILike(`%${q}%`) : undefined,
     };
 
-    const [services, count] = await this.serviceRepository.findAndCount({
-      where,
-      take: limit,
-      skip: (page - 1) * limit,
-      order: { name: 'ASC' },
-    });
+    // `ORDER BY "name"` de Postgres es sensible a mayúsculas (las minúsculas
+    // ordenan después de TODAS las mayúsculas), así que un servicio escrito
+    // en minúscula caía al final y se salía de la vista previa del home. Se
+    // ordena en memoria con `localeCompare` (case-insensitive) en vez de
+    // pedirle el orden a la base; el catálogo es chico, así que paginar acá
+    // sale más barato que armar el `ORDER BY LOWER(name)` con QueryBuilder.
+    const all = await this.serviceRepository.find({ where });
+    all.sort((a, b) =>
+      a.name.localeCompare(b.name, 'es', { sensitivity: 'base' }),
+    );
+
+    const count = all.length;
+    const start = (page - 1) * limit;
+    const services = all.slice(start, start + limit);
 
     return {
       count,
