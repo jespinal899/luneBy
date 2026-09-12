@@ -74,6 +74,24 @@ describe('ServicesService', () => {
       expect(res.products.map((s) => s.name)).toEqual(['manicure', 'Diseños']);
     });
 
+    it('por defecto solo pide los servicios visibles (isActive)', async () => {
+      serviceRepository.find.mockResolvedValue([]);
+
+      await service.findAll({});
+
+      expect(serviceRepository.find.mock.calls[0][0].where.isActive).toBe(true);
+    });
+
+    it('con includeHidden no filtra por isActive (panel admin)', async () => {
+      serviceRepository.find.mockResolvedValue([]);
+
+      await service.findAll({}, { includeHidden: true });
+
+      expect(
+        serviceRepository.find.mock.calls[0][0].where.isActive,
+      ).toBeUndefined();
+    });
+
     it('filtra por categorías (CSV) con un operador In', async () => {
       serviceRepository.find.mockResolvedValue([]);
 

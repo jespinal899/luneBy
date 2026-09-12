@@ -28,7 +28,8 @@ export class ServicesController {
   constructor(private readonly servicesService: ServicesService) {}
 
   /**
-   * Catálogo con paginación y filtros de categoría / precio.
+   * Catálogo público con paginación y filtros de categoría / precio.
+   * Solo devuelve servicios visibles (`isActive`).
    *
    * Sin `Cache-Control` propio a propósito: si el navegador cachea la
    * respuesta (además de la caché en memoria del servidor, que sí se
@@ -38,6 +39,16 @@ export class ServicesController {
   @Get()
   findAll(@Query() paginationDto: PaginationDto) {
     return this.servicesService.findAll(paginationDto);
+  }
+
+  /** Mismo listado, pero incluyendo los ocultos (para el panel admin). */
+  @Get('admin/all')
+  @Auth(ValidRoles.admin)
+  @ApiBearerAuth()
+  findAllForAdmin(@Query() paginationDto: PaginationDto) {
+    return this.servicesService.findAll(paginationDto, {
+      includeHidden: true,
+    });
   }
 
   /** Detalle de un servicio por id (UUID) o por slug. */

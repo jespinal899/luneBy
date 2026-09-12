@@ -28,7 +28,8 @@ const steps = [
 
 export const HomePage = () => {
   const { data, isLoading } = useServices({ limit: 6, sort: 'recent' });
-  const services = (data?.products ?? []).filter((s) => s.isActive);
+  // El endpoint público ya devuelve solo los visibles (`isActive`).
+  const services = data?.products ?? [];
 
   return (
     <>

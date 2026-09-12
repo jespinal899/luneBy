@@ -22,9 +22,9 @@ export const AgendarPage = () => {
     const { status } = useAuth();
 
     const { data: servicesData } = useServices({ limit: 100 });
-    const services = (servicesData?.products ?? []).filter(
-        (s) => s.isActive && s.isBookable,
-    );
+    // El endpoint público ya filtra los ocultos (`isActive`); acá solo queda
+    // quedarse con los que el admin marcó como agendables.
+    const services = (servicesData?.products ?? []).filter((s) => s.isBookable);
 
     const quote = useQuote();
 
@@ -34,7 +34,7 @@ export const AgendarPage = () => {
     useEffect(() => {
         if (!preselectId || !servicesData) return;
         const svc = servicesData.products.find((s) => s.id === preselectId);
-        if (svc && svc.isActive && svc.isBookable && !isInQuote(svc.id))
+        if (svc && svc.isBookable && !isInQuote(svc.id))
             add(toQuoteItem(svc));
     }, [preselectId, servicesData, add, isInQuote]);
 
