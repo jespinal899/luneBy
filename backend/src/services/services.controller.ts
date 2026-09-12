@@ -3,7 +3,6 @@ import {
   Controller,
   Delete,
   Get,
-  Header,
   Param,
   ParseUUIDPipe,
   Patch,
@@ -28,16 +27,21 @@ import { CreateServiceDto, UpdateServiceDto } from './dto';
 export class ServicesController {
   constructor(private readonly servicesService: ServicesService) {}
 
-  /** Catálogo con paginación y filtros de categoría / precio. */
+  /**
+   * Catálogo con paginación y filtros de categoría / precio.
+   *
+   * Sin `Cache-Control` propio a propósito: si el navegador cachea la
+   * respuesta (además de la caché en memoria del servidor, que sí se
+   * invalida al crear/editar/borrar), el panel admin puede seguir viendo
+   * un servicio ya eliminado hasta que esa caché del navegador expire.
+   */
   @Get()
-  @Header('Cache-Control', 'public, max-age=60')
   findAll(@Query() paginationDto: PaginationDto) {
     return this.servicesService.findAll(paginationDto);
   }
 
   /** Detalle de un servicio por id (UUID) o por slug. */
   @Get(':term')
-  @Header('Cache-Control', 'public, max-age=60')
   findOne(@Param('term') term: string) {
     return this.servicesService.findOne(term);
   }
