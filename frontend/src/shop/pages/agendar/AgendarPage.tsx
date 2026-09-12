@@ -22,7 +22,9 @@ export const AgendarPage = () => {
     const { status } = useAuth();
 
     const { data: servicesData } = useServices({ limit: 100 });
-    const services = (servicesData?.products ?? []).filter((s) => s.isActive);
+    const services = (servicesData?.products ?? []).filter(
+        (s) => s.isActive && s.isBookable,
+    );
 
     const quote = useQuote();
 
@@ -32,7 +34,8 @@ export const AgendarPage = () => {
     useEffect(() => {
         if (!preselectId || !servicesData) return;
         const svc = servicesData.products.find((s) => s.id === preselectId);
-        if (svc && svc.isActive && !isInQuote(svc.id)) add(toQuoteItem(svc));
+        if (svc && svc.isActive && svc.isBookable && !isInQuote(svc.id))
+            add(toQuoteItem(svc));
     }, [preselectId, servicesData, add, isInQuote]);
 
     const [date, setDate] = useState('');

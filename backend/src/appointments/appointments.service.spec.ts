@@ -22,6 +22,7 @@ describe('AppointmentsService · getAvailability', () => {
   const activeService = (durationMin = 60) => ({
     id: 's1',
     isActive: true,
+    isBookable: true,
     durationMin,
   });
   // Miércoles. Congelamos "hoy" al día anterior para que el filtro de horas
@@ -75,6 +76,18 @@ describe('AppointmentsService · getAvailability', () => {
     serviceRepository.findOneBy.mockResolvedValue({
       id: 's1',
       isActive: false,
+      isBookable: true,
+    });
+    await expect(
+      service.getAvailability(WEDNESDAY, 's1'),
+    ).rejects.toBeInstanceOf(BadRequestException);
+  });
+
+  it('lanza BadRequestException si el servicio no es agendable', async () => {
+    serviceRepository.findOneBy.mockResolvedValue({
+      id: 's1',
+      isActive: true,
+      isBookable: false,
     });
     await expect(
       service.getAvailability(WEDNESDAY, 's1'),

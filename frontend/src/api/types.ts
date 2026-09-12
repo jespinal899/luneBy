@@ -30,7 +30,10 @@ export interface Service {
   durationMin: number;
   image: string | null;
   slug: string;
+  /** Visible en el catálogo público (referencia de diseños). */
   isActive: boolean;
+  /** Aparece como opción para agendar en /shop/agendar. */
+  isBookable: boolean;
 }
 
 /** Respuesta paginada de GET /services (el listado va bajo `products`). */

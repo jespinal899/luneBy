@@ -1,5 +1,6 @@
 import { Link, useLocation } from 'react-router';
 import {
+    CalendarCheck,
     CalendarClock,
     CalendarDays,
     ChevronLeft,
@@ -19,6 +20,7 @@ interface SidebarProps {
 const menuItems = [
     { icon: Home, label: 'Dashboard', to: '/admin' },
     { icon: Scissors, label: 'Servicios', to: '/admin/products' },
+    { icon: CalendarCheck, label: 'Agendar', to: '/admin/agendar' },
     { icon: CalendarDays, label: 'Citas', to: '/admin/citas' },
     { icon: CalendarClock, label: 'Horario', to: '/admin/horario' },
 ];
@@ -44,9 +46,8 @@ export const AdminSidebar: React.FC<SidebarProps> = ({
 
     return (
         <div
-            className={`flex flex-col border-r border-gray-200 bg-white transition-all duration-300 ease-in-out ${
-                isCollapsed ? 'w-18' : 'w-64'
-            }`}
+            className={`flex flex-col border-r border-gray-200 bg-white transition-all duration-300 ease-in-out ${isCollapsed ? 'w-18' : 'w-64'
+                }`}
         >
             <div className="flex h-18 items-center justify-between border-b border-gray-200 p-4">
                 {!isCollapsed && <CustomLogo />}
@@ -64,11 +65,10 @@ export const AdminSidebar: React.FC<SidebarProps> = ({
                         <li key={to}>
                             <Link
                                 to={to}
-                                className={`group flex items-center space-x-3 rounded-lg px-3 py-2 transition-all duration-200 ${
-                                    isActiveRoute(to)
+                                className={`group flex items-center space-x-3 rounded-lg px-3 py-2 transition-all duration-200 ${isActiveRoute(to)
                                         ? 'border-r-2 border-blue-600 bg-blue-50 text-blue-600'
                                         : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                                }`}
+                                    }`}
                             >
                                 <Icon size={20} className="flex-shrink-0" />
                                 {!isCollapsed && (
