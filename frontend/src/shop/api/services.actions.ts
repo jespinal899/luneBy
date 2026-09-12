@@ -45,19 +45,19 @@ export interface ServiceInput {
   isActive?: boolean;
 }
 
-/** Quita descripción/imagen vacías (la API valida `image` como URL). */
-const toBody = (input: ServiceInput) => {
-  const body: Record<string, unknown> = {
-    name: input.name,
-    price: input.price,
-    category: input.category,
-    durationMin: input.durationMin,
-    isActive: input.isActive ?? true,
-  };
-  if (input.description?.trim()) body.description = input.description.trim();
-  if (input.image?.trim()) body.image = input.image.trim();
-  return body;
-};
+/**
+ * `description`/`image` vacíos se mandan como `null` (no se omiten): así el
+ * backend los limpia de verdad en vez de dejar el valor anterior intacto.
+ */
+const toBody = (input: ServiceInput) => ({
+  name: input.name,
+  price: input.price,
+  category: input.category,
+  durationMin: input.durationMin,
+  isActive: input.isActive ?? true,
+  description: input.description?.trim() || null,
+  image: input.image?.trim() || null,
+});
 
 export const createService = async (input: ServiceInput) => {
   const { data } = await http.post<Service>('/services', toBody(input));

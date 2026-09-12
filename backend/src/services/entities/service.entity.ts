@@ -21,7 +21,7 @@ export class Service {
   price: number;
 
   @Column('text', { nullable: true })
-  description: string;
+  description: string | null;
 
   @Column('text')
   category: string;
@@ -32,7 +32,7 @@ export class Service {
 
   /** URL de la imagen del servicio (opcional). */
   @Column('text', { nullable: true })
-  image: string;
+  image: string | null;
 
   @Column('text', { unique: true })
   slug: string;
