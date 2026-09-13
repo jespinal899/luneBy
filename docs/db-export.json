@@ -1,5 +1,5 @@
 {
-  "generado_at": "2026-09-13T20:45:10.384Z",
+  "generado_at": "2026-09-13T21:49:16.537Z",
   "motor": "postgres",
   "tablas": [
     {
@@ -57,7 +57,7 @@
           "referencia": "services.id"
         }
       ],
-      "politicas": [
+      "politicas_rls": [
         "items_select_propios"
       ]
     },
@@ -147,7 +147,7 @@
           "referencia": "users.id"
         }
       ],
-      "politicas": [
+      "politicas_rls": [
         "citas_insert_propias",
         "citas_select_propias"
       ]
@@ -197,7 +197,7 @@
         "pk_availability_rules"
       ],
       "relaciones": [],
-      "politicas": []
+      "politicas_rls": []
     },
     {
       "nombre": "catalog_items",
@@ -250,7 +250,7 @@
           "referencia": "services.id"
         }
       ],
-      "politicas": [
+      "politicas_rls": [
         "catalogo_items_select_publico"
       ]
     },
@@ -312,7 +312,7 @@
         "pk_idempotency_keys"
       ],
       "relaciones": [],
-      "politicas": []
+      "politicas_rls": []
     },
     {
       "nombre": "services",
@@ -385,7 +385,7 @@
         "uq_services_slug"
       ],
       "relaciones": [],
-      "politicas": [
+      "politicas_rls": [
         "catalogo_publico_select"
       ]
     },
@@ -428,7 +428,7 @@
         "pk_time_off"
       ],
       "relaciones": [],
-      "politicas": []
+      "politicas_rls": []
     },
     {
       "nombre": "users",
@@ -495,7 +495,7 @@
         "uq_users_google_id"
       ],
       "relaciones": [],
-      "politicas": [
+      "politicas_rls": [
         "usuarios_select_propio",
         "usuarios_update_propio"
       ]
