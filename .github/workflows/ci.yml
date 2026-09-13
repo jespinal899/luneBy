@@ -178,6 +178,12 @@ jobs:
       - name: Instalar dependencias
         run: npm ci
 
+      - name: Simular roles de Supabase (anon/authenticated/auth.uid)
+        working-directory: .
+        run: |
+          psql -h localhost -U postgres -d luneby_test -v ON_ERROR_STOP=1 \
+            -f "scripts/ci-simulate-supabase-roles.sql"
+
       - name: Aplicar migraciones SQL
         working-directory: .
         run: |
