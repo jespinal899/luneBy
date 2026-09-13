@@ -1,0 +1,504 @@
+{
+  "generado_at": "2026-09-13T20:45:10.384Z",
+  "motor": "postgres",
+  "tablas": [
+    {
+      "nombre": "appointment_items",
+      "filas": 28,
+      "columnas": [
+        {
+          "nombre": "id",
+          "tipo": "uuid",
+          "pk": true,
+          "nulo": false
+        },
+        {
+          "nombre": "appointmentId",
+          "tipo": "uuid",
+          "pk": false,
+          "nulo": false
+        },
+        {
+          "nombre": "serviceId",
+          "tipo": "uuid",
+          "pk": false,
+          "nulo": true
+        },
+        {
+          "nombre": "nameAtBooking",
+          "tipo": "text",
+          "pk": false,
+          "nulo": false
+        },
+        {
+          "nombre": "priceAtBooking",
+          "tipo": "double precision",
+          "pk": false,
+          "nulo": false
+        },
+        {
+          "nombre": "createdAt",
+          "tipo": "timestamp with time zone",
+          "pk": false,
+          "nulo": false
+        }
+      ],
+      "indices": [
+        "appointment_items_pkey",
+        "idx_appointment_items_appointment"
+      ],
+      "relaciones": [
+        {
+          "columna": "appointmentId",
+          "referencia": "appointments.id"
+        },
+        {
+          "columna": "serviceId",
+          "referencia": "services.id"
+        }
+      ],
+      "politicas": [
+        "items_select_propios"
+      ]
+    },
+    {
+      "nombre": "appointments",
+      "filas": 16,
+      "columnas": [
+        {
+          "nombre": "id",
+          "tipo": "uuid",
+          "pk": true,
+          "nulo": false
+        },
+        {
+          "nombre": "date",
+          "tipo": "date",
+          "pk": false,
+          "nulo": false
+        },
+        {
+          "nombre": "startTime",
+          "tipo": "text",
+          "pk": false,
+          "nulo": false
+        },
+        {
+          "nombre": "endTime",
+          "tipo": "text",
+          "pk": false,
+          "nulo": false
+        },
+        {
+          "nombre": "status",
+          "tipo": "text",
+          "pk": false,
+          "nulo": false
+        },
+        {
+          "nombre": "notes",
+          "tipo": "text",
+          "pk": false,
+          "nulo": true
+        },
+        {
+          "nombre": "createdAt",
+          "tipo": "timestamp without time zone",
+          "pk": false,
+          "nulo": false
+        },
+        {
+          "nombre": "serviceId",
+          "tipo": "uuid",
+          "pk": false,
+          "nulo": true
+        },
+        {
+          "nombre": "userId",
+          "tipo": "uuid",
+          "pk": false,
+          "nulo": true
+        },
+        {
+          "nombre": "priceAtBooking",
+          "tipo": "double precision",
+          "pk": false,
+          "nulo": true
+        },
+        {
+          "nombre": "durationMin",
+          "tipo": "integer",
+          "pk": false,
+          "nulo": false
+        }
+      ],
+      "indices": [
+        "idx_appointments_date_start",
+        "no_overlap_citas",
+        "pk_appointments"
+      ],
+      "relaciones": [
+        {
+          "columna": "serviceId",
+          "referencia": "services.id"
+        },
+        {
+          "columna": "userId",
+          "referencia": "users.id"
+        }
+      ],
+      "politicas": [
+        "citas_insert_propias",
+        "citas_select_propias"
+      ]
+    },
+    {
+      "nombre": "availability_rules",
+      "filas": 7,
+      "columnas": [
+        {
+          "nombre": "id",
+          "tipo": "uuid",
+          "pk": true,
+          "nulo": false
+        },
+        {
+          "nombre": "weekday",
+          "tipo": "integer",
+          "pk": false,
+          "nulo": false
+        },
+        {
+          "nombre": "startTime",
+          "tipo": "text",
+          "pk": false,
+          "nulo": false
+        },
+        {
+          "nombre": "endTime",
+          "tipo": "text",
+          "pk": false,
+          "nulo": false
+        },
+        {
+          "nombre": "slotIntervalMin",
+          "tipo": "integer",
+          "pk": false,
+          "nulo": false
+        },
+        {
+          "nombre": "isActive",
+          "tipo": "boolean",
+          "pk": false,
+          "nulo": false
+        }
+      ],
+      "indices": [
+        "pk_availability_rules"
+      ],
+      "relaciones": [],
+      "politicas": []
+    },
+    {
+      "nombre": "catalog_items",
+      "filas": 1,
+      "columnas": [
+        {
+          "nombre": "id",
+          "tipo": "uuid",
+          "pk": true,
+          "nulo": false
+        },
+        {
+          "nombre": "serviceId",
+          "tipo": "uuid",
+          "pk": false,
+          "nulo": false
+        },
+        {
+          "nombre": "image",
+          "tipo": "text",
+          "pk": false,
+          "nulo": true
+        },
+        {
+          "nombre": "description",
+          "tipo": "text",
+          "pk": false,
+          "nulo": true
+        },
+        {
+          "nombre": "isActive",
+          "tipo": "boolean",
+          "pk": false,
+          "nulo": false
+        },
+        {
+          "nombre": "createdAt",
+          "tipo": "timestamp with time zone",
+          "pk": false,
+          "nulo": false
+        }
+      ],
+      "indices": [
+        "idx_catalog_items_service",
+        "pk_catalog_items"
+      ],
+      "relaciones": [
+        {
+          "columna": "serviceId",
+          "referencia": "services.id"
+        }
+      ],
+      "politicas": [
+        "catalogo_items_select_publico"
+      ]
+    },
+    {
+      "nombre": "idempotency_keys",
+      "filas": 156,
+      "columnas": [
+        {
+          "nombre": "key",
+          "tipo": "text",
+          "pk": true,
+          "nulo": false
+        },
+        {
+          "nombre": "userId",
+          "tipo": "uuid",
+          "pk": false,
+          "nulo": true
+        },
+        {
+          "nombre": "method",
+          "tipo": "text",
+          "pk": false,
+          "nulo": false
+        },
+        {
+          "nombre": "path",
+          "tipo": "text",
+          "pk": false,
+          "nulo": false
+        },
+        {
+          "nombre": "statusCode",
+          "tipo": "integer",
+          "pk": false,
+          "nulo": true
+        },
+        {
+          "nombre": "response",
+          "tipo": "jsonb",
+          "pk": false,
+          "nulo": true
+        },
+        {
+          "nombre": "completedAt",
+          "tipo": "timestamp with time zone",
+          "pk": false,
+          "nulo": true
+        },
+        {
+          "nombre": "createdAt",
+          "tipo": "timestamp with time zone",
+          "pk": false,
+          "nulo": false
+        }
+      ],
+      "indices": [
+        "idx_idempotency_keys_created",
+        "pk_idempotency_keys"
+      ],
+      "relaciones": [],
+      "politicas": []
+    },
+    {
+      "nombre": "services",
+      "filas": 7,
+      "columnas": [
+        {
+          "nombre": "id",
+          "tipo": "uuid",
+          "pk": true,
+          "nulo": false
+        },
+        {
+          "nombre": "name",
+          "tipo": "text",
+          "pk": false,
+          "nulo": false
+        },
+        {
+          "nombre": "price",
+          "tipo": "double precision",
+          "pk": false,
+          "nulo": false
+        },
+        {
+          "nombre": "description",
+          "tipo": "text",
+          "pk": false,
+          "nulo": true
+        },
+        {
+          "nombre": "category",
+          "tipo": "text",
+          "pk": false,
+          "nulo": false
+        },
+        {
+          "nombre": "durationMin",
+          "tipo": "integer",
+          "pk": false,
+          "nulo": false
+        },
+        {
+          "nombre": "image",
+          "tipo": "text",
+          "pk": false,
+          "nulo": true
+        },
+        {
+          "nombre": "slug",
+          "tipo": "text",
+          "pk": false,
+          "nulo": false
+        },
+        {
+          "nombre": "isActive",
+          "tipo": "boolean",
+          "pk": false,
+          "nulo": false
+        },
+        {
+          "nombre": "createdAt",
+          "tipo": "timestamp with time zone",
+          "pk": false,
+          "nulo": false
+        }
+      ],
+      "indices": [
+        "pk_services",
+        "uq_services_name",
+        "uq_services_slug"
+      ],
+      "relaciones": [],
+      "politicas": [
+        "catalogo_publico_select"
+      ]
+    },
+    {
+      "nombre": "time_off",
+      "filas": 0,
+      "columnas": [
+        {
+          "nombre": "id",
+          "tipo": "uuid",
+          "pk": true,
+          "nulo": false
+        },
+        {
+          "nombre": "date",
+          "tipo": "date",
+          "pk": false,
+          "nulo": false
+        },
+        {
+          "nombre": "startTime",
+          "tipo": "text",
+          "pk": false,
+          "nulo": true
+        },
+        {
+          "nombre": "endTime",
+          "tipo": "text",
+          "pk": false,
+          "nulo": true
+        },
+        {
+          "nombre": "reason",
+          "tipo": "text",
+          "pk": false,
+          "nulo": true
+        }
+      ],
+      "indices": [
+        "pk_time_off"
+      ],
+      "relaciones": [],
+      "politicas": []
+    },
+    {
+      "nombre": "users",
+      "filas": 4,
+      "columnas": [
+        {
+          "nombre": "id",
+          "tipo": "uuid",
+          "pk": true,
+          "nulo": false
+        },
+        {
+          "nombre": "email",
+          "tipo": "text",
+          "pk": false,
+          "nulo": false
+        },
+        {
+          "nombre": "password",
+          "tipo": "text",
+          "pk": false,
+          "nulo": true
+        },
+        {
+          "nombre": "fullName",
+          "tipo": "text",
+          "pk": false,
+          "nulo": false
+        },
+        {
+          "nombre": "phone",
+          "tipo": "text",
+          "pk": false,
+          "nulo": true
+        },
+        {
+          "nombre": "isActive",
+          "tipo": "boolean",
+          "pk": false,
+          "nulo": false
+        },
+        {
+          "nombre": "roles",
+          "tipo": "ARRAY",
+          "pk": false,
+          "nulo": false
+        },
+        {
+          "nombre": "googleId",
+          "tipo": "text",
+          "pk": false,
+          "nulo": true
+        },
+        {
+          "nombre": "avatarUrl",
+          "tipo": "text",
+          "pk": false,
+          "nulo": true
+        }
+      ],
+      "indices": [
+        "pk_users",
+        "uq_users_email",
+        "uq_users_google_id"
+      ],
+      "relaciones": [],
+      "politicas": [
+        "usuarios_select_propio",
+        "usuarios_update_propio"
+      ]
+    }
+  ]
+}
