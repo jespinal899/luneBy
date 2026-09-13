@@ -7,6 +7,12 @@ backend_ref/
 **/dist/
 **/coverage/
 
+# ...excepto el reporte de cobertura versionado a propósito en la raíz
+# (docs/checklist de calidad de código: coverage-summary.json + lcov.info).
+!/coverage/
+!/coverage/coverage-summary.json
+!/coverage/lcov.info
+
 # Variables de entorno reales (las plantillas .env.example sí se versionan)
 **/.env
 **/.env.*
