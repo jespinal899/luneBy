@@ -289,3 +289,5 @@ Con `STAGE=prod`: SSL en PostgreSQL y CORS restringido a `FRONTEND_URL`. Usa un
 - [x] Despliegue en Supabase + Render (ver `DEPLOY.md`)
 
 > Cobertura de tests: ver `coverage/coverage-summary.json` en la raíz del repo (≥60% de líneas).
+
+> (probando SonarCloud tras regenerar SONAR_TOKEN)
