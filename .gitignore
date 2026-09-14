@@ -27,3 +27,6 @@ backend_ref/
 *.log
 .DS_Store
 Thumbs.db
+
+.vercel
+.env*

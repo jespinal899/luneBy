@@ -311,8 +311,13 @@ jobs:
           curl -fsS "$RENDER_DEPLOY_HOOK_URL" > /dev/null
           echo "Deploy de la API disparado en Render."
 
+      # Se corre desde la RAÍZ del repo, no desde `frontend/`: el proyecto
+      # de Vercel tiene `frontend` configurado como Root Directory (por eso
+      # `frontend/vercel.json` surte efecto), así que la CLI debe subir el
+      # repo completo y dejar que Vercel aplique ese ajuste — igual que hace
+      # hoy la integración de Git. Apuntar la CLI a `frontend/` haría que
+      # buscara `frontend/frontend`.
       - name: Desplegar el frontend en Vercel
-        working-directory: frontend
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
