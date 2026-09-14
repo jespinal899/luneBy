@@ -1,0 +1,20 @@
+{
+  "name": "Luné by Kelin",
+  "short_name": "Luné by Kelin",
+  "description": "Estudio de uñas: catálogo, cotizaciones y agenda de citas en línea.",
+  "start_url": "/index.html",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ede6ff",
+  "theme_color": "#863bff",
+  "lang": "es",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
