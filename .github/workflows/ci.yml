@@ -277,3 +277,49 @@ jobs:
             fi
           done
           echo "Todo en orden."
+
+  # ─────────────────────────────────────────────────────────────
+  # Despliegue, encadenado al pipeline: `needs: ci-ok` hace que este job
+  # solo arranque si el gate quedó en verde. Así un commit con los tests
+  # en rojo no llega a producción.
+  #
+  # Los pasos se saltan solos (con un aviso, sin fallar) mientras falten
+  # los secrets: eso permite tener esto en `main` sin romper nada durante
+  # la transición, hasta que se apague el auto-deploy de Vercel y Render.
+  deploy:
+    name: Desplegar a producción
+    needs: ci-ok
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Configurar Node.js 20 LTS
+        uses: actions/setup-node@v5
+        with:
+          node-version: 20
+
+      - name: Desplegar la API en Render
+        env:
+          RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+        run: |
+          if [ -z "$RENDER_DEPLOY_HOOK_URL" ]; then
+            echo "::warning::Falta el secret RENDER_DEPLOY_HOOK_URL: se omite el deploy de la API."
+            exit 0
+          fi
+          curl -fsS "$RENDER_DEPLOY_HOOK_URL" > /dev/null
+          echo "Deploy de la API disparado en Render."
+
+      - name: Desplegar el frontend en Vercel
+        working-directory: frontend
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: |
+          if [ -z "$VERCEL_TOKEN" ] || [ -z "$VERCEL_PROJECT_ID" ]; then
+            echo "::warning::Faltan los secrets de Vercel: se omite el deploy del frontend."
+            exit 0
+          fi
+          npx --yes vercel@latest deploy --prod --yes --token="$VERCEL_TOKEN"
