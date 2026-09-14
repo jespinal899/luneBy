@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
 
 import { tokenStorage } from '@/api/http';
 import type { AuthResponse, User } from '@/api/types';
@@ -54,20 +54,25 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     applyAuth(await updateProfileRequest(payload));
   };
 
+  const value = useMemo(
+    () => ({
+      status,
+      user,
+      isAdmin: user?.roles.includes('admin') ?? false,
+      login,
+      register,
+      loginWithGoogle,
+      updateProfile,
+      logout: clearAuth,
+    }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- las funciones
+    // se recrean cada render (no están envueltas en useCallback); memoizar
+    // por status/user evita renders de más en el resto del árbol cuando
+    // ninguno de los dos cambió.
+    [status, user],
+  );
+
   return (
-    <AuthContext.Provider
-      value={{
-        status,
-        user,
-        isAdmin: user?.roles.includes('admin') ?? false,
-        login,
-        register,
-        loginWithGoogle,
-        updateProfile,
-        logout: clearAuth,
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
+    <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
   );
 };
