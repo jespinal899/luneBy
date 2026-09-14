@@ -289,7 +289,17 @@ jobs:
   deploy:
     name: Desplegar a producción
     needs: ci-ok
-    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+    # `always()` es necesario: si el filtro de rutas saltea los jobs de build
+    # (un commit que solo toca docs/ o render.yaml), GitHub propaga ese
+    # "skipped" por el grafo y saltearía este job aunque `ci-ok` haya
+    # terminado en verde. Con `always()` el job siempre se evalúa, y la
+    # condición de abajo mantiene intacto el gate: solo despliega si el
+    # pipeline pasó.
+    if: >-
+      ${{ always()
+      && needs['ci-ok'].result == 'success'
+      && github.event_name == 'push'
+      && github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
