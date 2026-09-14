@@ -9,7 +9,10 @@ services:
     rootDir: backend # el monorepo tiene la API en backend/
     dockerfilePath: ./Dockerfile
     healthCheckPath: /api/health
-    autoDeploy: true
+    # El deploy lo dispara el pipeline (job `deploy` de .github/workflows/ci.yml)
+    # con el Deploy Hook, y solo si CI quedó en verde. Con autoDeploy en true,
+    # Render desplegaba en cada push sin mirar los tests.
+    autoDeploy: false
     envVars:
       - key: STAGE
         value: prod
