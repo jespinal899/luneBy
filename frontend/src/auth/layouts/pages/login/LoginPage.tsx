@@ -26,7 +26,7 @@ export const LoginPage = () => {
         onSuccess: () => navigate(from, { replace: true }),
     });
 
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = (event: React.SubmitEvent<HTMLFormElement>) => {
         event.preventDefault();
         const form = new FormData(event.currentTarget);
         mutation.mutate({

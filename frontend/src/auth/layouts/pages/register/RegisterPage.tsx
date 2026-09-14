@@ -24,7 +24,7 @@ export const RegisterPage = () => {
         onSuccess: () => navigate('/', { replace: true }),
     });
 
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = (event: React.SubmitEvent<HTMLFormElement>) => {
         event.preventDefault();
         const form = new FormData(event.currentTarget);
         const phone = ((form.get('phone') as string | null) ?? '').trim();

@@ -73,7 +73,7 @@ export const AdminProductPage = () => {
         upload.mutate(file, { onSuccess: (url) => set('image', url) });
     };
 
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = (event: React.SubmitEvent<HTMLFormElement>) => {
         event.preventDefault();
         mutation.mutate(form, {
             onSuccess: () => navigate('/admin/products'),

@@ -57,7 +57,7 @@ export const AdminServicioPage = () => {
     const set = <K extends keyof ServiceInput>(field: K, value: ServiceInput[K]) =>
         setForm((prev) => ({ ...prev, [field]: value }));
 
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = (event: React.SubmitEvent<HTMLFormElement>) => {
         event.preventDefault();
         mutation.mutate(form, {
             onSuccess: () => navigate('/admin/agendar'),

@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react';
+import { useState, type SubmitEvent } from 'react';
 import { Check, KeyRound, UserCog } from 'lucide-react';
 
 import { apiErrorMessage } from '@/api/errors';
@@ -30,7 +30,7 @@ export const PerfilPage = () => {
 
   if (!user) return null;
 
-  const handleProfile = async (e: FormEvent) => {
+  const handleProfile = async (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     setProfileState({ saving: true, ok: false, error: null });
     try {
@@ -45,7 +45,7 @@ export const PerfilPage = () => {
     }
   };
 
-  const handlePassword = async (e: FormEvent) => {
+  const handlePassword = async (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (pwd.next !== pwd.confirm) {
       setPwdState({

@@ -1,5 +1,5 @@
 import { QueryClient } from '@tanstack/react-query';
-import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
+import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister';
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -17,7 +17,7 @@ export const queryClient = new QueryClient({
  * más tarde, el catálogo aparece al instante mientras se revalida en segundo
  * plano. Solo se persiste el catálogo público (ver `luneby.tsx`).
  */
-export const persister = createSyncStoragePersister({
+export const persister = createAsyncStoragePersister({
   storage: window.localStorage,
   key: 'luneby_query_cache',
 });
