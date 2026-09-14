@@ -287,3 +287,5 @@ Con `STAGE=prod`: SSL en PostgreSQL y CORS restringido a `FRONTEND_URL`. Usa un
 - [x] Subida de imágenes de servicios a Supabase Storage
 - [x] Migraciones SQL con la CLI de Supabase (`../supabase/migrations/`)
 - [x] Despliegue en Supabase + Render (ver `DEPLOY.md`)
+
+> Cobertura de tests: ver `coverage/coverage-summary.json` en la raíz del repo (≥60% de líneas).
