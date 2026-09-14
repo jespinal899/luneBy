@@ -1,4 +1,5 @@
-import { Link, useLocation } from 'react-router';
+import { useEffect, useRef, useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router';
 import {
     CalendarCheck,
     CalendarClock,
@@ -6,7 +7,9 @@ import {
     ChevronLeft,
     ChevronRight,
     Home,
+    LogOut,
     Scissors,
+    User as UserIcon,
 } from 'lucide-react';
 
 import { useAuth } from '@/auth/context/use-auth';
@@ -25,24 +28,101 @@ const menuItems = [
     { icon: CalendarClock, label: 'Horario', to: '/admin/horario' },
 ];
 
-export const AdminSidebar: React.FC<SidebarProps> = ({
-    isCollapsed,
-    onToggle,
-}) => {
-    const { pathname } = useLocation();
-    const { user } = useAuth();
+/** Avatar del usuario en el sidebar: abre un menú con cuenta, inicio y logout. */
+const UserMenu = ({ isCollapsed }: { isCollapsed: boolean }) => {
+    const { user, logout } = useAuth();
+    const navigate = useNavigate();
+    const [open, setOpen] = useState(false);
+    const ref = useRef<HTMLDivElement>(null);
 
-    const isActiveRoute = (to: string) => {
-        if (to === '/admin') return pathname === '/admin';
-        return pathname.startsWith(to);
-    };
+    useEffect(() => {
+        if (!open) return;
+        const onClickOutside = (e: MouseEvent) => {
+            if (ref.current && !ref.current.contains(e.target as Node)) {
+                setOpen(false);
+            }
+        };
+        document.addEventListener('mousedown', onClickOutside);
+        return () => document.removeEventListener('mousedown', onClickOutside);
+    }, [open]);
 
-    const initials = (user?.fullName ?? '?')
+    if (!user) return null;
+
+    const initials = user.fullName
         .split(' ')
         .map((w) => w[0])
         .slice(0, 2)
         .join('')
         .toUpperCase();
+
+    const handleLogout = () => {
+        setOpen(false);
+        logout();
+        navigate('/');
+    };
+
+    return (
+        <div className="relative border-t border-gray-200 p-4" ref={ref}>
+            <button
+                type="button"
+                onClick={() => setOpen((o) => !o)}
+                className="flex w-full items-center space-x-3 rounded-lg p-3 transition-colors hover:bg-gray-50"
+            >
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-blue-500 to-purple-600 font-semibold text-white">
+                    {initials}
+                </div>
+                {!isCollapsed && (
+                    <div className="min-w-0 flex-1 text-left">
+                        <p className="truncate text-sm font-medium text-gray-900">
+                            {user.fullName}
+                        </p>
+                        <p className="truncate text-xs text-gray-500">{user.email}</p>
+                    </div>
+                )}
+            </button>
+
+            {open && (
+                <div className="absolute bottom-full left-4 right-4 z-20 mb-2 rounded-xl border border-slate-200 bg-white p-1.5 shadow-lg">
+                    <Link
+                        to="/perfil"
+                        onClick={() => setOpen(false)}
+                        className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"
+                    >
+                        <UserIcon size={16} />
+                        Ver cuenta
+                    </Link>
+                    <Link
+                        to="/"
+                        onClick={() => setOpen(false)}
+                        className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"
+                    >
+                        <Home size={16} />
+                        Volver al inicio
+                    </Link>
+                    <button
+                        type="button"
+                        onClick={handleLogout}
+                        className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm text-red-600 hover:bg-red-50"
+                    >
+                        <LogOut size={16} />
+                        Cerrar sesión
+                    </button>
+                </div>
+            )}
+        </div>
+    );
+};
+
+export const AdminSidebar: React.FC<SidebarProps> = ({
+    isCollapsed,
+    onToggle,
+}) => {
+    const { pathname } = useLocation();
+
+    const isActiveRoute = (to: string) => {
+        if (to === '/admin') return pathname === '/admin';
+        return pathname.startsWith(to);
+    };
 
     return (
         <div
@@ -80,21 +160,7 @@ export const AdminSidebar: React.FC<SidebarProps> = ({
                 </ul>
             </nav>
 
-            {!isCollapsed && user && (
-                <div className="border-t border-gray-200 p-4">
-                    <div className="flex items-center space-x-3 rounded-lg p-3">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-linear-to-br from-blue-500 to-purple-600 font-semibold text-white">
-                            {initials}
-                        </div>
-                        <div className="min-w-0 flex-1">
-                            <p className="truncate text-sm font-medium text-gray-900">
-                                {user.fullName}
-                            </p>
-                            <p className="truncate text-xs text-gray-500">{user.email}</p>
-                        </div>
-                    </div>
-                </div>
-            )}
+            <UserMenu isCollapsed={isCollapsed} />
         </div>
     );
 };
