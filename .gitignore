@@ -13,10 +13,10 @@ backend_ref/
 !/coverage/coverage-summary.json
 !/coverage/lcov.info
 
-# Variables de entorno reales (las plantillas .env.example sí se versionan)
+# Variables de entorno reales. Ningún archivo `.env*` se versiona nunca:
+# las plantillas viven en `env.example` (sin punto inicial).
 **/.env
 **/.env.*
-!**/.env.example
 
 # Logs y basura del SO / editores
 *.log

@@ -71,12 +71,12 @@ cd luneBy
 ```
 
 ### 2. Variables de entorno
-Cada app trae una plantilla `.env.example`. Cópiala a `.env` y ajusta los valores
+Cada app trae una plantilla `env.example`. Cópiala a `.env` y ajusta los valores
 (los `.env` reales están en `.gitignore` y **nunca** se versionan):
 
 ```bash
-cp backend/.env.example  backend/.env
-cp frontend/.env.example frontend/.env
+cp backend/env.example  backend/.env
+cp frontend/env.example frontend/.env
 ```
 
 | App        | Variable            | Para qué |
@@ -174,7 +174,7 @@ Ver el estado del pipeline en la pestaña **Actions** del repositorio.
 ---
 
 ## 🔒 Buenas prácticas de seguridad
-* **Sin secretos versionados**: los `.env` reales están en `.gitignore`; solo se versionan las plantillas `.env.example`. En esas plantillas, **toda clave que nombra una credencial se deja con el valor vacío** (contraseña de base de datos, secreto de JWT, keys de Supabase y Resend, client ID de OAuth): qué poner en cada una se explica en el comentario de arriba, no en el valor. Así el archivo documenta la configuración sin que quede ni una sola cadena con forma de credencial en el repositorio.
+* **Sin secretos versionados**: los `.env` reales están en `.gitignore`; solo se versionan las plantillas `env.example` (sin punto inicial, para que ningún archivo versionado matchee el patrón `.env*`). En esas plantillas, **toda clave que nombra una credencial se deja con el valor vacío** (contraseña de base de datos, secreto de JWT, keys de Supabase y Resend, client ID de OAuth): qué poner en cada una se explica en el comentario de arriba, no en el valor. Así el archivo documenta la configuración sin que quede ni una sola cadena con forma de credencial en el repositorio.
 * **Escaneo automático**: el job `secrets` del CI corre [gitleaks](https://github.com/gitleaks/gitleaks) sobre el código y **todo el historial de git** en cada push y PR. Si aparece un secreto, el pipeline falla. Configuración y falsos positivos verificados en [`.gitleaks.toml`](.gitleaks.toml).
 * La configuración sensible vive en las variables de entorno del hosting (Render / Vercel / Supabase). En `render.yaml`, `JWT_SECRET` usa `generateValue: true` y el resto `sync: false` (se rellenan en el panel, nunca en el archivo).
 * La imagen Docker de la API corre como usuario sin privilegios (`node`) y con `tini` como PID 1.
