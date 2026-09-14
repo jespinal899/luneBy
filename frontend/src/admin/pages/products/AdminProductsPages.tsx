@@ -66,7 +66,7 @@ export const AdminProductsPage = () => {
                 <p className="py-16 text-center text-red-600">
                     No se pudo cargar el catálogo.
                 </p>
-            ) : data && data.products.length === 0 ? (
+            ) : data?.products.length === 0 ? (
                 <p className="py-16 text-center text-slate-500">
                     Todavía no hay diseños en el catálogo. Creá el primero con
                     “Nuevo diseño”.

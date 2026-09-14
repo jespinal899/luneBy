@@ -93,7 +93,7 @@ export class AppointmentsService {
       }
     }
 
-    return [...slots].sort();
+    return [...slots].sort((a, b) => a.localeCompare(b));
   }
 
   /** Agenda una cita con los servicios elegidos en un slot libre. */

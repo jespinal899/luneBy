@@ -39,11 +39,11 @@ export const formatScheduleLines = (
 
   const lines: ScheduleLine[] = [];
   for (const day of ordered) {
-    const last = lines[lines.length - 1];
+    const last = lines.at(-1);
     const sameHours =
-      last && last.time === `${formatClock(day.startTime)} – ${formatClock(day.endTime)}`;
+      last?.time === `${formatClock(day.startTime)} – ${formatClock(day.endTime)}`;
 
-    if (sameHours && isConsecutive(day, byWeekday)) {
+    if (sameHours && last && isConsecutive(day, byWeekday)) {
       last.days = `${last.days.split(' a ')[0]} a ${DAY_NAMES[day.weekday]}`;
     } else {
       lines.push({

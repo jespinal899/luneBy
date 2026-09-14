@@ -1,6 +1,6 @@
 import { Request } from 'express';
 
-const ALLOWED = ['jpg', 'jpeg', 'png', 'webp'];
+const ALLOWED = new Set(['jpg', 'jpeg', 'png', 'webp']);
 
 /** Solo acepta imágenes por su extensión de MIME type. */
 export const fileFilter = (
@@ -9,6 +9,6 @@ export const fileFilter = (
   callback: (error: Error | null, acceptFile: boolean) => void,
 ) => {
   const ext = file.mimetype.split('/')[1]?.toLowerCase();
-  if (ext && ALLOWED.includes(ext)) return callback(null, true);
+  if (ext && ALLOWED.has(ext)) return callback(null, true);
   callback(null, false);
 };

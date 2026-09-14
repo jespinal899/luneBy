@@ -1,4 +1,4 @@
-import { request as httpsRequest } from 'https';
+import { request as httpsRequest } from 'node:https';
 
 import {
   Injectable,

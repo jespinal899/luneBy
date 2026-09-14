@@ -56,7 +56,7 @@ export const AdminAgendarServiciosPage = () => {
                 <p className="py-16 text-center text-red-600">
                     No se pudieron cargar los servicios.
                 </p>
-            ) : data && data.products.length === 0 ? (
+            ) : data?.products.length === 0 ? (
                 <p className="py-16 text-center text-slate-500">
                     Todavía no hay servicios. Creá el primero con “Nuevo servicio”.
                 </p>

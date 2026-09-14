@@ -30,8 +30,8 @@ export const LoginPage = () => {
         event.preventDefault();
         const form = new FormData(event.currentTarget);
         mutation.mutate({
-            email: String(form.get('email') ?? ''),
-            password: String(form.get('password') ?? ''),
+            email: (form.get('email') as string | null) ?? '',
+            password: (form.get('password') as string | null) ?? '',
         });
     };
 

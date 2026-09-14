@@ -5,7 +5,7 @@ import { ConfigService } from '@nestjs/config';
 import { Test } from '@nestjs/testing';
 
 const requestMock = jest.fn();
-jest.mock('https', () => ({
+jest.mock('node:https', () => ({
   request: (...args: unknown[]) => requestMock(...args),
 }));
 

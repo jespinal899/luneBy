@@ -26,7 +26,8 @@ export class AppointmentCreatedListener {
     } catch (error) {
       // Un fallo aquí nunca debe afectar la reserva: ya se guardó antes de
       // emitir el evento. Solo se registra para revisarlo.
-      const detail = error instanceof Error ? error.message : String(error);
+      const detail =
+        error instanceof Error ? error.message : JSON.stringify(error);
       this.logger.error(`No se pudo notificar la nueva cita: ${detail}`);
     }
   }

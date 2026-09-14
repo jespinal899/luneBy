@@ -5,10 +5,10 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { Test } from '@nestjs/testing';
 
-jest.mock('fs', () => ({
+jest.mock('node:fs', () => ({
   existsSync: jest.fn(),
 }));
-jest.mock('fs/promises', () => ({
+jest.mock('node:fs/promises', () => ({
   mkdir: jest.fn(),
   writeFile: jest.fn(),
 }));
@@ -21,8 +21,8 @@ const sharpChain = {
 };
 jest.mock('sharp', () => jest.fn(() => sharpChain));
 
-import { existsSync } from 'fs';
-import { mkdir, writeFile } from 'fs/promises';
+import { existsSync } from 'node:fs';
+import { mkdir, writeFile } from 'node:fs/promises';
 
 import { FilesService } from './files.service';
 import { SupabaseStorageService } from './storage/supabase-storage.service';

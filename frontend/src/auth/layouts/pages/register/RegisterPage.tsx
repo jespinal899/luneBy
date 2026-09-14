@@ -27,11 +27,11 @@ export const RegisterPage = () => {
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const form = new FormData(event.currentTarget);
-        const phone = String(form.get('phone') ?? '').trim();
+        const phone = ((form.get('phone') as string | null) ?? '').trim();
         mutation.mutate({
-            fullName: String(form.get('fullName') ?? ''),
-            email: String(form.get('email') ?? ''),
-            password: String(form.get('password') ?? ''),
+            fullName: (form.get('fullName') as string | null) ?? '',
+            email: (form.get('email') as string | null) ?? '',
+            password: (form.get('password') as string | null) ?? '',
             ...(phone ? { phone } : {}),
         });
     };

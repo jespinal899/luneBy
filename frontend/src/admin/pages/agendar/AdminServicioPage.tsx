@@ -137,7 +137,7 @@ export const AdminServicioPage = () => {
                                             required
                                             value={form.price}
                                             onChange={(e) =>
-                                                set('price', parseFloat(e.target.value) || 0)
+                                                set('price', Number.parseFloat(e.target.value) || 0)
                                             }
                                             className={`${inputClass} pl-9`}
                                             placeholder="0"
@@ -160,7 +160,7 @@ export const AdminServicioPage = () => {
                                             onChange={(e) =>
                                                 set(
                                                     'durationMin',
-                                                    parseInt(e.target.value) || 0,
+                                                    Number.parseInt(e.target.value) || 0,
                                                 )
                                             }
                                             className={`${inputClass} pl-9`}

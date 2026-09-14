@@ -1,7 +1,7 @@
-import { existsSync } from 'fs';
-import { mkdir, writeFile } from 'fs/promises';
-import { join } from 'path';
-import { randomUUID } from 'crypto';
+import { existsSync } from 'node:fs';
+import { mkdir, writeFile } from 'node:fs/promises';
+import { join } from 'node:path';
+import { randomUUID } from 'node:crypto';
 
 import {
   BadRequestException,
@@ -50,7 +50,8 @@ export class FilesService {
         this.config.get<string>('HOST_API') ?? 'http://localhost:3001/api';
       return `${host}/files/service/${filename}`;
     } catch (error) {
-      const detail = error instanceof Error ? error.message : String(error);
+      const detail =
+        error instanceof Error ? error.message : JSON.stringify(error);
       this.logger.error(
         `Fallo al guardar la imagen (${contentType}, ${file.size} bytes): ${detail}`,
         error instanceof Error ? error.stack : undefined,
@@ -80,7 +81,8 @@ export class FilesService {
         .toBuffer();
       return { body, ext: 'webp', contentType: 'image/webp' };
     } catch (error) {
-      const detail = error instanceof Error ? error.message : String(error);
+      const detail =
+        error instanceof Error ? error.message : JSON.stringify(error);
       this.logger.warn(
         `No se pudo optimizar la imagen (${file.mimetype}), se guarda el original: ${detail}`,
       );

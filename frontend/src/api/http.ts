@@ -12,7 +12,7 @@ export const http = axios.create({
   baseURL: import.meta.env.VITE_API_URL ?? 'http://localhost:3001/api',
 });
 
-const WRITE_METHODS = ['post', 'put', 'patch', 'delete'];
+const WRITE_METHODS = new Set(['post', 'put', 'patch', 'delete']);
 
 // Adjunta el Bearer token y, en operaciones de escritura, una Idempotency-Key:
 // si la petición se reintenta a nivel de red, el backend devuelve la respuesta
@@ -22,7 +22,7 @@ http.interceptors.request.use((config) => {
   if (token) config.headers.Authorization = `Bearer ${token}`;
 
   const method = (config.method ?? 'get').toLowerCase();
-  if (WRITE_METHODS.includes(method) && !config.headers['Idempotency-Key']) {
+  if (WRITE_METHODS.has(method) && !config.headers['Idempotency-Key']) {
     config.headers['Idempotency-Key'] = crypto.randomUUID();
   }
   return config;
