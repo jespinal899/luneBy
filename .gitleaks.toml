@@ -1,23 +1,15 @@
-# Configuración de gitleaks (escaneo de secretos en CI).
-# Extiende el ruleset por defecto y añade una allowlist para falsos positivos
-# conocidos, todos verificados manualmente como NO sensibles.
+# Configuración de gitleaks para este repo.
+# Extiende las reglas por defecto y solo agrega excepciones puntuales
+# para falsos positivos conocidos — no se desactiva ninguna regla real.
+title = "gitleaks config — luneBy"
 
 [extend]
 useDefault = true
 
 [allowlist]
-description = "Falsos positivos verificados"
-paths = [
-  # Hashes `integrity` (sha512/base64) que contienen subcadenas tipo token.
-  '''package-lock\.json$''',
-  # Plantillas de entorno: solo llevan placeholders, nunca valores reales.
-  '''\.env\.example$''',
-]
-regexes = [
-  # Ref público del proyecto de Supabase (aparece en la URL pública de la API;
-  # no es una credencial). La CLI lo necesita en supabase/config.toml.
-  '''fxlttpayjkkbfomveavx''',
-  # Client ID de OAuth de Google: es público por diseño (va en el bundle del
-  # frontend). El secret del cliente NO se usa en este proyecto.
-  '''[0-9]+-[a-z0-9]+\.apps\.googleusercontent\.com''',
-]
+description = "Falsos positivos conocidos, no son secretos"
+# El Project Key de SonarCloud es público (es la URL del proyecto en
+# sonarcloud.io) y su forma "usuario_repo" dispara la regla genérica de
+# "posible API key" por su entropía. No es un secreto.
+regexes = ['''jespinal899_luneBy''']
+paths = ['''sonar-project\.properties''']
