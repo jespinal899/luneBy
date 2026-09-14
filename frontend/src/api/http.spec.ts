@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 
-import { http, tokenStorage } from './http';
+import { http, sessionMarker, tokenStorage } from './http';
 
 // axios expone los interceptores registrados en un array interno; no hay una
 // API pública para invocarlos directo, así que se accede tal cual lo hacen
@@ -31,6 +31,27 @@ describe('tokenStorage', () => {
     expect(tokenStorage.get()).toBe('abc123');
     tokenStorage.clear();
     expect(tokenStorage.get()).toBeNull();
+  });
+});
+
+describe('sessionMarker', () => {
+  beforeEach(() => sessionMarker.clear());
+
+  it('set() deja la cookie que lee el middleware', () => {
+    sessionMarker.set();
+    expect(document.cookie).toContain('luneby_session=1');
+  });
+
+  it('clear() la borra', () => {
+    sessionMarker.set();
+    sessionMarker.clear();
+    expect(document.cookie).not.toContain('luneby_session=1');
+  });
+
+  it('no guarda el token ni datos del usuario, solo el marcador', () => {
+    tokenStorage.set('token-secreto-123');
+    sessionMarker.set();
+    expect(document.cookie).not.toContain('token-secreto-123');
   });
 });
 

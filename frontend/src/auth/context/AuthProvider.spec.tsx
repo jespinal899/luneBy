@@ -90,6 +90,38 @@ describe('AuthProvider', () => {
     expect(tokenStorage.get()).toBeNull();
   });
 
+  it('al autenticarse deja la cookie marcadora y al fallar la borra', async () => {
+    tokenStorage.set('tok-1');
+    vi.mocked(checkStatusRequest).mockResolvedValue({
+      token: 'tok-1',
+      user: { id: '1', email: 'kelin@example.com', roles: ['admin'] } as never,
+    });
+
+    const { unmount } = render(
+      <AuthProvider>
+        <Probe />
+      </AuthProvider>,
+    );
+
+    await waitFor(() =>
+      expect(screen.getByTestId('status')).toHaveTextContent('authenticated'),
+    );
+    expect(document.cookie).toContain('luneby_session=1');
+
+    unmount();
+    localStorage.clear();
+    tokenStorage.set('tok-viejo');
+    vi.mocked(checkStatusRequest).mockRejectedValue(new Error('401'));
+
+    render(
+      <AuthProvider>
+        <Probe />
+      </AuthProvider>,
+    );
+
+    await waitFor(() => expect(document.cookie).not.toContain('luneby_session=1'));
+  });
+
   it('login() guarda el token y el usuario', async () => {
     vi.mocked(loginRequest).mockResolvedValue({
       token: 'tok-nuevo',

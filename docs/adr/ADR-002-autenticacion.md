@@ -96,13 +96,35 @@ del lado de la aplicación.
   quien no es admin) la aplica el JavaScript en el navegador con
   `ProtectedRoute`, después de que el HTML ya se sirvió. Como el token
   vive en `localStorage` (no en una cookie), un Edge Middleware de Vercel
-  no puede leerlo para decidir si servir 401/redirect antes del HTML —
-  el servidor no tiene forma de saber si hay sesión. Un escáner que solo
-  inspecciona el HTML crudo (sin ejecutar JS) ve el mismo shell en toda
-  ruta y puede reportarlo como "contenido sin proteger" — no lo es: no
-  hay dato de negocio en ese HTML, y cada llamada a la API sí exige el
-  JWT (ver más arriba). Arreglar esto de raíz a nivel HTTP requeriría
-  migrar el token a una cookie `httpOnly` + agregar un Edge Middleware
-  que verifique sesión antes de servir la página — cambio grande, no
-  hecho todavía porque no hay una fuga real de datos que lo justifique
-  hoy, solo una limitación de cómo un escáner sin JS interpreta un SPA.
+  no puede leerlo ni validar su firma antes de servir el HTML. Un escáner
+  que solo inspecciona el HTML crudo (sin ejecutar JS) veía el mismo shell
+  en toda ruta y lo reportaba como "contenido sin proteger" — no lo es:
+  no hay dato de negocio en ese HTML, y cada llamada a la API sí exige el
+  JWT (ver más arriba).
+
+  **Mitigación parcial adoptada (cookie marcadora + Edge Middleware).**
+  `AuthProvider` deja una cookie `luneby_session=1` al iniciar sesión y la
+  borra al cerrarla. No lleva el token ni dato alguno del usuario: solo
+  declara "este navegador tiene una sesión abierta". Con eso,
+  `frontend/middleware.ts` responde un 307 al login en `/admin`, `/perfil`
+  y `/mis-citas` cuando la cookie falta, en vez de servir el shell.
+
+  Lo que esto **sí** resuelve: la UX (antes se veía un shell en blanco
+  parpadeando hasta que arrancaba el JS y el guard redirigía) y la
+  semántica HTTP (la respuesta ahora refleja el estado de sesión).
+
+  Lo que esto **no** es: una barrera de seguridad. La cookie es
+  falsificable a mano, y quien la fabrique recibe el shell — que sigue sin
+  contener datos. La autorización real no cambió de lugar: está en la API,
+  que exige un JWT firmado y válido para devolver cualquier dato, y en
+  `ProtectedRoute`, que valida el rol contra el usuario real.
+
+  **Deuda pendiente:** el arreglo de raíz sigue siendo migrar el token a
+  una cookie `httpOnly; Secure; SameSite=None` y que el middleware valide
+  la firma en el borde. No se hizo porque la API y el frontend viven en
+  dominios distintos (Render y Vercel), lo que obliga a cookies
+  cross-site, CORS con `credentials` y el `JWT_SECRET` replicado en
+  Vercel: cuatro piezas que deben alinearse en una app ya en producción,
+  a cambio de un beneficio marginal mientras el HTML no contenga datos
+  (no hay SSR). Vale la pena revisarlo si aparece SSR, más cuentas de
+  administración, o datos sensibles renderizados en el servidor.

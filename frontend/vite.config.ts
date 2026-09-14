@@ -16,7 +16,9 @@ export default defineConfig({
     globals: true,
     setupFiles: ['./src/test/setup.ts'],
     css: false,
-    include: ['src/**/*.{test,spec}.{ts,tsx}'],
+    // `middleware.ts` vive en la raíz (lo exige Vercel), así que su spec
+    // también, y no lo cubre el patrón de `src`.
+    include: ['src/**/*.{test,spec}.{ts,tsx}', 'middleware.spec.ts'],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'lcov'],

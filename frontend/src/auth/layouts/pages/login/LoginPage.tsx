@@ -9,12 +9,18 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/auth/context/use-auth';
+import { safeInternalPath } from '@/lib/safe-redirect';
 
 export const LoginPage = () => {
     const { login, loginWithGoogle } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
-    const from = (location.state as { from?: string } | null)?.from ?? '/';
+    // El destino puede venir del guard de React (state) o del Edge Middleware,
+    // que redirige con `?from=` al no encontrar la cookie de sesión.
+    const from = safeInternalPath(
+        (location.state as { from?: string } | null)?.from ??
+        new URLSearchParams(location.search).get('from'),
+    );
 
     const mutation = useMutation({
         mutationFn: login,

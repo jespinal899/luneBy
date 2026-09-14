@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 
-import { tokenStorage } from '@/api/http';
+import { sessionMarker, tokenStorage } from '@/api/http';
 import type { AuthResponse, User } from '@/api/types';
 import {
   checkStatusRequest,
@@ -22,12 +22,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const applyAuth = ({ user: nextUser, token }: AuthResponse) => {
     tokenStorage.set(token);
+    sessionMarker.set();
     setUser(nextUser);
     setStatus('authenticated');
   };
 
   const clearAuth = () => {
     tokenStorage.clear();
+    sessionMarker.clear();
     setUser(null);
     setStatus('unauthenticated');
   };
@@ -35,6 +37,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   // Al montar, si hay token guardado, se revalida contra el backend.
   useEffect(() => {
     if (!tokenStorage.get()) return;
+    // La cookie marcadora se repone de entrada (sesiones que ya existían
+    // antes de que hubiera middleware, o si la cookie expiró antes que el
+    // token); si la revalidación falla, `clearAuth` la vuelve a borrar.
+    sessionMarker.set();
     checkStatusRequest().then(applyAuth).catch(clearAuth);
   }, []);
 
