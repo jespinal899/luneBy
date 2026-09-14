@@ -18,6 +18,11 @@ backend_ref/
 **/.env
 **/.env.*
 
+# Estado local de la CLI de Vercel (`vercel link` escribe acá los ids del
+# proyecto). No son credenciales, pero es configuración de la máquina, no
+# del repo.
+**/.vercel
+
 # Logs y basura del SO / editores
 *.log
 .DS_Store
