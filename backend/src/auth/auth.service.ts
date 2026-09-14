@@ -17,6 +17,12 @@ import {
 import { GOOGLE_OAUTH_CLIENT } from './google-oauth.provider';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
 
+/**
+ * Coste del hash de bcrypt. Cada punto duplica el trabajo; 10 es el
+ * equilibrio habitual entre resistencia a fuerza bruta y latencia del login.
+ */
+const BCRYPT_ROUNDS = 10;
+
 // El correo duplicado (`uq_users_email`) lo traduce a 409 el
 // `DatabaseExceptionFilter` global.
 @Injectable()
@@ -35,7 +41,7 @@ export class AuthService {
 
     const user = this.userRepository.create({
       ...userData,
-      password: bcrypt.hashSync(password, 10),
+      password: await bcrypt.hash(password, BCRYPT_ROUNDS),
     });
     await this.userRepository.save(user);
 
@@ -58,7 +64,7 @@ export class AuthService {
     if (!user) throw new UnauthorizedException('Credenciales no válidas');
     if (!user.password)
       throw new UnauthorizedException('Esta cuenta inicia sesión con Google');
-    if (!bcrypt.compareSync(password, user.password))
+    if (!(await bcrypt.compare(password, user.password)))
       throw new UnauthorizedException('Credenciales no válidas');
 
     return this.buildAuthResponse(user);
@@ -151,12 +157,12 @@ export class AuthService {
         'Esta cuenta inicia sesión con Google y no tiene contraseña',
       );
     }
-    if (!bcrypt.compareSync(dto.currentPassword, row.password)) {
+    if (!(await bcrypt.compare(dto.currentPassword, row.password))) {
       throw new UnauthorizedException('La contraseña actual no es correcta');
     }
 
     await this.userRepository.update(user.id, {
-      password: bcrypt.hashSync(dto.newPassword, 10),
+      password: await bcrypt.hash(dto.newPassword, BCRYPT_ROUNDS),
     });
 
     return { message: 'Contraseña actualizada' };
