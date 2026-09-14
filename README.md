@@ -174,7 +174,7 @@ Ver el estado del pipeline en la pestaña **Actions** del repositorio.
 ---
 
 ## 🔒 Buenas prácticas de seguridad
-* **Sin secretos versionados**: los `.env` reales están en `.gitignore`; solo se versionan las plantillas `.env.example`, que llevan únicamente *placeholders* (`JWT_SECRET=cambia-esto…`, credenciales de Postgres locales, variables de Supabase comentadas y vacías).
+* **Sin secretos versionados**: los `.env` reales están en `.gitignore`; solo se versionan las plantillas `.env.example`. En esas plantillas, **toda clave que nombra una credencial se deja con el valor vacío** (contraseña de base de datos, secreto de JWT, keys de Supabase y Resend, client ID de OAuth): qué poner en cada una se explica en el comentario de arriba, no en el valor. Así el archivo documenta la configuración sin que quede ni una sola cadena con forma de credencial en el repositorio.
 * **Escaneo automático**: el job `secrets` del CI corre [gitleaks](https://github.com/gitleaks/gitleaks) sobre el código y **todo el historial de git** en cada push y PR. Si aparece un secreto, el pipeline falla. Configuración y falsos positivos verificados en [`.gitleaks.toml`](.gitleaks.toml).
 * La configuración sensible vive en las variables de entorno del hosting (Render / Vercel / Supabase). En `render.yaml`, `JWT_SECRET` usa `generateValue: true` y el resto `sync: false` (se rellenan en el panel, nunca en el archivo).
 * La imagen Docker de la API corre como usuario sin privilegios (`node`) y con `tini` como PID 1.
