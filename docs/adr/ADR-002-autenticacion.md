@@ -88,3 +88,21 @@ del lado de la aplicación.
   que las políticas RLS de `appointment_items` empiecen a filtrar de
   verdad) implica migrar usuarios existentes y su relación con
   `appointments`/`appointment_items`, no es un cambio de configuración.
+- **El JWT vive en `localStorage`, no en una cookie — limitación conocida
+  para cualquier verificación a nivel de servidor/edge.** El frontend es
+  un SPA (React Router, sin SSR): el HTML que devuelve Vercel para `/`,
+  `/auth/login` o `/admin` es literalmente el mismo shell vacío en los
+  tres casos — la protección real (mostrar el login, bloquear `/admin` a
+  quien no es admin) la aplica el JavaScript en el navegador con
+  `ProtectedRoute`, después de que el HTML ya se sirvió. Como el token
+  vive en `localStorage` (no en una cookie), un Edge Middleware de Vercel
+  no puede leerlo para decidir si servir 401/redirect antes del HTML —
+  el servidor no tiene forma de saber si hay sesión. Un escáner que solo
+  inspecciona el HTML crudo (sin ejecutar JS) ve el mismo shell en toda
+  ruta y puede reportarlo como "contenido sin proteger" — no lo es: no
+  hay dato de negocio en ese HTML, y cada llamada a la API sí exige el
+  JWT (ver más arriba). Arreglar esto de raíz a nivel HTTP requeriría
+  migrar el token a una cookie `httpOnly` + agregar un Edge Middleware
+  que verifique sesión antes de servir la página — cambio grande, no
+  hecho todavía porque no hay una fuga real de datos que lo justifique
+  hoy, solo una limitación de cómo un escáner sin JS interpreta un SPA.
