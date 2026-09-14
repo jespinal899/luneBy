@@ -15,7 +15,13 @@ import {
   APPOINTMENT_CREATED_EVENT,
   AppointmentCreatedEvent,
 } from './events/appointment-created.event';
-import { overlaps, toHHMM, toMinutes } from './helpers/time.helper';
+import {
+  nowInSalon,
+  overlaps,
+  toHHMM,
+  toMinutes,
+  weekdayOf,
+} from './helpers/time.helper';
 import { ScheduleService } from './schedule.service';
 import { TimeOffService } from './time-off.service';
 
@@ -56,11 +62,25 @@ export class AppointmentsService {
       );
 
     const duration = service.durationMin + Math.max(0, extraMinutes);
-    const weekday = new Date(`${date}T00:00:00`).getDay();
 
-    const rules = await this.scheduleService.getActiveRulesForWeekday(weekday);
+    const rules = await this.scheduleService.getActiveRulesForWeekday(
+      weekdayOf(date),
+    );
     if (rules.length === 0) return [];
 
+    const busy = await this.collectBusyRanges(date);
+    if (busy === null) return []; // día completo bloqueado
+
+    return this.buildSlots(date, rules, duration, busy);
+  }
+
+  /**
+   * Tramos ya ocupados de un día, en minutos: citas vigentes más bloqueos de
+   * agenda. Devuelve `null` si el día entero está bloqueado.
+   */
+  private async collectBusyRanges(
+    date: string,
+  ): Promise<Array<[number, number]> | null> {
     const busy: Array<[number, number]> = [];
 
     const dayAppointments = await this.appointmentRepository.find({
@@ -72,20 +92,37 @@ export class AppointmentsService {
 
     const timeOffs = await this.timeOffService.getTimeOffForDate(date);
     for (const off of timeOffs) {
-      if (!off.startTime || !off.endTime) return []; // día completo bloqueado
+      if (!off.startTime || !off.endTime) return null;
       busy.push([toMinutes(off.startTime), toMinutes(off.endTime)]);
     }
 
-    const now = new Date();
-    const isToday = date === now.toISOString().slice(0, 10);
-    const nowMinutes = now.getHours() * 60 + now.getMinutes();
+    return busy;
+  }
+
+  /**
+   * Horas de inicio que entran completas en alguna franja de atención y no
+   * chocan con nada ocupado. Si la fecha es hoy, descarta las ya pasadas —
+   * medido en la hora del salón, no en la del servidor.
+   */
+  private buildSlots(
+    date: string,
+    rules: Array<{
+      startTime: string;
+      endTime: string;
+      slotIntervalMin: number;
+    }>,
+    duration: number,
+    busy: Array<[number, number]>,
+  ): string[] {
+    const salonNow = nowInSalon();
+    const isToday = date === salonNow.date;
 
     const slots = new Set<string>();
     for (const rule of rules) {
       const open = toMinutes(rule.startTime);
       const close = toMinutes(rule.endTime);
       for (let t = open; t + duration <= close; t += rule.slotIntervalMin) {
-        if (isToday && t <= nowMinutes) continue;
+        if (isToday && t <= salonNow.minutes) continue;
         const clashes = busy.some(([bs, be]) =>
           overlaps(t, t + duration, bs, be),
         );
