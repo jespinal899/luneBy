@@ -291,3 +291,5 @@ Con `STAGE=prod`: SSL en PostgreSQL y CORS restringido a `FRONTEND_URL`. Usa un
 > Cobertura de tests: ver `coverage/coverage-summary.json` en la raíz del repo (≥60% de líneas).
 
 > (probando SonarCloud tras regenerar SONAR_TOKEN)
+
+> (reintento tras recrear el proyecto en SonarCloud y token nuevo)
