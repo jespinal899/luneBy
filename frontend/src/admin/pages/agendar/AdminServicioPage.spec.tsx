@@ -37,7 +37,7 @@ describe('AdminServicioPage (nuevo servicio)', () => {
     vi.mocked(createService).mockResolvedValue({ id: '1' } as never);
   });
 
-  it('crea un servicio con los valores del formulario', async () => {
+  it('crea un servicio con los valores del formulario, incluyendo precio y duración', async () => {
     const user = userEvent.setup();
     renderPage('/agendar/new');
 
@@ -45,10 +45,56 @@ describe('AdminServicioPage (nuevo servicio)', () => {
       screen.getByPlaceholderText('Ej: Manicura Rusa Premium'),
       'Manicura Rusa',
     );
+    const price = screen.getByPlaceholderText('0');
+    await user.clear(price);
+    await user.type(price, '350');
+    const duration = screen.getByPlaceholderText('60');
+    await user.clear(duration);
+    await user.type(duration, '45');
     await user.click(screen.getByRole('button', { name: /guardar/i }));
 
     expect(createService).toHaveBeenCalledWith(
-      expect.objectContaining({ name: 'Manicura Rusa' }),
+      expect.objectContaining({
+        name: 'Manicura Rusa',
+        price: 350,
+        durationMin: 45,
+      }),
     );
+  });
+
+  it('actualiza el precio al cambiarlo más de una vez', async () => {
+    const user = userEvent.setup();
+    renderPage('/agendar/new');
+
+    await user.type(
+      screen.getByPlaceholderText('Ej: Manicura Rusa Premium'),
+      'Servicio X',
+    );
+    const price = screen.getByPlaceholderText('0');
+    await user.clear(price);
+    await user.type(price, '100');
+    await user.clear(price);
+    await user.type(price, '200');
+    await user.click(screen.getByRole('button', { name: /guardar/i }));
+
+    expect(createService).toHaveBeenCalledWith(
+      expect.objectContaining({ price: 200 }),
+    );
+  });
+
+  it('muestra un mensaje de error si la mutación falla', async () => {
+    vi.mocked(createService).mockRejectedValue(new Error('boom'));
+    const user = userEvent.setup();
+    renderPage('/agendar/new');
+
+    await user.type(
+      screen.getByPlaceholderText('Ej: Manicura Rusa Premium'),
+      'Servicio X',
+    );
+    await user.click(screen.getByRole('button', { name: /guardar/i }));
+
+    expect(
+      await screen.findByText('No se pudo guardar el servicio.'),
+    ).toBeInTheDocument();
   });
 });
