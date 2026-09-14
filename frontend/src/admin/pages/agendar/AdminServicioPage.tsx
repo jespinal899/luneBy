@@ -70,7 +70,7 @@ export const AdminServicioPage = () => {
         : 'Actualiza la información de este servicio.';
 
     if (!isNew && isLoading) {
-        return <p className="py-16 text-center text-slate-500">Cargando servicio…</p>;
+        return <p className="py-16 text-center text-muted-foreground">Cargando servicio…</p>;
     }
 
     return (
@@ -94,21 +94,21 @@ export const AdminServicioPage = () => {
             </div>
 
             {mutation.isError && (
-                <p className="mb-6 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">
+                <p className="mb-6 rounded-lg bg-destructive/10 px-4 py-3 text-sm text-destructive">
                     {apiErrorMessage(mutation.error, 'No se pudo guardar el servicio.')}
                 </p>
             )}
 
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
                 <div className="space-y-6 lg:col-span-2">
-                    <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-                        <h2 className="mb-6 text-lg font-semibold text-slate-800">
+                    <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
+                        <h2 className="mb-6 text-lg font-semibold text-foreground">
                             Información del servicio
                         </h2>
 
                         <div className="space-y-6">
                             <div>
-                                <label className="mb-2 block text-sm font-medium text-slate-700">
+                                <label className="mb-2 block text-sm font-medium text-foreground">
                                     Nombre del servicio
                                 </label>
                                 <input
@@ -123,11 +123,11 @@ export const AdminServicioPage = () => {
 
                             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                                 <div>
-                                    <label className="mb-2 block text-sm font-medium text-slate-700">
+                                    <label className="mb-2 block text-sm font-medium text-foreground">
                                         Precio (L.)
                                     </label>
                                     <div className="relative">
-                                        <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm font-medium text-slate-400">
+                                        <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm font-medium text-muted-foreground">
                                             L.
                                         </span>
                                         <input
@@ -146,11 +146,11 @@ export const AdminServicioPage = () => {
                                 </div>
 
                                 <div>
-                                    <label className="mb-2 block text-sm font-medium text-slate-700">
+                                    <label className="mb-2 block text-sm font-medium text-foreground">
                                         Duración (minutos)
                                     </label>
                                     <div className="relative">
-                                        <Clock className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                                        <Clock className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                                         <input
                                             type="number"
                                             min={5}
@@ -171,7 +171,7 @@ export const AdminServicioPage = () => {
                             </div>
 
                             <div>
-                                <label className="mb-2 block text-sm font-medium text-slate-700">
+                                <label className="mb-2 block text-sm font-medium text-foreground">
                                     Categoría
                                 </label>
                                 <select
@@ -188,7 +188,7 @@ export const AdminServicioPage = () => {
                             </div>
 
                             <div>
-                                <label className="mb-2 block text-sm font-medium text-slate-700">
+                                <label className="mb-2 block text-sm font-medium text-foreground">
                                     Descripción
                                 </label>
                                 <textarea
@@ -204,17 +204,17 @@ export const AdminServicioPage = () => {
                 </div>
 
                 <div className="space-y-6">
-                    <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-                        <h2 className="mb-4 text-lg font-semibold text-slate-800">
+                    <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
+                        <h2 className="mb-4 text-lg font-semibold text-foreground">
                             Disponibilidad
                         </h2>
 
-                        <label className="flex items-center justify-between rounded-lg bg-slate-50 p-3">
+                        <label className="flex items-center justify-between rounded-lg bg-muted p-3">
                             <div>
-                                <p className="text-sm font-medium text-slate-700">
+                                <p className="text-sm font-medium text-foreground">
                                     Disponible para agendar
                                 </p>
-                                <p className="text-xs text-slate-400">
+                                <p className="text-xs text-muted-foreground">
                                     Aparece como opción en /shop/agendar
                                 </p>
                             </div>
@@ -222,15 +222,15 @@ export const AdminServicioPage = () => {
                                 type="checkbox"
                                 checked={form.isActive}
                                 onChange={(e) => set('isActive', e.target.checked)}
-                                className="h-5 w-5 accent-slate-900"
+                                className="h-5 w-5 accent-primary"
                             />
                         </label>
 
-                        <p className="mt-4 text-xs text-slate-400">
+                        <p className="mt-4 text-xs text-muted-foreground">
                             Las fotos de los diseños se cargan en el{' '}
                             <Link
                                 to="/admin/products"
-                                className="underline hover:text-slate-600"
+                                className="underline hover:text-muted-foreground"
                             >
                                 catálogo
                             </Link>

@@ -61,19 +61,19 @@ export const AdminProductsPage = () => {
             </div>
 
             {isLoading ? (
-                <p className="py-16 text-center text-slate-500">Cargando catálogo…</p>
+                <p className="py-16 text-center text-muted-foreground">Cargando catálogo…</p>
             ) : isError ? (
-                <p className="py-16 text-center text-red-600">
+                <p className="py-16 text-center text-destructive">
                     No se pudo cargar el catálogo.
                 </p>
             ) : data?.products.length === 0 ? (
-                <p className="py-16 text-center text-slate-500">
+                <p className="py-16 text-center text-muted-foreground">
                     Todavía no hay diseños en el catálogo. Creá el primero con
                     “Nuevo diseño”.
                 </p>
             ) : (
                 <>
-                    <Table className="mb-10 border border-gray-200 bg-white shadow-xs">
+                    <Table className="mb-10 border border-border bg-card shadow-xs">
                         <TableHeader>
                             <TableRow>
                                 <TableHead>Foto</TableHead>
@@ -98,7 +98,7 @@ export const AdminProductsPage = () => {
                                         {item.name}
                                     </TableCell>
                                     <TableCell>
-                                        <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-700">
+                                        <span className="rounded-full bg-muted px-2.5 py-1 text-xs font-medium text-foreground">
                                             {item.category}
                                         </span>
                                     </TableCell>
@@ -107,15 +107,15 @@ export const AdminProductsPage = () => {
                                         <span
                                             className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${
                                                 item.isActive
-                                                    ? 'bg-emerald-50 text-emerald-700'
-                                                    : 'bg-slate-100 text-slate-500'
+                                                    ? 'bg-success/10 text-success'
+                                                    : 'bg-muted text-muted-foreground'
                                             }`}
                                         >
                                             <span
                                                 className={`h-1.5 w-1.5 rounded-full ${
                                                     item.isActive
-                                                        ? 'bg-emerald-500'
-                                                        : 'bg-slate-400'
+                                                        ? 'bg-success'
+                                                        : 'bg-muted-foreground'
                                                 }`}
                                             />
                                             {item.isActive ? 'Visible' : 'Oculto'}
@@ -135,7 +135,7 @@ export const AdminProductsPage = () => {
                                         <Button
                                             variant="ghost"
                                             size="sm"
-                                            className="text-red-600 hover:text-red-700"
+                                            className="text-destructive hover:text-destructive"
                                             disabled={deleteItem.isPending}
                                             onClick={() =>
                                                 handleDelete(item.id, item.name)

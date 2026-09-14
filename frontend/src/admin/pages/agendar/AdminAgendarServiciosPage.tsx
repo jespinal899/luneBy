@@ -51,17 +51,17 @@ export const AdminAgendarServiciosPage = () => {
             </div>
 
             {isLoading ? (
-                <p className="py-16 text-center text-slate-500">Cargando servicios…</p>
+                <p className="py-16 text-center text-muted-foreground">Cargando servicios…</p>
             ) : isError ? (
-                <p className="py-16 text-center text-red-600">
+                <p className="py-16 text-center text-destructive">
                     No se pudieron cargar los servicios.
                 </p>
             ) : data?.products.length === 0 ? (
-                <p className="py-16 text-center text-slate-500">
+                <p className="py-16 text-center text-muted-foreground">
                     Todavía no hay servicios. Creá el primero con “Nuevo servicio”.
                 </p>
             ) : (
-                <Table className="mb-10 border border-gray-200 bg-white shadow-xs">
+                <Table className="mb-10 border border-border bg-card shadow-xs">
                     <TableHeader>
                         <TableRow>
                             <TableHead>Servicio</TableHead>
@@ -79,7 +79,7 @@ export const AdminAgendarServiciosPage = () => {
                                     {service.name}
                                 </TableCell>
                                 <TableCell>
-                                    <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-700">
+                                    <span className="rounded-full bg-muted px-2.5 py-1 text-xs font-medium text-foreground">
                                         {service.category}
                                     </span>
                                 </TableCell>
@@ -91,15 +91,15 @@ export const AdminAgendarServiciosPage = () => {
                                     <span
                                         className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${
                                             service.isActive
-                                                ? 'bg-emerald-50 text-emerald-700'
-                                                : 'bg-slate-100 text-slate-500'
+                                                ? 'bg-success/10 text-success'
+                                                : 'bg-muted text-muted-foreground'
                                         }`}
                                     >
                                         <span
                                             className={`h-1.5 w-1.5 rounded-full ${
                                                 service.isActive
-                                                    ? 'bg-emerald-500'
-                                                    : 'bg-slate-400'
+                                                    ? 'bg-success'
+                                                    : 'bg-muted-foreground'
                                             }`}
                                         />
                                         {service.isActive
@@ -121,7 +121,7 @@ export const AdminAgendarServiciosPage = () => {
                                     <Button
                                         variant="ghost"
                                         size="sm"
-                                        className="text-red-600 hover:text-red-700"
+                                        className="text-destructive hover:text-destructive"
                                         disabled={deleteService.isPending}
                                         onClick={() =>
                                             handleDelete(service.id, service.name)

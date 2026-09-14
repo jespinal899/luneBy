@@ -65,9 +65,9 @@ const WeeklySchedule = () => {
   if (days.length === 0) return null;
 
   return (
-    <section className="rounded-xl border border-gray-200 bg-white p-6">
-      <h2 className="text-lg font-semibold text-gray-900">Horario semanal</h2>
-      <p className="mt-1 text-sm text-gray-500">
+    <section className="rounded-xl border border-border bg-card p-6">
+      <h2 className="text-lg font-semibold text-foreground">Horario semanal</h2>
+      <p className="mt-1 text-sm text-muted-foreground">
         Marca los días que atiendes, el rango de horas y cada cuánto empieza
         un turno (ej. cada hora en punto: 6:00 pm, 7:00 pm, 8:00 pm…). Las
         clientas solo verán esas horas exactas como disponibles.
@@ -77,7 +77,7 @@ const WeeklySchedule = () => {
         {days.map((d) => (
           <div
             key={d.weekday}
-            className="flex flex-wrap items-center gap-3 rounded-lg border border-gray-100 px-3 py-2.5"
+            className="flex flex-wrap items-center gap-3 rounded-lg border border-border px-3 py-2.5"
           >
             <label className="flex w-32 items-center gap-2 text-sm font-medium">
               <input
@@ -95,15 +95,15 @@ const WeeklySchedule = () => {
                 value={d.startTime}
                 disabled={!d.isActive}
                 onChange={(e) => set(d.weekday, { startTime: e.target.value })}
-                className="rounded-md border border-gray-300 px-2 py-1 disabled:opacity-40"
+                className="rounded-md border border-input px-2 py-1 disabled:opacity-40"
               />
-              <span className="text-gray-400">a</span>
+              <span className="text-muted-foreground">a</span>
               <input
                 type="time"
                 value={d.endTime}
                 disabled={!d.isActive}
                 onChange={(e) => set(d.weekday, { endTime: e.target.value })}
-                className="rounded-md border border-gray-300 px-2 py-1 disabled:opacity-40"
+                className="rounded-md border border-input px-2 py-1 disabled:opacity-40"
               />
             </div>
 
@@ -113,7 +113,7 @@ const WeeklySchedule = () => {
               onChange={(e) =>
                 set(d.weekday, { slotIntervalMin: Number(e.target.value) })
               }
-              className="rounded-md border border-gray-300 px-2 py-1 text-sm disabled:opacity-40"
+              className="rounded-md border border-input px-2 py-1 text-sm disabled:opacity-40"
             >
               {INTERVAL_OPTIONS.map((opt) => (
                 <option key={opt.value} value={opt.value}>
@@ -123,19 +123,19 @@ const WeeklySchedule = () => {
             </select>
 
             {!d.isActive && (
-              <span className="text-xs text-gray-400">Cerrado</span>
+              <span className="text-xs text-muted-foreground">Cerrado</span>
             )}
           </div>
         ))}
       </div>
 
       {save.isError && (
-        <p className="mt-3 text-sm text-red-600">
+        <p className="mt-3 text-sm text-destructive">
           {apiErrorMessage(save.error, 'No se pudo guardar el horario.')}
         </p>
       )}
       {save.isSuccess && (
-        <p className="mt-3 flex items-center gap-1.5 text-sm text-emerald-600">
+        <p className="mt-3 flex items-center gap-1.5 text-sm text-success">
           <Check className="h-4 w-4" /> Horario guardado
         </p>
       )}
@@ -188,9 +188,9 @@ const ClosedDays = () => {
   };
 
   return (
-    <section className="rounded-xl border border-gray-200 bg-white p-6">
-      <h2 className="text-lg font-semibold text-gray-900">Días cerrados</h2>
-      <p className="mt-1 text-sm text-gray-500">
+    <section className="rounded-xl border border-border bg-card p-6">
+      <h2 className="text-lg font-semibold text-foreground">Días cerrados</h2>
+      <p className="mt-1 text-sm text-muted-foreground">
         Toca un día para cerrarlo (vacaciones, feriados). Ese día no se podrá
         reservar.
       </p>
@@ -204,7 +204,7 @@ const ClosedDays = () => {
                 new Date(cursor.getFullYear(), cursor.getMonth() - 1, 1),
               )
             }
-            className="rounded-md p-1.5 hover:bg-gray-100"
+            className="rounded-md p-1.5 hover:bg-muted"
             aria-label="Mes anterior"
           >
             <ChevronLeft className="h-4 w-4" />
@@ -222,14 +222,14 @@ const ClosedDays = () => {
                 new Date(cursor.getFullYear(), cursor.getMonth() + 1, 1),
               )
             }
-            className="rounded-md p-1.5 hover:bg-gray-100"
+            className="rounded-md p-1.5 hover:bg-muted"
             aria-label="Mes siguiente"
           >
             <ChevronRight className="h-4 w-4" />
           </button>
         </div>
 
-        <div className="mt-3 grid grid-cols-7 gap-1 text-center text-xs text-gray-400">
+        <div className="mt-3 grid grid-cols-7 gap-1 text-center text-xs text-muted-foreground">
           {DAY_SHORT.map((d, i) => (
             <span key={i}>{d}</span>
           ))}
@@ -247,9 +247,9 @@ const ClosedDays = () => {
                 onClick={() => toggle(dateStr)}
                 className={[
                   'aspect-square rounded-md text-sm transition-colors',
-                  isPast && 'cursor-not-allowed text-gray-300',
-                  !isPast && !isClosed && 'hover:bg-gray-100',
-                  isClosed && 'bg-red-100 font-semibold text-red-700',
+                  isPast && 'cursor-not-allowed text-muted-foreground',
+                  !isPast && !isClosed && 'hover:bg-muted',
+                  isClosed && 'bg-destructive/15 font-semibold text-destructive',
                 ]
                   .filter(Boolean)
                   .join(' ')}
@@ -266,16 +266,16 @@ const ClosedDays = () => {
           {closed.map((c) => (
             <li
               key={c.id}
-              className="flex items-center justify-between rounded-lg bg-red-50 px-3 py-2"
+              className="flex items-center justify-between rounded-lg bg-destructive/10 px-3 py-2"
             >
-              <span className="flex items-center gap-2 capitalize text-red-800">
+              <span className="flex items-center gap-2 capitalize text-destructive">
                 <CalendarOff className="h-4 w-4" />
                 {formatLongDate(c.date)}
               </span>
               <button
                 type="button"
                 onClick={() => remove.mutate(c.id)}
-                className="text-xs font-medium text-red-600 hover:underline"
+                className="text-xs font-medium text-destructive hover:underline"
               >
                 Reabrir
               </button>

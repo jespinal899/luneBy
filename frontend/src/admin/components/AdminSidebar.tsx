@@ -62,31 +62,31 @@ const UserMenu = ({ isCollapsed }: { isCollapsed: boolean }) => {
     };
 
     return (
-        <div className="relative border-t border-gray-200 p-4" ref={ref}>
+        <div className="relative border-t border-border p-4" ref={ref}>
             <button
                 type="button"
                 onClick={() => setOpen((o) => !o)}
-                className="flex w-full items-center space-x-3 rounded-lg p-3 transition-colors hover:bg-gray-50"
+                className="flex w-full items-center space-x-3 rounded-lg p-3 transition-colors hover:bg-muted"
             >
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-blue-500 to-purple-600 font-semibold text-white">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary font-semibold text-primary-foreground">
                     {initials}
                 </div>
                 {!isCollapsed && (
                     <div className="min-w-0 flex-1 text-left">
-                        <p className="truncate text-sm font-medium text-gray-900">
+                        <p className="truncate text-sm font-medium text-foreground">
                             {user.fullName}
                         </p>
-                        <p className="truncate text-xs text-gray-500">{user.email}</p>
+                        <p className="truncate text-xs text-muted-foreground">{user.email}</p>
                     </div>
                 )}
             </button>
 
             {open && (
-                <div className="absolute bottom-full left-4 right-4 z-20 mb-2 rounded-xl border border-slate-200 bg-white p-1.5 shadow-lg">
+                <div className="absolute bottom-full left-4 right-4 z-20 mb-2 rounded-xl border border-border bg-card p-1.5 shadow-lg">
                     <Link
                         to="/perfil"
                         onClick={() => setOpen(false)}
-                        className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"
+                        className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-foreground hover:bg-muted"
                     >
                         <UserIcon size={16} />
                         Ver cuenta
@@ -94,7 +94,7 @@ const UserMenu = ({ isCollapsed }: { isCollapsed: boolean }) => {
                     <Link
                         to="/"
                         onClick={() => setOpen(false)}
-                        className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"
+                        className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-foreground hover:bg-muted"
                     >
                         <Home size={16} />
                         Volver al inicio
@@ -102,7 +102,7 @@ const UserMenu = ({ isCollapsed }: { isCollapsed: boolean }) => {
                     <button
                         type="button"
                         onClick={handleLogout}
-                        className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm text-red-600 hover:bg-red-50"
+                        className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm text-destructive hover:bg-destructive/10"
                     >
                         <LogOut size={16} />
                         Cerrar sesión
@@ -126,14 +126,14 @@ export const AdminSidebar: React.FC<SidebarProps> = ({
 
     return (
         <div
-            className={`flex flex-col border-r border-gray-200 bg-white transition-all duration-300 ease-in-out ${isCollapsed ? 'w-18' : 'w-64'
+            className={`flex flex-col border-r border-border bg-card transition-all duration-300 ease-in-out ${isCollapsed ? 'w-18' : 'w-64'
                 }`}
         >
-            <div className="flex h-18 items-center justify-between border-b border-gray-200 p-4">
+            <div className="flex h-18 items-center justify-between border-b border-border p-4">
                 {!isCollapsed && <CustomLogo />}
                 <button
                     onClick={onToggle}
-                    className="rounded-lg p-2 transition-colors hover:bg-gray-100"
+                    className="rounded-lg p-2 transition-colors hover:bg-muted"
                 >
                     {isCollapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
                 </button>
@@ -146,8 +146,8 @@ export const AdminSidebar: React.FC<SidebarProps> = ({
                             <Link
                                 to={to}
                                 className={`group flex items-center space-x-3 rounded-lg px-3 py-2 transition-all duration-200 ${isActiveRoute(to)
-                                        ? 'border-r-2 border-blue-600 bg-blue-50 text-blue-600'
-                                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                                        ? 'border-r-2 border-primary bg-primary/10 text-primary'
+                                        : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                                     }`}
                             >
                                 <Icon size={20} className="flex-shrink-0" />

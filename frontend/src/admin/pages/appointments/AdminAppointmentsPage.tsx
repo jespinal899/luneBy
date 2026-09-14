@@ -25,13 +25,13 @@ const STATUS_LABEL: Record<AppointmentStatus, string> = {
 };
 
 const STATUS_STYLE: Record<AppointmentStatus, string> = {
-    pending: 'bg-amber-50 text-amber-700',
-    confirmed: 'bg-emerald-50 text-emerald-700',
-    cancelled: 'bg-slate-100 text-slate-500',
-    done: 'bg-slate-100 text-slate-600',
+    pending: 'bg-warning/10 text-warning',
+    confirmed: 'bg-success/10 text-success',
+    cancelled: 'bg-muted text-muted-foreground',
+    done: 'bg-muted text-muted-foreground',
 };
 
-const inputClass = 'rounded-lg border border-slate-300 px-3 py-2 text-sm';
+const inputClass = 'rounded-lg border border-input px-3 py-2 text-sm';
 
 export const AdminAppointmentsPage = () => {
     const [date, setDate] = useState('');
@@ -89,17 +89,17 @@ export const AdminAppointmentsPage = () => {
             </div>
 
             {isLoading ? (
-                <p className="py-16 text-center text-slate-500">Cargando…</p>
+                <p className="py-16 text-center text-muted-foreground">Cargando…</p>
             ) : isError ? (
-                <p className="py-16 text-center text-red-600">
+                <p className="py-16 text-center text-destructive">
                     No se pudo cargar la agenda.
                 </p>
             ) : (data?.length ?? 0) === 0 ? (
-                <p className="py-16 text-center text-slate-500">
+                <p className="py-16 text-center text-muted-foreground">
                     No hay citas con esos filtros.
                 </p>
             ) : (
-                <Table className="border border-gray-200 bg-white shadow-xs">
+                <Table className="border border-border bg-card shadow-xs">
                     <TableHeader>
                         <TableRow>
                             <TableHead>Fecha</TableHead>
@@ -119,7 +119,7 @@ export const AdminAppointmentsPage = () => {
                                 </TableCell>
                                 <TableCell className="font-medium">
                                     {appt.user.fullName}
-                                    <span className="block text-xs text-slate-400">
+                                    <span className="block text-xs text-muted-foreground">
                                         {appt.user.phone ?? appt.user.email}
                                     </span>
                                 </TableCell>
@@ -130,7 +130,7 @@ export const AdminAppointmentsPage = () => {
                                               .join(' + ')
                                         : appt.service.name}
                                     {appt.priceAtBooking != null && (
-                                        <span className="block text-xs font-medium text-slate-500">
+                                        <span className="block text-xs font-medium text-muted-foreground">
                                             {formatLps(appt.priceAtBooking)}
                                         </span>
                                     )}
@@ -168,7 +168,7 @@ export const AdminAppointmentsPage = () => {
                                         <Button
                                             size="sm"
                                             variant="ghost"
-                                            className="text-red-600"
+                                            className="text-destructive"
                                             disabled={updateStatus.isPending}
                                             onClick={() => change(appt.id, 'cancelled')}
                                         >

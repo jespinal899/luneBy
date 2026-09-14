@@ -42,6 +42,9 @@ html {
   --color-input: var(--input);
   --color-border: var(--border);
   --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
   --color-muted-foreground: var(--muted-foreground);
@@ -83,6 +86,12 @@ html {
   --accent: oklch(0.93 0.07 95);
   --accent-foreground: oklch(0.42 0.06 90);
   --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.99 0.005 300);
+  /* Colores de estado: son información, no decoración. Se mantienen aparte
+     del color de marca para que "confirmada" y "pendiente" se distingan a
+     simple vista aunque la marca cambie de matiz. */
+  --success: oklch(0.52 0.11 160);
+  --warning: oklch(0.56 0.12 75);
   --border: oklch(0.9 0.014 300);
   --input: oklch(0.9 0.014 300);
   --ring: oklch(0.52 0.13 300);
@@ -122,6 +131,9 @@ html {
   --accent: oklch(0.269 0 0);
   --accent-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.704 0.191 22.216);
+  --destructive-foreground: oklch(0.98 0 0);
+  --success: oklch(0.72 0.13 160);
+  --warning: oklch(0.78 0.13 80);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.556 0 0);
