@@ -1,5 +1,5 @@
 TN:
-SF:src\app.module.ts
+SF:backend/src/app.module.ts
 FN:18,(anonymous_1)
 FNF:1
 FNH:0
@@ -36,7 +36,7 @@ BRF:3
 BRH:0
 end_of_record
 TN:
-SF:src\health.controller.ts
+SF:backend/src/health.controller.ts
 FN:9,(anonymous_2)
 FNF:1
 FNH:0
@@ -52,7 +52,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:src\main.ts
+SF:backend/src/main.ts
 FN:10,bootstrap
 FNF:1
 FNH:0
@@ -87,7 +87,7 @@ BRF:4
 BRH:0
 end_of_record
 TN:
-SF:src\appointments\appointments.controller.ts
+SF:backend/src/appointments/appointments.controller.ts
 FN:34,(anonymous_4)
 FN:44,(anonymous_5)
 FN:56,(anonymous_6)
@@ -160,7 +160,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:src\appointments\appointments.module.ts
+SF:backend/src/appointments/appointments.module.ts
 FNF:0
 FNH:0
 DA:1,0
@@ -179,7 +179,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:src\appointments\appointments.service.ts
+SF:backend/src/appointments/appointments.service.ts
 FN:29,(anonymous_4)
 FN:46,(anonymous_5)
 FN:89,(anonymous_6)
@@ -322,7 +322,7 @@ BRF:19
 BRH:8
 end_of_record
 TN:
-SF:src\appointments\schedule.service.ts
+SF:backend/src/appointments/schedule.service.ts
 FN:12,(anonymous_4)
 FN:18,(anonymous_5)
 FN:20,(anonymous_6)
@@ -383,7 +383,7 @@ BRF:12
 BRH:0
 end_of_record
 TN:
-SF:src\appointments\time-off.service.ts
+SF:backend/src/appointments/time-off.service.ts
 FN:11,(anonymous_4)
 FN:16,(anonymous_5)
 FN:27,(anonymous_6)
@@ -424,7 +424,7 @@ BRF:8
 BRH:0
 end_of_record
 TN:
-SF:src\appointments\dto\availability-query.dto.ts
+SF:backend/src/appointments/dto/availability-query.dto.ts
 FN:25,(anonymous_2)
 FNF:1
 FNH:0
@@ -442,7 +442,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:src\appointments\dto\create-appointment.dto.ts
+SF:backend/src/appointments/dto/create-appointment.dto.ts
 FNF:0
 FNH:0
 DA:1,0
@@ -457,7 +457,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:src\appointments\dto\create-time-off.dto.ts
+SF:backend/src/appointments/dto/create-time-off.dto.ts
 FNF:0
 FNH:0
 DA:1,0
@@ -470,7 +470,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:src\appointments\dto\index.ts
+SF:backend/src/appointments/dto/index.ts
 FN:1,(anonymous_0)
 FN:2,(anonymous_1)
 FN:3,(anonymous_2)
@@ -496,7 +496,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:src\appointments\dto\update-appointment-status.dto.ts
+SF:backend/src/appointments/dto/update-appointment-status.dto.ts
 FNF:0
 FNH:0
 DA:1,0
@@ -509,7 +509,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:src\appointments\dto\update-schedule.dto.ts
+SF:backend/src/appointments/dto/update-schedule.dto.ts
 FN:44,(anonymous_2)
 FNF:1
 FNH:0
@@ -532,7 +532,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:src\appointments\entities\appointment-item.entity.ts
+SF:backend/src/appointments/entities/appointment-item.entity.ts
 FN:20,(anonymous_2)
 FN:20,(anonymous_3)
 FN:25,(anonymous_4)
@@ -559,7 +559,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:src\appointments\entities\appointment.entity.ts
+SF:backend/src/appointments/entities/appointment.entity.ts
 FN:15,(anonymous_2)
 FN:54,(anonymous_3)
 FN:54,(anonymous_4)
@@ -609,7 +609,7 @@ BRF:2
 BRH:2
 end_of_record
 TN:
-SF:src\appointments\entities\availability-rule.entity.ts
+SF:backend/src/appointments/entities/availability-rule.entity.ts
 FNF:0
 FNH:0
 DA:1,2
@@ -626,7 +626,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:src\appointments\entities\index.ts
+SF:backend/src/appointments/entities/index.ts
 FN:1,(anonymous_0)
 FN:1,(anonymous_1)
 FN:2,(anonymous_2)
@@ -649,7 +649,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:src\appointments\entities\time-off.entity.ts
+SF:backend/src/appointments/entities/time-off.entity.ts
 FNF:0
 FNH:0
 DA:1,2
@@ -665,7 +665,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:src\appointments\events\appointment-created.event.ts
+SF:backend/src/appointments/events/appointment-created.event.ts
 FN:6,(anonymous_0)
 FNF:1
 FNH:0
@@ -679,7 +679,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:src\appointments\helpers\time.helper.ts
+SF:backend/src/appointments/helpers/time.helper.ts
 FN:2,(anonymous_0)
 FN:8,(anonymous_1)
 FN:15,(anonymous_2)
@@ -705,7 +705,7 @@ BRF:2
 BRH:2
 end_of_record
 TN:
-SF:src\auth\auth.controller.ts
+SF:backend/src/auth/auth.controller.ts
 FN:19,(anonymous_4)
 FN:26,(anonymous_5)
 FN:33,(anonymous_6)
@@ -749,7 +749,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:src\auth\auth.module.ts
+SF:backend/src/auth/auth.module.ts
 FN:23,(anonymous_1)
 FNF:1
 FNH:0
@@ -774,7 +774,7 @@ BRF:2
 BRH:0
 end_of_record
 TN:
-SF:src\auth\auth.service.ts
+SF:backend/src/auth/auth.service.ts
 FN:24,(anonymous_13)
 FN:33,(anonymous_14)
 FN:45,(anonymous_15)
@@ -894,7 +894,7 @@ BRF:30
 BRH:18
 end_of_record
 TN:
-SF:src\auth\google-oauth.provider.ts
+SF:backend/src/auth/google-oauth.provider.ts
 FN:10,(anonymous_0)
 FNF:1
 FNH:0
@@ -910,7 +910,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:src\auth\decorators\auth.decorator.ts
+SF:backend/src/auth/decorators/auth.decorator.ts
 FN:14,Auth
 FNF:1
 FNH:1
@@ -927,7 +927,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:src\auth\decorators\get-user.decorator.ts
+SF:backend/src/auth/decorators/get-user.decorator.ts
 FN:13,(anonymous_0)
 FNF:1
 FNH:0
@@ -948,7 +948,7 @@ BRF:3
 BRH:0
 end_of_record
 TN:
-SF:src\auth\decorators\index.ts
+SF:backend/src/auth/decorators/index.ts
 FN:1,(anonymous_0)
 FN:2,(anonymous_1)
 FN:3,(anonymous_2)
@@ -968,7 +968,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:src\auth\decorators\role-protected.decorator.ts
+SF:backend/src/auth/decorators/role-protected.decorator.ts
 FN:9,(anonymous_0)
 FNF:1
 FNH:1
@@ -983,7 +983,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:src\auth\dto\change-password.dto.ts
+SF:backend/src/auth/dto/change-password.dto.ts
 FNF:0
 FNH:0
 DA:1,1
@@ -996,7 +996,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:src\auth\dto\create-user.dto.ts
+SF:backend/src/auth/dto/create-user.dto.ts
 FNF:0
 FNH:0
 DA:1,2
@@ -1011,7 +1011,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:src\auth\dto\google-login.dto.ts
+SF:backend/src/auth/dto/google-login.dto.ts
 FNF:0
 FNH:0
 DA:1,1
@@ -1023,7 +1023,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:src\auth\dto\index.ts
+SF:backend/src/auth/dto/index.ts
 FN:1,(anonymous_0)
 FN:2,(anonymous_1)
 FN:3,(anonymous_2)
@@ -1047,7 +1047,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:src\auth\dto\login-user.dto.ts
+SF:backend/src/auth/dto/login-user.dto.ts
 FNF:0
 FNH:0
 DA:1,1
@@ -1060,7 +1060,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:src\auth\dto\update-profile.dto.ts
+SF:backend/src/auth/dto/update-profile.dto.ts
 FNF:0
 FNH:0
 DA:1,1
@@ -1073,7 +1073,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:src\auth\entities\user.entity.ts
+SF:backend/src/auth/entities/user.entity.ts
 FN:48,(anonymous_2)
 FN:53,(anonymous_3)
 FN:44,(anonymous_4)
@@ -1108,7 +1108,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:src\auth\guards\user-role.guard.ts
+SF:backend/src/auth/guards/user-role.guard.ts
 FN:16,(anonymous_2)
 FN:18,(anonymous_3)
 FN:33,(anonymous_4)
@@ -1139,7 +1139,7 @@ BRF:5
 BRH:5
 end_of_record
 TN:
-SF:src\auth\interfaces\index.ts
+SF:backend/src/auth/interfaces/index.ts
 FN:1,(anonymous_0)
 FNF:1
 FNH:1
@@ -1151,7 +1151,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:src\auth\interfaces\valid-roles.ts
+SF:backend/src/auth/interfaces/valid-roles.ts
 FN:1,(anonymous_0)
 FNF:1
 FNH:1
@@ -1167,7 +1167,7 @@ BRF:2
 BRH:2
 end_of_record
 TN:
-SF:src\auth\strategies\jwt.strategy.ts
+SF:backend/src/auth/strategies/jwt.strategy.ts
 FN:13,(anonymous_4)
 FN:28,(anonymous_5)
 FNF:2
@@ -1198,7 +1198,7 @@ BRF:2
 BRH:2
 end_of_record
 TN:
-SF:src\catalog\catalog.controller.ts
+SF:backend/src/catalog/catalog.controller.ts
 FN:28,(anonymous_4)
 FN:32,(anonymous_5)
 FN:40,(anonymous_6)
@@ -1243,7 +1243,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:src\catalog\catalog.module.ts
+SF:backend/src/catalog/catalog.module.ts
 FNF:0
 FNH:0
 DA:1,0
@@ -1259,7 +1259,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:src\catalog\catalog.service.ts
+SF:backend/src/catalog/catalog.service.ts
 FN:34,(anonymous_4)
 FN:42,(anonymous_5)
 FN:46,(anonymous_6)
@@ -1361,7 +1361,7 @@ BRF:19
 BRH:17
 end_of_record
 TN:
-SF:src\catalog\dto\create-catalog-item.dto.ts
+SF:backend/src/catalog/dto/create-catalog-item.dto.ts
 FN:19,(anonymous_2)
 FNF:1
 FNH:0
@@ -1382,7 +1382,7 @@ BRF:2
 BRH:0
 end_of_record
 TN:
-SF:src\catalog\dto\index.ts
+SF:backend/src/catalog/dto/index.ts
 FN:1,(anonymous_0)
 FN:2,(anonymous_1)
 FNF:2
@@ -1397,7 +1397,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:src\catalog\dto\update-catalog-item.dto.ts
+SF:backend/src/catalog/dto/update-catalog-item.dto.ts
 FNF:0
 FNH:0
 DA:1,1
@@ -1409,7 +1409,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:src\catalog\entities\catalog-item.entity.ts
+SF:backend/src/catalog/entities/catalog-item.entity.ts
 FN:23,(anonymous_2)
 FNF:1
 FNH:0
@@ -1430,7 +1430,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:src\common\common.module.ts
+SF:backend/src/common/common.module.ts
 FNF:0
 FNH:0
 DA:1,0
@@ -1446,7 +1446,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:src\common\dtos\pagination.dto.ts
+SF:backend/src/common/dtos/pagination.dto.ts
 FN:12,(anonymous_2)
 FN:17,(anonymous_3)
 FN:36,(anonymous_4)
@@ -1478,7 +1478,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:src\common\entities\idempotency-key.entity.ts
+SF:backend/src/common/entities/idempotency-key.entity.ts
 FN:34,(anonymous_2)
 FNF:1
 FNH:0
@@ -1500,7 +1500,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:src\common\filters\database-exception.filter.ts
+SF:backend/src/common/filters/database-exception.filter.ts
 FN:25,(anonymous_1)
 FN:26,(anonymous_2)
 FN:27,(anonymous_3)
@@ -1556,7 +1556,7 @@ BRF:11
 BRH:10
 end_of_record
 TN:
-SF:src\common\interceptors\idempotency.interceptor.ts
+SF:backend/src/common/interceptors/idempotency.interceptor.ts
 FN:39,(anonymous_4)
 FN:45,(anonymous_5)
 FN:82,(anonymous_6)
@@ -1644,7 +1644,7 @@ BRF:18
 BRH:12
 end_of_record
 TN:
-SF:src\files\files.controller.ts
+SF:backend/src/files/files.controller.ts
 FN:27,(anonymous_4)
 FN:31,(anonymous_5)
 FN:50,(anonymous_6)
@@ -1679,7 +1679,7 @@ BRF:1
 BRH:1
 end_of_record
 TN:
-SF:src\files\files.module.ts
+SF:backend/src/files/files.module.ts
 FNF:0
 FNH:0
 DA:1,0
@@ -1698,7 +1698,7 @@ BRF:1
 BRH:0
 end_of_record
 TN:
-SF:src\files\files.service.ts
+SF:backend/src/files/files.service.ts
 FN:29,(anonymous_3)
 FN:38,(anonymous_4)
 FN:67,(anonymous_5)
@@ -1763,7 +1763,7 @@ BRF:12
 BRH:8
 end_of_record
 TN:
-SF:src\files\helpers\file-filter.helper.ts
+SF:backend/src/files/helpers/file-filter.helper.ts
 FN:6,(anonymous_0)
 FNF:1
 FNH:0
@@ -1782,7 +1782,7 @@ BRF:3
 BRH:0
 end_of_record
 TN:
-SF:src\files\helpers\index.ts
+SF:backend/src/files/helpers/index.ts
 FN:1,(anonymous_0)
 FNF:1
 FNH:1
@@ -1794,7 +1794,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:src\files\storage\supabase-storage.service.ts
+SF:backend/src/files/storage/supabase-storage.service.ts
 FN:31,(anonymous_2)
 FN:33,(anonymous_3)
 FN:37,(anonymous_4)
@@ -1863,7 +1863,7 @@ BRF:10
 BRH:8
 end_of_record
 TN:
-SF:src\mail\mail.module.ts
+SF:backend/src/mail/mail.module.ts
 FNF:0
 FNH:0
 DA:1,0
@@ -1878,7 +1878,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:src\mail\mail.service.ts
+SF:backend/src/mail/mail.service.ts
 FN:14,(anonymous_4)
 FN:20,(anonymous_5)
 FN:38,(anonymous_6)
@@ -1910,7 +1910,7 @@ BRF:3
 BRH:3
 end_of_record
 TN:
-SF:src\mail\resend-mail-sender.service.ts
+SF:backend/src/mail/resend-mail-sender.service.ts
 FN:16,(anonymous_2)
 FN:24,(anonymous_3)
 FNF:2
@@ -1944,7 +1944,7 @@ BRF:6
 BRH:6
 end_of_record
 TN:
-SF:src\mail\interfaces\mail-sender.interface.ts
+SF:backend/src/mail/interfaces/mail-sender.interface.ts
 FNF:0
 FNH:0
 DA:18,2
@@ -1954,7 +1954,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:src\mail\listeners\appointment-created.listener.ts
+SF:backend/src/mail/listeners/appointment-created.listener.ts
 FN:20,(anonymous_2)
 FN:23,(anonymous_3)
 FNF:2
@@ -1981,7 +1981,7 @@ BRF:2
 BRH:1
 end_of_record
 TN:
-SF:src\mail\templates\new-appointment.template.ts
+SF:backend/src/mail/templates/new-appointment.template.ts
 FN:13,(anonymous_0)
 FN:18,(anonymous_1)
 FN:22,(anonymous_2)
@@ -2015,7 +2015,7 @@ BRF:4
 BRH:2
 end_of_record
 TN:
-SF:src\services\services.controller.ts
+SF:backend/src/services/services.controller.ts
 FN:28,(anonymous_4)
 FN:40,(anonymous_5)
 FN:48,(anonymous_6)
@@ -2060,7 +2060,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:src\services\services.module.ts
+SF:backend/src/services/services.module.ts
 FNF:0
 FNH:0
 DA:1,0
@@ -2076,7 +2076,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:src\services\services.service.ts
+SF:backend/src/services/services.service.ts
 FN:17,(anonymous_4)
 FN:25,(anonymous_5)
 FN:29,(anonymous_6)
@@ -2163,7 +2163,7 @@ BRF:17
 BRH:14
 end_of_record
 TN:
-SF:src\services\dto\create-service.dto.ts
+SF:backend/src/services/dto/create-service.dto.ts
 FN:38,(anonymous_2)
 FNF:1
 FNH:1
@@ -2188,7 +2188,7 @@ BRF:2
 BRH:2
 end_of_record
 TN:
-SF:src\services\dto\index.ts
+SF:backend/src/services/dto/index.ts
 FN:1,(anonymous_0)
 FN:2,(anonymous_1)
 FNF:2
@@ -2203,7 +2203,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:src\services\dto\update-service.dto.ts
+SF:backend/src/services/dto/update-service.dto.ts
 FNF:0
 FNH:0
 DA:1,1
@@ -2215,7 +2215,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:src\services\entities\index.ts
+SF:backend/src/services/entities/index.ts
 FN:1,(anonymous_0)
 FNF:1
 FNH:0
@@ -2227,7 +2227,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:src\services\entities\service.entity.ts
+SF:backend/src/services/entities/service.entity.ts
 FN:52,(anonymous_2)
 FN:58,(anonymous_3)
 FN:62,(anonymous_4)
@@ -2269,7 +2269,7 @@ BRF:2
 BRH:0
 end_of_record
 TN:
-SF:src\services\helpers\price-band.helper.ts
+SF:backend/src/services/helpers/price-band.helper.ts
 FN:22,priceBounds
 FN:42,priceFilter
 FNF:2
