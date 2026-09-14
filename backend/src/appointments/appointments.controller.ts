@@ -16,6 +16,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Auth, GetUser } from '../auth/decorators';
 import { User } from '../auth/entities/user.entity';
 import { ValidRoles } from '../auth/interfaces';
+import { AppointmentsAdminService } from './appointments-admin.service';
 import { AppointmentsService } from './appointments.service';
 import {
   AvailabilityQueryDto,
@@ -33,6 +34,7 @@ import { TimeOffService } from './time-off.service';
 export class AppointmentsController {
   constructor(
     private readonly appointmentsService: AppointmentsService,
+    private readonly appointmentsAdminService: AppointmentsAdminService,
     private readonly scheduleService: ScheduleService,
     private readonly timeOffService: TimeOffService,
   ) {}
@@ -137,7 +139,7 @@ export class AppointmentsController {
     @Query('date') date?: string,
     @Query('status') status?: AppointmentStatus,
   ) {
-    return this.appointmentsService.findAll({ date, status });
+    return this.appointmentsAdminService.findAll({ date, status });
   }
 
   /** Confirma, completa o cancela una cita. */
@@ -148,6 +150,6 @@ export class AppointmentsController {
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateAppointmentStatusDto,
   ) {
-    return this.appointmentsService.updateStatus(id, dto.status);
+    return this.appointmentsAdminService.updateStatus(id, dto.status);
   }
 }

@@ -26,9 +26,12 @@ import { ScheduleService } from './schedule.service';
 import { TimeOffService } from './time-off.service';
 
 /**
- * Reservas: disponibilidad, creación, y gestión propia/administrativa de
- * citas. El horario semanal y los bloqueos de agenda viven en
- * `ScheduleService` y `TimeOffService`; esta clase solo los consulta.
+ * Reservas desde el lado de la clienta: consultar disponibilidad, agendar,
+ * ver y cancelar las citas propias.
+ *
+ * Lo que ve y hace la administradora vive en `AppointmentsAdminService`; el
+ * horario semanal y los bloqueos, en `ScheduleService` y `TimeOffService`.
+ * Esta clase solo los consulta.
  */
 @Injectable()
 export class AppointmentsService {
@@ -229,22 +232,6 @@ export class AppointmentsService {
       );
 
     appointment.status = AppointmentStatus.cancelled;
-    return this.appointmentRepository.save(appointment);
-  }
-
-  // ---- Administración (Kelin) ----
-
-  /** Agenda completa, opcionalmente filtrada por fecha y/o estado. */
-  findAll(filters: { date?: string; status?: AppointmentStatus }) {
-    return this.appointmentRepository.find({
-      where: { date: filters.date, status: filters.status },
-      order: { date: 'ASC', startTime: 'ASC' },
-    });
-  }
-
-  async updateStatus(id: string, status: AppointmentStatus) {
-    const appointment = await this.findOne(id);
-    appointment.status = status;
     return this.appointmentRepository.save(appointment);
   }
 }
