@@ -99,6 +99,29 @@ describe('CatalogService', () => {
       );
     });
 
+    // El paso 1 de agendar muestra, al elegir "Esmaltado", solo los diseños
+    // que le pertenecen.
+    it('filtra los diseños por servicio cuando se pide', async () => {
+      qb.getMany.mockResolvedValue([]);
+
+      await service.findAll({ serviceId: 'svc-1' });
+
+      expect(qb.andWhere).toHaveBeenCalledWith('service.id = :serviceId', {
+        serviceId: 'svc-1',
+      });
+    });
+
+    it('sin serviceId no filtra por servicio', async () => {
+      qb.getMany.mockResolvedValue([]);
+
+      await service.findAll({});
+
+      expect(qb.andWhere).not.toHaveBeenCalledWith(
+        'service.id = :serviceId',
+        expect.anything(),
+      );
+    });
+
     it('por defecto filtra por isActive en item y servicio', async () => {
       qb.getMany.mockResolvedValue([]);
 

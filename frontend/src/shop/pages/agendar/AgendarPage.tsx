@@ -12,6 +12,7 @@ import {
     useAvailability,
     useCreateAppointment,
 } from '@/shop/hooks/use-appointments';
+import { DesignPicker } from '@/shop/components/DesignPicker';
 import { useServices } from '@/shop/hooks/use-services';
 import { formatDuration, formatLps } from '@/shop/lib/format';
 
@@ -113,18 +114,21 @@ export const AgendarPage = () => {
                             {services.map((s) => {
                                 const selected = quote.isInQuote(s.id);
                                 return (
-                                    <button
+                                    <div
                                         key={s.id}
+                                        className={`rounded-xl border p-4 transition-all ${
+                                            selected
+                                                ? 'border-brand bg-brand/5 ring-1 ring-brand'
+                                                : 'border-brand/15 hover:border-brand/40 hover:bg-brand/5'
+                                        }`}
+                                    >
+                                    <button
                                         type="button"
                                         onClick={() => {
                                             quote.toggle(toQuoteItem(s));
                                             setSlot('');
                                         }}
-                                        className={`flex items-start justify-between gap-3 rounded-xl border p-4 text-left transition-all ${
-                                            selected
-                                                ? 'border-brand bg-brand/5 ring-1 ring-brand'
-                                                : 'border-brand/15 hover:border-brand/40 hover:bg-brand/5'
-                                        }`}
+                                        className="flex w-full items-start justify-between gap-3 text-left"
                                     >
                                         <span className="min-w-0">
                                             <span className="block font-medium text-brand-dark">
@@ -149,6 +153,11 @@ export const AgendarPage = () => {
                                             )}
                                         </span>
                                     </button>
+
+                                    {/* Los diseños solo tienen sentido una vez
+                                        elegido el servicio al que pertenecen. */}
+                                    {selected && <DesignPicker service={s} />}
+                                    </div>
                                 );
                             })}
                         </div>

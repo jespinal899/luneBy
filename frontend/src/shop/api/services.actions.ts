@@ -7,6 +7,8 @@ export interface ServiceFilters {
   q?: string;
   /** Categorías separadas por coma (valores exactos: "Manicura", "Nail Art"…). */
   categorias?: string;
+  /** Solo los diseños de este servicio (lo usa el paso 1 de agendar). */
+  serviceId?: string;
   /** Banda de precio: "any" | "0-50" | "50-100" | "100-200" | "200+". */
   price?: string;
   /** "name" (alfabético, default) o "recent" (más nuevos primero). */

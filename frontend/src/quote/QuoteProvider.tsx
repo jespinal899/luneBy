@@ -12,6 +12,7 @@ const STORAGE_KEY = 'luneby_quote';
 
 type Action =
   | { type: 'add'; item: QuoteItem }
+  | { type: 'choose'; item: QuoteItem }
   | { type: 'remove'; serviceId: string }
   | { type: 'clear' };
 
@@ -21,6 +22,13 @@ const reducer = (state: QuoteItem[], action: Action): QuoteItem[] => {
       return state.some((i) => i.serviceId === action.item.serviceId)
         ? state
         : [...state, action.item];
+    // Cambiar el diseño elegido de un servicio que ya está en la cotización.
+    // `add` no sirve para esto: ignora a propósito lo que ya está, para que
+    // agregar dos veces desde el catálogo no duplique la línea.
+    case 'choose':
+      return state.map((i) =>
+        i.serviceId === action.item.serviceId ? action.item : i,
+      );
     case 'remove':
       return state.filter((i) => i.serviceId !== action.serviceId);
     case 'clear':
@@ -59,6 +67,7 @@ export const QuoteProvider = ({ children }: { children: ReactNode }) => {
       count: items.length,
       isInQuote: has,
       add: (item: QuoteItem) => dispatch({ type: 'add', item }),
+      choose: (item: QuoteItem) => dispatch({ type: 'choose', item }),
       remove: (serviceId: string) => dispatch({ type: 'remove', serviceId }),
       toggle: (item: QuoteItem) =>
         dispatch(
