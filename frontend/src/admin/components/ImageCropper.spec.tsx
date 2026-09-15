@@ -5,6 +5,9 @@ import { describe, expect, it, vi, beforeEach } from 'vitest';
 // El código fuente como texto (import nativo de Vite), para la guarda de
 // abajo. Evita depender de node:fs, que no corresponde en código de navegador.
 import fuenteDelComponente from './ImageCropper.tsx?raw';
+// La configuración de despliegue, como texto: la vista previa depende de que
+// la CSP permita el esquema blob:.
+import vercelJson from '../../../vercel.json?raw';
 
 const AREA = { x: 5, y: 10, width: 300, height: 300 };
 
@@ -144,5 +147,19 @@ describe('ImageCropper', () => {
   // Pasó en producción. Esta guarda evita que se vuelva a quitar.
   it('importa la hoja de estilos de react-easy-crop', () => {
     expect(fuenteDelComponente).toContain('react-easy-crop/react-easy-crop.css');
+  });
+
+  // La vista previa usa URL.createObjectURL(archivo), que devuelve una URL
+  // blob:. La CSP es una lista blanca: si img-src no la incluye, el navegador
+  // bloquea la imagen y el recorte se ve en blanco. Pasó en producción.
+  it('la CSP permite blob: en img-src, que es lo que usa la vista previa', () => {
+    expect(fuenteDelComponente).toContain('createObjectURL');
+
+    const imgSrc = vercelJson
+      .split(';')
+      .find((directiva) => directiva.includes('img-src'));
+
+    expect(imgSrc).toBeDefined();
+    expect(imgSrc).toContain('blob:');
   });
 });
