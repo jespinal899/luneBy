@@ -7,6 +7,7 @@ import {
     ChevronLeft,
     ChevronRight,
     Home,
+    LayoutTemplate,
     LogOut,
     Scissors,
     User as UserIcon,
@@ -26,6 +27,7 @@ const menuItems = [
     { icon: CalendarCheck, label: 'Agendar', to: '/admin/agendar' },
     { icon: CalendarDays, label: 'Citas', to: '/admin/citas' },
     { icon: CalendarClock, label: 'Horario', to: '/admin/horario' },
+    { icon: LayoutTemplate, label: 'Portada', to: '/admin/contenido' },
 ];
 
 /** Avatar del usuario en el sidebar: abre un menú con cuenta, inicio y logout. */

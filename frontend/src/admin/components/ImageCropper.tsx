@@ -17,6 +17,11 @@ interface Props {
   onConfirm: (cropped: File) => void;
   onCancel: () => void;
   isUploading?: boolean;
+  /**
+   * Proporción del recorte. Por defecto 1:1, la del catálogo; la portada usa
+   * 4:5, que es como la muestra HomePage.
+   */
+  aspect?: number;
 }
 
 /**
@@ -24,14 +29,15 @@ interface Props {
  *
  * El catálogo muestra las fotos en `object-cover`, así que el navegador las
  * recorta igual: sin este paso, qué parte del diseño queda visible lo decide
- * el navegador y no Kelin. Se recorta a 1:1 porque esa es la proporción de la
- * página de detalle, donde la foto se ve grande.
+ * el navegador y no Kelin. Recorta a 1:1 salvo que se le pida otra cosa: es la
+ * proporción de la página de detalle, donde la foto se ve grande.
  */
 export const ImageCropper = ({
   file,
   onConfirm,
   onCancel,
   isUploading = false,
+  aspect = 1,
 }: Props) => {
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
@@ -85,7 +91,7 @@ export const ImageCropper = ({
             image={src}
             crop={crop}
             zoom={zoom}
-            aspect={1}
+            aspect={aspect}
             onCropChange={setCrop}
             onZoomChange={setZoom}
             onCropComplete={onCropComplete}

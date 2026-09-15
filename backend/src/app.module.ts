@@ -14,6 +14,7 @@ import { AppointmentsModule } from './appointments/appointments.module';
 import { CatalogModule } from './catalog/catalog.module';
 import { FilesModule } from './files/files.module';
 import { MailModule } from './mail/mail.module';
+import { SiteContentModule } from './site-content/site-content.module';
 
 const buildDbOptions = (config: ConfigService): TypeOrmModuleOptions => {
   const common: TypeOrmModuleOptions = {
@@ -77,6 +78,7 @@ const buildDbOptions = (config: ConfigService): TypeOrmModuleOptions => {
     CatalogModule,
     FilesModule,
     MailModule,
+    SiteContentModule,
   ],
   controllers: [HealthController],
   providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],

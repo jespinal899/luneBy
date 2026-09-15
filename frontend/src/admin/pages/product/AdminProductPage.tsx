@@ -27,9 +27,9 @@ const emptyForm: CatalogItemInput = {
 };
 
 /**
- * Alta/edición de una entrada del catálogo. El nombre no se escribe: se
- * elige un servicio agendable del desplegable (los que se cargan en
- * /admin/agendar) y de ahí se heredan nombre, precio y duración.
+ * Alta/edición de un diseño del catálogo. El nombre y el precio son propios
+ * del diseño; el servicio agendable se elige del desplegable (los que se
+ * cargan en /admin/agendar) y de él se heredan la duración y la categoría.
  */
 export const AdminProductPage = () => {
     const { id } = useParams();

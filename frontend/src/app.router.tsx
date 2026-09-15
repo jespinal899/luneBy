@@ -7,6 +7,7 @@ import { RegisterPage } from './auth/layouts/pages/register/RegisterPage';
 import { AdminAgendarServiciosPage } from './admin/pages/agendar/AdminAgendarServiciosPage';
 import { AdminServicioPage } from './admin/pages/agendar/AdminServicioPage';
 import { AdminAppointmentsPage } from './admin/pages/appointments/AdminAppointmentsPage';
+import { AdminContenidoPage } from './admin/pages/contenido/AdminContenidoPage';
 import { AdminProductPage } from './admin/pages/product/AdminProductPage';
 import { AdminProductsPage } from './admin/pages/products/AdminProductsPages';
 import { DashboardPage } from './admin/pages/dashboard/DashboardPage';
@@ -84,6 +85,7 @@ export const appRouter = createBrowserRouter([
       { path: 'agendar/:id', element: <AdminServicioPage /> },
       { path: 'citas', element: <AdminAppointmentsPage /> },
       { path: 'horario', element: <HorarioPage /> },
+      { path: 'contenido', element: <AdminContenidoPage /> },
     ],
   },
 ]);

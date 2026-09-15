@@ -14,7 +14,7 @@ import { SectionHeading } from '@/shop/components/SectionHeading';
 import { ContactoSection } from '@/shop/components/sections/ContactoSection';
 import { NosotrosSection } from '@/shop/components/sections/NosotrosSection';
 import { useCatalog } from '@/shop/hooks/use-catalog';
-import heroImage from '@/assets/hero-nailart.webp';
+import { useHero } from '@/shop/hooks/use-hero';
 
 const steps = [
   {
@@ -36,6 +36,9 @@ const steps = [
 
 export const HomePage = () => {
   const { data, isLoading } = useCatalog({ limit: 6, sort: 'recent' });
+  // La portada la edita la administradora desde el panel; si la API no
+  // responde, el hook devuelve el texto y la foto con los que salió el sitio.
+  const { hero, image: heroImage } = useHero();
   // El endpoint público ya devuelve solo las entradas visibles.
   const items = data?.products ?? [];
 
@@ -46,16 +49,15 @@ export const HomePage = () => {
         <div className="container mx-auto grid items-center gap-12 px-4 py-20 lg:grid-cols-[1.1fr_1fr] lg:gap-20 lg:px-8 lg:py-28">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand">
-              Estudio de uñas · Choloma
+              {hero.eyebrow}
             </p>
 
             <h1 className="mt-5 font-display text-[2.75rem] leading-[1.08] text-brand-dark sm:text-6xl">
-              Tus uñas, tu mejor accesorio de lujo
+              {hero.title}
             </h1>
 
             <p className="mt-6 max-w-lg text-lg leading-relaxed text-muted-foreground">
-              Especialistas en manicura rusa, uñas acrílicas esculpidas y nail
-              art de autor. Cotiza tu diseño y agenda tu cita en segundos.
+              {hero.subtitle}
             </p>
 
             <div className="mt-9 flex flex-wrap gap-3">
