@@ -38,7 +38,7 @@ export const HomePage = () => {
   const { data, isLoading } = useCatalog({ limit: 6, sort: 'recent' });
   // La portada la edita la administradora desde el panel; si la API no
   // responde, el hook devuelve el texto y la foto con los que salió el sitio.
-  const { hero, image: heroImage, shape } = useHero();
+  const { hero, image: heroImage, shape, isUnknown } = useHero();
   // El endpoint público ya devuelve solo las entradas visibles.
   const items = data?.products ?? [];
 
@@ -48,17 +48,34 @@ export const HomePage = () => {
       <section className="border-b border-brand/10 bg-cream">
         <div className="container mx-auto grid items-center gap-12 px-4 py-20 lg:grid-cols-[1.1fr_1fr] lg:gap-20 lg:px-8 lg:py-28">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand">
-              {hero.eyebrow}
-            </p>
+            {/*
+              Mientras no se sabe qué portada va, se reserva el espacio en vez
+              de pintar el texto de respaldo: mostrarlo y reemplazarlo al
+              instante se veía como un parpadeo al recargar. Solo pasa la
+              primera vez; después el navegador ya tiene la última guardada.
+            */}
+            {isUnknown ? (
+              <div aria-hidden className="animate-pulse">
+                <div className="h-4 w-48 rounded bg-brand/10" />
+                <div className="mt-5 h-12 w-full rounded bg-brand/10 sm:h-16" />
+                <div className="mt-3 h-12 w-3/4 rounded bg-brand/10 sm:h-16" />
+                <div className="mt-6 h-16 max-w-lg rounded bg-brand/10" />
+              </div>
+            ) : (
+              <>
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand">
+                  {hero.eyebrow}
+                </p>
 
-            <h1 className="mt-5 font-display text-[2.75rem] leading-[1.08] text-brand-dark sm:text-6xl">
-              {hero.title}
-            </h1>
+                <h1 className="mt-5 font-display text-[2.75rem] leading-[1.08] text-brand-dark sm:text-6xl">
+                  {hero.title}
+                </h1>
 
-            <p className="mt-6 max-w-lg text-lg leading-relaxed text-muted-foreground">
-              {hero.subtitle}
-            </p>
+                <p className="mt-6 max-w-lg text-lg leading-relaxed text-muted-foreground">
+                  {hero.subtitle}
+                </p>
+              </>
+            )}
 
             <div className="mt-9 flex flex-wrap gap-3">
               <Button
@@ -96,13 +113,20 @@ export const HomePage = () => {
           </div>
 
           <div className="mx-auto w-full max-w-lg">
-            <img
-              src={heroImage}
-              alt="Trabajo de uñas de Luné by Kelin"
-              fetchPriority="high"
-              decoding="async"
-              className={`${shape.className} w-full rounded-3xl object-cover shadow-xl shadow-brand/10`}
-            />
+            {isUnknown ? (
+              <div
+                aria-hidden
+                className={`${shape.className} w-full animate-pulse rounded-3xl bg-brand/10`}
+              />
+            ) : (
+              <img
+                src={heroImage}
+                alt="Trabajo de uñas de Luné by Kelin"
+                fetchPriority="high"
+                decoding="async"
+                className={`${shape.className} w-full rounded-3xl object-cover shadow-xl shadow-brand/10`}
+              />
+            )}
           </div>
         </div>
       </section>

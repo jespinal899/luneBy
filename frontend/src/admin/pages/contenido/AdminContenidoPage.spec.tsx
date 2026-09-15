@@ -38,6 +38,9 @@ const renderPage = () => {
 
 describe('AdminContenidoPage', () => {
   beforeEach(() => {
+    // La portada se guarda en el navegador para no parpadear al recargar; sin
+    // esto, una prueba arrancaría con la que dejó la anterior.
+    localStorage.clear();
     vi.mocked(getHero).mockReset();
     vi.mocked(updateHero).mockReset();
     vi.mocked(getHero).mockResolvedValue(guardada);

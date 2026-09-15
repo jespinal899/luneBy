@@ -31,6 +31,9 @@ const renderHome = () => {
 
 describe('HomePage — portada editable', () => {
   beforeEach(() => {
+    // La portada se guarda en el navegador para no parpadear al recargar; sin
+    // esto, una prueba arrancaría con la portada que dejó la anterior.
+    localStorage.clear();
     vi.mocked(getHero).mockReset();
     vi.mocked(getCatalog).mockResolvedValue({
       products: [],
@@ -87,6 +90,57 @@ describe('HomePage — portada editable', () => {
       await screen.findByRole('heading', {
         name: /tu mejor accesorio de lujo/i,
       }),
+    ).toBeInTheDocument();
+  });
+
+  // El parpadeo al recargar: se veía el texto de respaldo y al instante el
+  // guardado. Ahora, mientras no se sabe cuál va, no se pinta ninguno.
+  it('no muestra el texto de respaldo mientras espera la respuesta', async () => {
+    let responder: (hero: unknown) => void = () => {};
+    vi.mocked(getHero).mockReturnValue(
+      new Promise((resolve) => {
+        responder = resolve;
+      }) as never,
+    );
+
+    renderHome();
+
+    expect(
+      screen.queryByText(/tu mejor accesorio de lujo/i),
+    ).not.toBeInTheDocument();
+
+    responder({
+      eyebrow: 'a',
+      title: 'Tu estilo, tus reglas',
+      subtitle: 'c',
+      image: null,
+      imageShape: 'vertical',
+    });
+
+    expect(
+      await screen.findByRole('heading', { name: 'Tu estilo, tus reglas' }),
+    ).toBeInTheDocument();
+  });
+
+  // Al recargar, la portada correcta tiene que estar en el primer cuadro; si
+  // hubiera que esperar a la API, volvería el parpadeo.
+  it('pinta de entrada la última portada que vio este navegador', () => {
+    localStorage.setItem(
+      'luneby:hero',
+      JSON.stringify({
+        eyebrow: 'a',
+        title: 'Lo que vio la última vez',
+        subtitle: 'c',
+        image: null,
+        imageShape: 'vertical',
+      }),
+    );
+    vi.mocked(getHero).mockReturnValue(new Promise(() => {}) as never);
+
+    renderHome();
+
+    expect(
+      screen.getByRole('heading', { name: 'Lo que vio la última vez' }),
     ).toBeInTheDocument();
   });
 
