@@ -139,7 +139,19 @@ export const CustomHeader = () => {
               )}
             </button>
 
-            {status === 'authenticated' ? (
+            {/*
+              Mientras se revalida el token no se sabe si hay sesión, y sólo
+              se llega a `checking` cuando hay uno guardado. Pintar el botón
+              de "Iniciar sesión" ahí hacía que, al recargar, una clienta ya
+              autenticada viera por un instante que no lo estaba. Se reserva
+              el espacio hasta saberlo.
+            */}
+            {status === 'checking' ? (
+              <div
+                aria-hidden
+                className="hidden h-9 w-28 animate-pulse rounded-full bg-brand/10 lg:block"
+              />
+            ) : status === 'authenticated' ? (
               <div className="hidden lg:block">
                 <UserMenu />
               </div>

@@ -92,7 +92,14 @@ export const MobileNav = ({ open, onClose, links }: Props) => {
           </nav>
 
           <div className="border-t border-brand/10 p-4">
-            {status === 'authenticated' ? (
+            {/* Ver el mismo parpadeo que en el encabezado: mientras se
+                revalida el token no se ofrece iniciar sesión. */}
+            {status === 'checking' ? (
+              <div aria-hidden className="space-y-2">
+                <div className="h-9 w-full animate-pulse rounded-full bg-brand/10" />
+                <div className="h-9 w-full animate-pulse rounded-full bg-brand/10" />
+              </div>
+            ) : status === 'authenticated' ? (
               <div className="space-y-3">
                 {user?.fullName && (
                   <p className="px-1 text-sm text-brand-dark/60">

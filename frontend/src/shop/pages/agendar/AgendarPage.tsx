@@ -301,7 +301,15 @@ export const AgendarPage = () => {
                     )}
 
                     <div className="mt-6">
-                        {status === 'authenticated' ? (
+                        {/* Mientras se revalida el token no se sabe si hay
+                            sesión: ofrecer "Inicia sesión" ahí le decía a una
+                            clienta ya autenticada que no lo estaba. */}
+                        {status === 'checking' ? (
+                            <div
+                                aria-hidden
+                                className="h-9 w-full animate-pulse rounded-md bg-muted"
+                            />
+                        ) : status === 'authenticated' ? (
                             <Button
                                 className="w-full"
                                 disabled={!canConfirm || createAppt.isPending}
