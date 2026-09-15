@@ -16,6 +16,11 @@ export const getAvailability = async (
 export interface CreateAppointmentInput {
   /** Servicios elegidos, en el orden en que se añadieron. */
   serviceIds: string[];
+  /**
+   * Diseños elegidos, para los servicios que se agregaron desde el catálogo.
+   * El backend congela el nombre y el precio del diseño en la cita.
+   */
+  catalogItemIds?: string[];
   date: string;
   startTime: string;
   notes?: string;

@@ -4,6 +4,11 @@ import type { CatalogItem, Service } from '@/api/types';
 
 export interface QuoteItem {
   serviceId: string;
+  /**
+   * Diseño elegido ("Soft Glam"), si la clienta llegó desde el catálogo.
+   * Nulo cuando reservó el servicio a secas desde /shop/agendar.
+   */
+  catalogItemId?: string;
   name: string;
   slug: string;
   price: number;
@@ -13,6 +18,7 @@ export interface QuoteItem {
 /** Desde un servicio agendable (lo que se elige en /shop/agendar). */
 export const toQuoteItem = (s: Service): QuoteItem => ({
   serviceId: s.id,
+  catalogItemId: undefined,
   name: s.name,
   slug: s.slug,
   price: s.price,
@@ -20,12 +26,14 @@ export const toQuoteItem = (s: Service): QuoteItem => ({
 });
 
 /**
- * Desde una entrada del catálogo. Se cotiza el SERVICIO al que apunta el
- * diseño (`serviceId`), no la entrada: varias fotos del mismo servicio son
- * la misma reserva.
+ * Desde un diseño del catálogo. Se reserva el SERVICIO (de ahí sale la
+ * duración y el cálculo de horarios), pero se recuerda qué diseño eligió:
+ * el nombre y el precio que se cotizan —y luego se cobran— son los del
+ * diseño, no los del servicio.
  */
 export const catalogItemToQuoteItem = (i: CatalogItem): QuoteItem => ({
   serviceId: i.serviceId,
+  catalogItemId: i.id,
   name: i.name,
   slug: i.slug,
   price: i.price,

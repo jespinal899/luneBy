@@ -73,6 +73,10 @@ export const AgendarPage = () => {
         createAppt.mutate(
             {
                 serviceIds: quote.items.map((i) => i.serviceId),
+                // Solo los ítems que vienen del catálogo traen diseño.
+                catalogItemIds: quote.items
+                    .map((i) => i.catalogItemId)
+                    .filter((id): id is string => Boolean(id)),
                 date,
                 startTime: slot,
                 notes: notes.trim() || undefined,

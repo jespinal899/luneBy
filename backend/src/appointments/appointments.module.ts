@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AuthModule } from '../auth/auth.module';
+import { CatalogItem } from '../catalog/entities/catalog-item.entity';
 import { ServicesModule } from '../services/services.module';
 import { AppointmentsAdminService } from './appointments-admin.service';
 import { AppointmentsController } from './appointments.controller';
@@ -29,6 +30,9 @@ import { TimeOffService } from './time-off.service';
       AppointmentItem,
       AvailabilityRule,
       TimeOff,
+      // Solo para leer el diseño elegido al agendar; su CRUD vive en
+      // CatalogModule.
+      CatalogItem,
     ]),
     ServicesModule,
     AuthModule,

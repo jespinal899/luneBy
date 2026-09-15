@@ -3,10 +3,12 @@ import {
   CreateDateColumn,
   Entity,
   Index,
+  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
+import { CatalogItem } from '../../catalog/entities/catalog-item.entity';
 import { Service } from '../../services/entities/service.entity';
 import { Appointment } from './appointment.entity';
 
@@ -28,6 +30,18 @@ export class AppointmentItem {
     onDelete: 'SET NULL',
   })
   service: Service | null;
+
+  /**
+   * Diseño concreto que eligió la clienta, si eligió uno. Es nulo cuando
+   * reservó el servicio sin diseño, y en las citas anteriores a que los
+   * diseños tuvieran identidad propia.
+   *
+   * Si el diseño se borra del catálogo esto queda en null, pero la cita
+   * conserva `nameAtBooking` y `priceAtBooking`: para eso están.
+   */
+  @ManyToOne(() => CatalogItem, { nullable: true, onDelete: 'SET NULL' })
+  @JoinColumn({ name: 'catalogItemId' })
+  catalogItem: CatalogItem | null;
 
   @Column('text', { name: 'nameAtBooking' })
   nameAtBooking: string;

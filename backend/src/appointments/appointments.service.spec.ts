@@ -3,6 +3,7 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
+import { CatalogItem } from '../catalog/entities/catalog-item.entity';
 import { Service } from '../services/entities/service.entity';
 import { AppointmentsService } from './appointments.service';
 import { Appointment, AppointmentItem } from './entities';
@@ -12,9 +13,14 @@ import { TimeOffService } from './time-off.service';
 describe('AppointmentsService · getAvailability', () => {
   let service: AppointmentsService;
 
-  const appointmentRepository = { find: jest.fn() };
+  const appointmentRepository = {
+    find: jest.fn(),
+    create: jest.fn(),
+    save: jest.fn(),
+  };
   const serviceRepository = { findOneBy: jest.fn(), findBy: jest.fn() };
   const itemRepository = { create: jest.fn((x) => x) };
+  const catalogRepository = { findBy: jest.fn() };
   const scheduleService = { getActiveRulesForWeekday: jest.fn() };
   const timeOffService = { getTimeOffForDate: jest.fn() };
   const eventEmitter = { emit: jest.fn() };
@@ -42,6 +48,7 @@ describe('AppointmentsService · getAvailability', () => {
     appointmentRepository.find.mockResolvedValue([]);
     scheduleService.getActiveRulesForWeekday.mockResolvedValue([]);
     timeOffService.getTimeOffForDate.mockResolvedValue([]);
+    catalogRepository.findBy.mockResolvedValue([]);
 
     const moduleRef = await Test.createTestingModule({
       providers: [
@@ -54,6 +61,10 @@ describe('AppointmentsService · getAvailability', () => {
         {
           provide: getRepositoryToken(AppointmentItem),
           useValue: itemRepository,
+        },
+        {
+          provide: getRepositoryToken(CatalogItem),
+          useValue: catalogRepository,
         },
         { provide: ScheduleService, useValue: scheduleService },
         { provide: TimeOffService, useValue: timeOffService },
@@ -126,5 +137,100 @@ describe('AppointmentsService · getAvailability', () => {
       { startTime: null, endTime: null },
     ]);
     expect(await service.getAvailability(WEDNESDAY, 's1')).toEqual([]);
+  });
+
+  describe('create · el diseño elegido manda sobre el servicio', () => {
+    const esmaltado = {
+      id: 's1',
+      name: 'Esmaltado',
+      price: 350,
+      durationMin: 45,
+      isActive: true,
+    };
+    const softGlam = {
+      id: 'd1',
+      name: 'Soft Glam',
+      price: 450,
+      service: esmaltado,
+    };
+
+    const agendable = () => {
+      serviceRepository.findBy.mockResolvedValue([esmaltado]);
+      scheduleService.getActiveRulesForWeekday.mockResolvedValue([
+        { startTime: '09:00', endTime: '17:00', slotIntervalMin: 45 },
+      ]);
+      appointmentRepository.create.mockImplementation((x: unknown) => x);
+      appointmentRepository.save.mockResolvedValue(undefined);
+    };
+
+    const reservar = (catalogItemIds?: string[]) =>
+      service.create(
+        {
+          serviceIds: ['s1'],
+          catalogItemIds,
+          date: WEDNESDAY,
+          startTime: '09:00',
+        } as never,
+        { id: 'u1' } as never,
+      );
+
+    it('congela el nombre y el precio del diseño, no los del servicio', async () => {
+      agendable();
+      catalogRepository.findBy.mockResolvedValue([softGlam]);
+
+      const cita = await reservar(['d1']);
+
+      expect(cita.items[0]).toMatchObject({
+        nameAtBooking: 'Soft Glam',
+        priceAtBooking: 450,
+      });
+      // Y queda registrado qué diseño fue, no solo su nombre.
+      expect(cita.items[0].catalogItem).toBe(softGlam);
+      expect(cita.priceAtBooking).toBe(450);
+    });
+
+    it('sin diseño elegido sigue congelando los del servicio', async () => {
+      agendable();
+
+      const cita = await reservar();
+
+      expect(cita.items[0]).toMatchObject({
+        nameAtBooking: 'Esmaltado',
+        priceAtBooking: 350,
+        catalogItem: null,
+      });
+      expect(cita.priceAtBooking).toBe(350);
+    });
+
+    it('la duración sale siempre del servicio, no del diseño', async () => {
+      agendable();
+      catalogRepository.findBy.mockResolvedValue([softGlam]);
+
+      const cita = await reservar(['d1']);
+
+      // 45 min del servicio: el diseño no altera el cálculo de horarios.
+      expect(cita.durationMin).toBe(45);
+      expect(cita.endTime).toBe('09:45');
+    });
+
+    it('rechaza un diseño que no pertenece a los servicios elegidos', async () => {
+      agendable();
+      catalogRepository.findBy.mockResolvedValue([
+        { id: 'd9', name: 'Baby Boomer', price: 700, service: { id: 'otro' } },
+      ]);
+
+      await expect(reservar(['d9'])).rejects.toBeInstanceOf(
+        BadRequestException,
+      );
+    });
+
+    it('rechaza un diseño inexistente', async () => {
+      agendable();
+      catalogRepository.findBy.mockResolvedValue([]);
+
+      await expect(reservar(['no-existe'])).rejects.toBeInstanceOf(
+        NotFoundException,
+      );
+    });
   });
 });

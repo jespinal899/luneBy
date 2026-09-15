@@ -8,6 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { In, Not, QueryFailedError, Repository } from 'typeorm';
 
 import { User } from '../auth/entities/user.entity';
+import { CatalogItem } from '../catalog/entities/catalog-item.entity';
 import { Service } from '../services/entities/service.entity';
 import { CreateAppointmentDto } from './dto';
 import { Appointment, AppointmentItem, AppointmentStatus } from './entities';
@@ -42,6 +43,8 @@ export class AppointmentsService {
     private readonly serviceRepository: Repository<Service>,
     @InjectRepository(AppointmentItem)
     private readonly itemRepository: Repository<AppointmentItem>,
+    @InjectRepository(CatalogItem)
+    private readonly catalogRepository: Repository<CatalogItem>,
     private readonly scheduleService: ScheduleService,
     private readonly timeOffService: TimeOffService,
     private readonly eventEmitter: EventEmitter2,
@@ -136,9 +139,38 @@ export class AppointmentsService {
     return [...slots].sort((a, b) => a.localeCompare(b));
   }
 
+  /**
+   * Diseños elegidos, indexados por el servicio al que pertenecen.
+   *
+   * El carrito no admite dos veces el mismo servicio, así que la relación
+   * servicio → diseño es unívoca y alcanza con un Map.
+   */
+  private async resolveChosenDesigns(
+    catalogItemIds: string[] | undefined,
+    serviceIds: string[],
+  ): Promise<Map<string, CatalogItem>> {
+    if (!catalogItemIds?.length) return new Map();
+
+    const designs = await this.catalogRepository.findBy({
+      id: In(catalogItemIds),
+    });
+    if (designs.length !== catalogItemIds.length)
+      throw new NotFoundException('Alguno de los diseños no existe');
+
+    const byService = new Map<string, CatalogItem>();
+    for (const design of designs) {
+      if (!serviceIds.includes(design.service.id))
+        throw new BadRequestException(
+          `"${design.name}" no corresponde a ninguno de los servicios elegidos`,
+        );
+      byService.set(design.service.id, design);
+    }
+    return byService;
+  }
+
   /** Agenda una cita con los servicios elegidos en un slot libre. */
   async create(dto: CreateAppointmentDto, user: User) {
-    const { serviceIds, date, startTime, notes } = dto;
+    const { serviceIds, catalogItemIds, date, startTime, notes } = dto;
 
     const ids = [...new Set(serviceIds)];
     const found = await this.serviceRepository.findBy({ id: In(ids) });
@@ -153,9 +185,24 @@ export class AppointmentsService {
         `"${inactive.name}" no está disponible para agendar`,
       );
 
+    const designs = await this.resolveChosenDesigns(catalogItemIds, ids);
+
+    // Qué se cobra y cómo se llama la línea: lo del diseño si la clienta
+    // eligió uno, y si no lo del servicio. La duración siempre sale del
+    // servicio — es lo que usa el cálculo de horarios.
+    const chosen = services.map((service) => {
+      const design = designs.get(service.id);
+      return {
+        service,
+        design: design ?? null,
+        name: design?.name ?? service.name,
+        price: design?.price ?? service.price,
+      };
+    });
+
     const [primary] = services;
     const durationMin = services.reduce((sum, s) => sum + s.durationMin, 0);
-    const totalPrice = services.reduce((sum, s) => sum + s.price, 0);
+    const totalPrice = chosen.reduce((sum, c) => sum + c.price, 0);
     const extraMinutes = durationMin - primary.durationMin;
 
     const available = await this.getAvailability(
@@ -178,11 +225,12 @@ export class AppointmentsService {
       status: AppointmentStatus.pending,
       priceAtBooking: totalPrice,
       durationMin,
-      items: services.map((s) =>
+      items: chosen.map((c) =>
         this.itemRepository.create({
-          service: s,
-          nameAtBooking: s.name,
-          priceAtBooking: s.price,
+          service: c.service,
+          catalogItem: c.design,
+          nameAtBooking: c.name,
+          priceAtBooking: c.price,
         }),
       ),
     });
