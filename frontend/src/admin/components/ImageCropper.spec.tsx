@@ -2,6 +2,10 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 
+// El código fuente como texto (import nativo de Vite), para la guarda de
+// abajo. Evita depender de node:fs, que no corresponde en código de navegador.
+import fuenteDelComponente from './ImageCropper.tsx?raw';
+
 const AREA = { x: 5, y: 10, width: 300, height: 300 };
 
 // Se simula la librería de recorte: lo que se prueba acá es la lógica propia
@@ -48,12 +52,10 @@ const setup = (props: Partial<Parameters<typeof ImageCropper>[0]> = {}) => {
 beforeEach(() => {
   cropToFile.mockReset();
   cropToFile.mockResolvedValue(new File(['y'], 'manicura.webp'));
-  // jsdom no implementa las URLs de objeto.
-  vi.stubGlobal('URL', {
-    ...URL,
-    createObjectURL: vi.fn(() => 'blob:preview'),
-    revokeObjectURL: vi.fn(),
-  });
+  // jsdom no implementa las URLs de objeto. Se reemplazan solo esos dos
+  // métodos: sustituir el global entero rompería `new URL(...)`.
+  URL.createObjectURL = vi.fn(() => 'blob:preview');
+  URL.revokeObjectURL = vi.fn();
 });
 
 describe('ImageCropper', () => {
@@ -134,5 +136,13 @@ describe('ImageCropper', () => {
       'data-zoom',
       '2.5',
     );
+  });
+
+  // Los casos de arriba mockean react-easy-crop, así que por construcción no
+  // pueden detectar que falte su hoja de estilos: sin ella el contenedor
+  // colapsa y el reset de Tailwind (img { max-width: 100% }) deforma la foto.
+  // Pasó en producción. Esta guarda evita que se vuelva a quitar.
+  it('importa la hoja de estilos de react-easy-crop', () => {
+    expect(fuenteDelComponente).toContain('react-easy-crop/react-easy-crop.css');
   });
 });

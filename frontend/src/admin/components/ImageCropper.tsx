@@ -1,5 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Cropper from "react-easy-crop";
+// Hoja de estilos del recorte: el paquete la publica aparte y es obligatoria.
+// Sin ella el contenedor colapsa y, sobre todo, el reset de Tailwind
+// (`img { max-width: 100% }`) deforma la foto — el propio CSS trae un
+// `max-width: unset` para contrarrestarlo.
+import "react-easy-crop/react-easy-crop.css";
 import { Loader2, ZoomIn } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
