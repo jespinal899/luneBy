@@ -48,6 +48,7 @@ describe('SiteContentService', () => {
         title: 'Tu estilo, tus reglas',
         subtitle: 'Diseños de autor.',
         image: 'https://cdn.test/portada.webp',
+        imageShape: 'horizontal' as const,
       };
       contentRepository.findOneBy.mockResolvedValue({ key: HERO_KEY, value });
 
@@ -75,6 +76,7 @@ describe('SiteContentService', () => {
       title: 'Tu estilo, tus reglas',
       subtitle: 'Diseños de autor.',
       image: 'https://cdn.test/portada.webp',
+      imageShape: 'horizontal' as const,
     };
 
     it('guarda siempre bajo la misma clave, para que no haya dos portadas', async () => {

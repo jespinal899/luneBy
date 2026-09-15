@@ -1,4 +1,5 @@
 import { http } from '@/api/http';
+import type { HeroShape } from '@/shop/lib/hero-shape';
 
 /** Textos y foto de la portada, tal como los guardó la administradora. */
 export interface Hero {
@@ -7,6 +8,8 @@ export interface Hero {
   subtitle: string;
   /** Nula = se usa la foto que viene con el sitio. */
   image: string | null;
+  /** Proporción a la que se recorta y se muestra la foto. */
+  imageShape: HeroShape;
 }
 
 export const getHero = async () => {

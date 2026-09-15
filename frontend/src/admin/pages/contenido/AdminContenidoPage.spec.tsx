@@ -20,6 +20,7 @@ const guardada = {
   title: 'Tu estilo, tus reglas',
   subtitle: 'Diseños de autor, cita previa.',
   image: null,
+  imageShape: 'vertical' as const,
 };
 
 const renderPage = () => {

@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Cache } from 'cache-manager';
 import { Repository } from 'typeorm';
 
-import { UpdateHeroDto } from './dto';
+import { UpdateHeroDto, type HeroShape } from './dto';
 import { SiteContent } from './entities/site-content.entity';
 
 export interface Hero {
@@ -13,6 +13,8 @@ export interface Hero {
   subtitle: string;
   /** Nula = se usa la foto que viene con el sitio. */
   image: string | null;
+  /** Proporción a la que se recorta y se muestra la foto. */
+  imageShape: HeroShape;
 }
 
 export const HERO_KEY = 'hero';
@@ -29,6 +31,7 @@ export const DEFAULT_HERO: Hero = {
   subtitle:
     'Especialistas en manicura rusa, uñas acrílicas esculpidas y nail art de autor. Cotiza tu diseño y agenda tu cita en segundos.',
   image: null,
+  imageShape: 'vertical',
 };
 
 /** Contenido editable del sitio público. Hoy, la portada. */
@@ -59,6 +62,7 @@ export class SiteContentService {
       title: dto.title,
       subtitle: dto.subtitle,
       image: dto.image ?? null,
+      imageShape: dto.imageShape ?? 'vertical',
     };
 
     // `save` con la clave primaria puesta inserta la primera vez y actualiza

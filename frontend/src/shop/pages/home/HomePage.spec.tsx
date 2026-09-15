@@ -46,6 +46,7 @@ describe('HomePage — portada editable', () => {
       title: 'Tu estilo, tus reglas',
       subtitle: 'Diseños de autor, cita previa.',
       image: null,
+      imageShape: 'vertical' as const,
     });
 
     renderHome();
@@ -62,6 +63,7 @@ describe('HomePage — portada editable', () => {
       title: 'b',
       subtitle: 'c',
       image: 'https://cdn.test/portada.webp',
+      imageShape: 'horizontal' as const,
     });
 
     renderHome();
@@ -86,5 +88,43 @@ describe('HomePage — portada editable', () => {
         name: /tu mejor accesorio de lujo/i,
       }),
     ).toBeInTheDocument();
+  });
+
+  // La foto ya no se muestra siempre vertical: si está tomada apaisada, se
+  // recorta y se muestra apaisada.
+  it('respeta la forma elegida para la foto', async () => {
+    vi.mocked(getHero).mockResolvedValue({
+      eyebrow: 'a',
+      title: 'b',
+      subtitle: 'c',
+      image: 'https://cdn.test/portada.webp',
+      imageShape: 'horizontal' as const,
+    });
+
+    renderHome();
+
+    await waitFor(() => {
+      const [foto] = screen.getAllByRole('img');
+      expect(foto.className).toContain('aspect-[4/3]');
+    });
+  });
+
+  // Una forma guardada por una versión posterior no debe dejar la portada sin
+  // proporción y descuadrar el diseño.
+  it('ante una forma desconocida, vuelve a la vertical', async () => {
+    vi.mocked(getHero).mockResolvedValue({
+      eyebrow: 'a',
+      title: 'b',
+      subtitle: 'c',
+      image: 'https://cdn.test/portada.webp',
+      imageShape: 'panoramica' as never,
+    });
+
+    renderHome();
+
+    await waitFor(() => {
+      const [foto] = screen.getAllByRole('img');
+      expect(foto.className).toContain('aspect-[4/5]');
+    });
   });
 });

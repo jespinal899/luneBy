@@ -38,7 +38,7 @@ export const HomePage = () => {
   const { data, isLoading } = useCatalog({ limit: 6, sort: 'recent' });
   // La portada la edita la administradora desde el panel; si la API no
   // responde, el hook devuelve el texto y la foto con los que salió el sitio.
-  const { hero, image: heroImage } = useHero();
+  const { hero, image: heroImage, shape } = useHero();
   // El endpoint público ya devuelve solo las entradas visibles.
   const items = data?.products ?? [];
 
@@ -95,15 +95,13 @@ export const HomePage = () => {
             </dl>
           </div>
 
-          <div className="mx-auto w-full max-w-md">
+          <div className="mx-auto w-full max-w-lg">
             <img
               src={heroImage}
               alt="Trabajo de uñas de Luné by Kelin"
-              width={1400}
-              height={1750}
               fetchPriority="high"
               decoding="async"
-              className="aspect-[4/5] w-full rounded-3xl object-cover shadow-xl shadow-brand/10"
+              className={`${shape.className} w-full rounded-3xl object-cover shadow-xl shadow-brand/10`}
             />
           </div>
         </div>

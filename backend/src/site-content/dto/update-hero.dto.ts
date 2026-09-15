@@ -1,11 +1,16 @@
 import { Transform } from 'class-transformer';
 import {
+  IsIn,
   IsOptional,
   IsString,
   IsUrl,
   MaxLength,
   MinLength,
 } from 'class-validator';
+
+/** Proporciones a las que se puede recortar la foto de la portada. */
+export const HERO_SHAPES = ['vertical', 'cuadrada', 'horizontal'] as const;
+export type HeroShape = (typeof HERO_SHAPES)[number];
 
 const trim = ({ value }: { value: unknown }) =>
   typeof value === 'string' ? value.trim() : value;
@@ -46,4 +51,13 @@ export class UpdateHeroDto {
   @IsUrl()
   @Transform(({ value }) => (value === '' ? null : value))
   image?: string | null;
+
+  /**
+   * Cómo se recorta la foto. Se guarda una proporción conocida y no la de
+   * cada foto: si cada una trajera la suya, el alto de la portada cambiaría
+   * con cada cambio de foto y el texto de al lado saltaría al cargar.
+   */
+  @IsOptional()
+  @IsIn(HERO_SHAPES)
+  imageShape?: HeroShape;
 }

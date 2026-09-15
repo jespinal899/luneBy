@@ -10,9 +10,11 @@ import { Button } from '@/components/ui/button';
 import { formInputClass as inputClass } from '@/lib/form-styles';
 import type { Hero } from '@/shop/api/site-content.actions';
 import { defaultHeroImage, useHero } from '@/shop/hooks/use-hero';
-
-/** La portada se muestra en 4:5; se recorta igual para que no haya sorpresas. */
-const HERO_ASPECT = 4 / 5;
+import {
+  HERO_SHAPES,
+  heroShapeOf,
+  type HeroShape,
+} from '@/shop/lib/hero-shape';
 
 /**
  * Edición de la portada del sitio: los textos y la foto que ve una clienta al
@@ -32,6 +34,9 @@ export const AdminContenidoPage = () => {
   // administradora escribe, manda el formulario. Así no hace falta esperar a
   // que llegue la portada para que el campo responda.
   const value = form ?? hero;
+  // El recorte y la vista previa usan la misma forma que la portada pública,
+  // así lo que se ve acá es lo que va a ver la clienta.
+  const shape = heroShapeOf(value.imageShape);
 
   const set = <K extends keyof Hero>(field: K, fieldValue: Hero[K]) => {
     setSaved(false);
@@ -68,7 +73,7 @@ export const AdminContenidoPage = () => {
       {pendingFile && (
         <ImageCropper
           file={pendingFile}
-          aspect={HERO_ASPECT}
+          aspect={shape.ratio}
           onConfirm={handleCropConfirm}
           onCancel={() => setPendingFile(null)}
           isUploading={upload.isPending}
@@ -193,7 +198,7 @@ export const AdminContenidoPage = () => {
                   <img
                     src={value.image}
                     alt="Vista previa de la portada"
-                    className="aspect-[4/5] w-full rounded-lg border border-border object-cover"
+                    className={`${shape.className} w-full rounded-lg border border-border object-cover`}
                   />
                   <button
                     type="button"
@@ -209,7 +214,7 @@ export const AdminContenidoPage = () => {
                   <img
                     src={defaultHeroImage}
                     alt="Foto que trae el sitio por defecto"
-                    className="mb-4 aspect-[4/5] w-full rounded-lg border border-border object-cover opacity-60"
+                    className={`mb-4 ${shape.className} w-full rounded-lg border border-border object-cover opacity-60`}
                   />
                   <label className="relative block cursor-pointer rounded-lg border-2 border-dashed border-input p-6 text-center transition-colors hover:border-input">
                     <input
@@ -235,9 +240,33 @@ export const AdminContenidoPage = () => {
                   {apiErrorMessage(upload.error, 'No se pudo subir la imagen.')}
                 </p>
               )}
+              <fieldset className="mt-5">
+                <legend className="mb-2 text-sm font-medium text-foreground">
+                  Forma de la foto
+                </legend>
+                <div className="grid grid-cols-3 gap-2">
+                  {(Object.keys(HERO_SHAPES) as HeroShape[]).map((key) => (
+                    <button
+                      key={key}
+                      type="button"
+                      aria-pressed={value.imageShape === key}
+                      onClick={() => set('imageShape', key)}
+                      className={`rounded-lg border px-2 py-2 text-xs font-medium transition-colors ${
+                        value.imageShape === key
+                          ? 'border-primary bg-primary/10 text-foreground'
+                          : 'border-border text-muted-foreground hover:border-input'
+                      }`}
+                    >
+                      {HERO_SHAPES[key].label}
+                    </button>
+                  ))}
+                </div>
+                <p className="mt-2 text-xs text-muted-foreground">{shape.hint}</p>
+              </fieldset>
+
               <p className="mt-3 text-xs text-muted-foreground">
-                Si quitás la foto vuelve la que trae el sitio. La imagen se
-                muestra vertical: se recorta a esa forma antes de subirla.
+                Si quitás la foto vuelve la que trae el sitio. Elegí la forma
+                antes de subirla: es la que se usa para recortar.
               </p>
             </div>
           </div>

@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { getHero, type Hero } from '@/shop/api/site-content.actions';
+import { DEFAULT_HERO_SHAPE, heroShapeOf } from '@/shop/lib/hero-shape';
 import heroImage from '@/assets/hero-nailart.webp';
 
 /**
@@ -17,6 +18,7 @@ export const FALLBACK_HERO: Hero = {
   subtitle:
     'Especialistas en manicura rusa, uñas acrílicas esculpidas y nail art de autor. Cotiza tu diseño y agenda tu cita en segundos.',
   image: null,
+  imageShape: DEFAULT_HERO_SHAPE,
 };
 
 /** La foto que viene con el sitio, para cuando no se subió ninguna. */
@@ -32,5 +34,9 @@ export const useHero = () => {
   });
 
   const hero = data ?? FALLBACK_HERO;
-  return { hero, image: hero.image ?? defaultHeroImage };
+  return {
+    hero,
+    image: hero.image ?? defaultHeroImage,
+    shape: heroShapeOf(hero.imageShape),
+  };
 };
