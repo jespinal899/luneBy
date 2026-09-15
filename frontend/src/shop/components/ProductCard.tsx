@@ -40,7 +40,7 @@ export const ProductCard = ({ item }: Props) => {
                 <div className="mt-auto flex items-end justify-between gap-3 border-t border-brand/10 pt-4">
                     <div>
                         <p className="text-xl font-semibold text-brand-dark">
-                            {formatLps(item.price)}
+                            {formatLps(item.servicePrice + item.price)}
                         </p>
                         <p className="mt-0.5 flex items-center gap-1.5 text-xs text-muted-foreground">
                             <Clock className="h-3.5 w-3.5" />

@@ -20,9 +20,12 @@ export interface CatalogItemView {
   id: string;
   serviceId: string;
   name: string;
+  /** Lo que suma el diseño sobre el precio del servicio. */
   price: number;
   /** Nombre del servicio al que pertenece ("Esmaltado"). */
   serviceName: string;
+  /** Precio base del servicio, al que se le suma el del diseño. */
+  servicePrice: number;
   durationMin: number;
   category: string;
   slug: string;
@@ -53,6 +56,7 @@ export class CatalogService {
       name: item.name,
       price: item.price,
       serviceName: item.service.name,
+      servicePrice: item.service.price,
       durationMin: item.service.durationMin,
       category: item.service.category,
       slug: item.service.slug,

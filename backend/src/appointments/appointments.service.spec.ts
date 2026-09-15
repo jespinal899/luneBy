@@ -174,19 +174,30 @@ describe('AppointmentsService · getAvailability', () => {
         { id: 'u1' } as never,
       );
 
-    it('congela el nombre y el precio del diseño, no los del servicio', async () => {
+    it('el diseño se suma al servicio, no lo reemplaza', async () => {
       agendable();
       catalogRepository.findBy.mockResolvedValue([softGlam]);
 
       const cita = await reservar(['d1']);
 
+      // 350 del esmaltado + 450 del diseño: hacer un Soft Glam es hacer el
+      // esmaltado y además el diseño.
       expect(cita.items[0]).toMatchObject({
-        nameAtBooking: 'Soft Glam',
-        priceAtBooking: 450,
+        nameAtBooking: 'Esmaltado · Soft Glam',
+        priceAtBooking: 800,
       });
       // Y queda registrado qué diseño fue, no solo su nombre.
       expect(cita.items[0].catalogItem).toBe(softGlam);
-      expect(cita.priceAtBooking).toBe(450);
+      expect(cita.priceAtBooking).toBe(800);
+    });
+
+    it('un diseño sin adicional deja el precio del servicio', async () => {
+      agendable();
+      catalogRepository.findBy.mockResolvedValue([{ ...softGlam, price: 0 }]);
+
+      const cita = await reservar(['d1']);
+
+      expect(cita.priceAtBooking).toBe(350);
     });
 
     it('sin diseño elegido sigue congelando los del servicio', async () => {

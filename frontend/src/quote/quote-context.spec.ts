@@ -17,16 +17,19 @@ const softGlam = {
   name: 'Soft Glam',
   serviceName: 'Esmaltado',
   slug: 'esmaltado',
+  // Lo que suma el diseño sobre el servicio, no el precio final.
   price: 450,
+  servicePrice: 350,
   durationMin: 45,
 } as CatalogItem;
 
 describe('cotización', () => {
-  it('desde un diseño cotiza su nombre y su precio, no los del servicio', () => {
+  it('desde un diseño suma el servicio y el adicional del diseño', () => {
     const item = catalogItemToQuoteItem(softGlam);
 
-    expect(item.name).toBe('Soft Glam');
-    expect(item.price).toBe(450);
+    expect(item.name).toBe('Esmaltado · Soft Glam');
+    // 350 del esmaltado + 450 del diseño.
+    expect(item.price).toBe(800);
     // Reserva el servicio (de ahí sale la duración y el cálculo de horarios)…
     expect(item.serviceId).toBe('svc-1');
     // …pero recuerda qué diseño fue, para que se cobre lo cotizado.

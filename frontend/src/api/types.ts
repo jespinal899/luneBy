@@ -46,10 +46,12 @@ export interface CatalogItem {
   serviceId: string;
   /** Nombre del diseño ("Soft Glam"). */
   name: string;
-  /** Precio del diseño. */
+  /** Lo que suma el diseño sobre el precio del servicio. */
   price: number;
   /** Nombre del servicio al que pertenece ("Esmaltado"). */
   serviceName: string;
+  /** Precio base del servicio, al que se le suma el del diseño. */
+  servicePrice: number;
   durationMin: number;
   category: string;
   slug: string;

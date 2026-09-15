@@ -206,8 +206,7 @@ export const AdminProductPage = () => {
                                     >
                                         Agendar
                                     </Link>
-                                    . De ahí se heredan el nombre, el precio y la
-                                    duración.
+                                    . De ahí salen la duración y el precio base.
                                 </p>
                             </div>
 
@@ -216,7 +215,7 @@ export const AdminProductPage = () => {
                                     htmlFor="precio-diseno"
                                     className="mb-2 block text-sm font-medium text-foreground"
                                 >
-                                    Precio (L.)
+                                    Precio adicional (L.)
                                 </label>
                                 <input
                                     id="precio-diseno"
@@ -232,8 +231,9 @@ export const AdminProductPage = () => {
                                     placeholder="0"
                                 />
                                 <p className="mt-2 text-xs text-muted-foreground">
-                                    Este diseño puede costar distinto que otros del
-                                    mismo servicio.
+                                    Lo que se cobra ADEMÁS del servicio. Si el
+                                    esmaltado cuesta L. 350 y acá pones 100, el
+                                    diseño sale L. 450. Deja 0 si no cobras extra.
                                 </p>
                             </div>
 

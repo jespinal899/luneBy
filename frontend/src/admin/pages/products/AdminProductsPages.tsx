@@ -78,7 +78,7 @@ export const AdminProductsPage = () => {
                             <TableRow>
                                 <TableHead>Foto</TableHead>
                                 <TableHead>Diseño</TableHead>
-                                <TableHead>Precio</TableHead>
+                                <TableHead>Adicional</TableHead>
                                 <TableHead>Estado</TableHead>
                                 <TableHead className="text-right">Acciones</TableHead>
                             </TableRow>
@@ -101,7 +101,14 @@ export const AdminProductsPage = () => {
                                             {item.serviceName}
                                         </span>
                                     </TableCell>
-                                    <TableCell>{formatLps(item.price)}</TableCell>
+                                    <TableCell>
+                                        <span className="block">
+                                            + {formatLps(item.price)}
+                                        </span>
+                                        <span className="block text-xs text-muted-foreground">
+                                            {formatLps(item.servicePrice + item.price)} en total
+                                        </span>
+                                    </TableCell>
                                     <TableCell>
                                         <span
                                             className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${

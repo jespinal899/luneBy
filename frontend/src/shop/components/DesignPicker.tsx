@@ -15,8 +15,12 @@ import { formatLps } from '@/shop/lib/format';
  * precio base. Así un servicio al que todavía no se le cargaron diseños se
  * puede reservar igual.
  *
+ * El precio del diseño se SUMA al del servicio: hacer un Soft Glam es hacer
+ * el esmaltado y además el diseño. Se muestra el total, con el adicional
+ * debajo, para que no haya sorpresas al llegar a la cotización.
+ *
  * La duración siempre sale del servicio, también cuando hay diseño: es lo que
- * usa el cálculo de horarios. Lo que cambia es el nombre y el precio.
+ * usa el cálculo de horarios, y el diseño no debe mover la agenda.
  */
 export const DesignPicker = ({ service }: { service: Service }) => {
   const quote = useQuote();
@@ -76,8 +80,15 @@ export const DesignPicker = ({ service }: { service: Service }) => {
           className={optionClass(chosen?.catalogItemId === design.id)}
         >
           <span className="min-w-0 truncate">{design.name}</span>
-          <span className="shrink-0 font-medium">
-            {formatLps(design.price)}
+          <span className="shrink-0 text-right">
+            <span className="block font-medium">
+              {formatLps(service.price + design.price)}
+            </span>
+            {design.price > 0 && (
+              <span className="block text-[11px] text-muted-foreground">
+                +{formatLps(design.price)}
+              </span>
+            )}
           </span>
         </button>
       ))}

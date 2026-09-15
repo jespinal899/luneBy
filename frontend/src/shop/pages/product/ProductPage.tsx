@@ -70,7 +70,7 @@ export const ProductPage = () => {
 
                     <div className="mt-4 flex items-center gap-6">
                         <span className="text-2xl font-semibold">
-                            {formatLps(item.price)}
+                            {formatLps(item.servicePrice + item.price)}
                         </span>
                         <span className="inline-flex items-center gap-1.5 text-sm text-muted-foreground">
                             <Clock className="h-4 w-4" />

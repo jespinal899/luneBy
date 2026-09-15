@@ -27,16 +27,19 @@ export const toQuoteItem = (s: Service): QuoteItem => ({
 
 /**
  * Desde un diseño del catálogo. Se reserva el SERVICIO (de ahí sale la
- * duración y el cálculo de horarios), pero se recuerda qué diseño eligió:
- * el nombre y el precio que se cotizan —y luego se cobran— son los del
- * diseño, no los del servicio.
+ * duración y el cálculo de horarios) y se recuerda qué diseño eligió.
+ *
+ * El precio es la suma de los dos: hacer un Soft Glam es hacer el esmaltado
+ * y además el diseño, así que lo del diseño se cobra encima del servicio, no
+ * en lugar de él. El backend vuelve a sumarlo por su cuenta al agendar — acá
+ * es solo lo que se muestra.
  */
 export const catalogItemToQuoteItem = (i: CatalogItem): QuoteItem => ({
   serviceId: i.serviceId,
   catalogItemId: i.id,
-  name: i.name,
+  name: `${i.serviceName} · ${i.name}`,
   slug: i.slug,
-  price: i.price,
+  price: i.servicePrice + i.price,
   durationMin: i.durationMin,
 });
 

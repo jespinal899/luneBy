@@ -26,8 +26,10 @@ const esmaltado = {
   isActive: true,
 } as Service;
 
+// `price` es el adicional del diseño; el total es servicePrice + price.
 const design = (over: Record<string, unknown>) => ({
   serviceId: 'svc-1',
+  servicePrice: 350,
   slug: 'esmaltado',
   durationMin: 45,
   category: 'Manos',
@@ -89,7 +91,7 @@ describe('DesignPicker', () => {
     vi.mocked(getCatalog).mockReset();
   });
 
-  it('muestra cada diseño con su propio precio', async () => {
+  it('muestra el total de cada diseño y cuánto suma', async () => {
     vi.mocked(getCatalog).mockResolvedValue(
       page([
         design({ id: 'd-1', name: 'Soft Glam', price: 450 }),
@@ -100,9 +102,11 @@ describe('DesignPicker', () => {
     renderPicker();
 
     expect(await screen.findByText('Soft Glam')).toBeInTheDocument();
-    expect(screen.getByText('L. 450')).toBeInTheDocument();
+    // 350 del servicio + 450 del diseño, y el adicional debajo.
+    expect(screen.getByText('L. 800')).toBeInTheDocument();
+    expect(screen.getByText('+L. 450')).toBeInTheDocument();
     expect(screen.getByText('French')).toBeInTheDocument();
-    expect(screen.getByText('L. 400')).toBeInTheDocument();
+    expect(screen.getByText('L. 750')).toBeInTheDocument();
   });
 
   it('pide solo los diseños del servicio elegido', async () => {
@@ -115,7 +119,7 @@ describe('DesignPicker', () => {
     );
   });
 
-  it('al elegir un diseño, se cotiza su nombre y su precio', async () => {
+  it('al elegir un diseño, se cotiza el servicio más el diseño', async () => {
     vi.mocked(getCatalog).mockResolvedValue(
       page([design({ id: 'd-1', name: 'Soft Glam', price: 450 })]) as never,
     );
@@ -127,7 +131,7 @@ describe('DesignPicker', () => {
     // La duración sigue siendo la del servicio: es la que usa el cálculo de
     // horarios, y el diseño no debe moverla.
     expect(screen.getByTestId('cotizacion')).toHaveTextContent(
-      'Soft Glam · 450 · d-1 · 45',
+      'Esmaltado · Soft Glam · 800 · d-1 · 45',
     );
   });
 
@@ -161,7 +165,7 @@ describe('DesignPicker', () => {
 
     expect(screen.getAllByRole('listitem')).toHaveLength(1);
     expect(screen.getByTestId('cotizacion')).toHaveTextContent(
-      'French · 400 · d-2',
+      'Esmaltado · French · 750 · d-2',
     );
   });
 

@@ -187,16 +187,18 @@ export class AppointmentsService {
 
     const designs = await this.resolveChosenDesigns(catalogItemIds, ids);
 
-    // Qué se cobra y cómo se llama la línea: lo del diseño si la clienta
-    // eligió uno, y si no lo del servicio. La duración siempre sale del
-    // servicio — es lo que usa el cálculo de horarios.
+    // Qué se cobra: siempre el servicio, más lo que agregue el diseño si
+    // la clienta eligió uno. El precio del diseño es un adicional, no un
+    // reemplazo: hacer Soft Glam es hacer el esmaltado y además el diseño.
+    // La duración sigue saliendo del servicio — es lo que usa el cálculo de
+    // horarios, y el diseño no debe mover la agenda.
     const chosen = services.map((service) => {
       const design = designs.get(service.id);
       return {
         service,
         design: design ?? null,
-        name: design?.name ?? service.name,
-        price: design?.price ?? service.price,
+        name: design ? `${service.name} · ${design.name}` : service.name,
+        price: service.price + (design?.price ?? 0),
       };
     });
 
