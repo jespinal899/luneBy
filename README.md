@@ -165,9 +165,7 @@ El workflow [`.github/workflows/ci.yml`](.github/workflows/ci.yml) se ejecuta en
    filtro cuenta como OK). Es el check a exigir en la protección de rama.
 
 El deploy es automático: **Render** reconstruye la API al hacer push a `main`
-(`render.yaml`) y **Vercel** publica el frontend. El workflow
-[`keep-alive.yml`](.github/workflows/keep-alive.yml) hace ping a la API cada 10 min
-para que el plan free de Render no la duerma.
+(`render.yaml`) y **Vercel** publica el frontend.
 
 Ver el estado del pipeline en la pestaña **Actions** del repositorio.
 
