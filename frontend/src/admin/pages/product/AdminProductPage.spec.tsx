@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router';
 import { describe, expect, it, vi, beforeEach } from 'vitest';
@@ -15,6 +15,34 @@ vi.mock('@/shop/api/catalog.actions', () => ({
 vi.mock('@/shop/api/services.actions', () => ({
   getServicesForAdmin: vi.fn(),
 }));
+vi.mock('@/admin/api/files.actions', () => ({
+  uploadServiceImage: (...args: unknown[]) => uploadServiceImage(...args),
+}));
+// El recorte en sí se prueba en ImageCropper.spec; acá solo importa cómo
+// reacciona la página a sus dos salidas.
+vi.mock('@/admin/components/ImageCropper', () => ({
+  ImageCropper: ({
+    file,
+    onConfirm,
+    onCancel,
+  }: {
+    file: File;
+    onConfirm: (f: File) => void;
+    onCancel: () => void;
+  }) => (
+    <div>
+      <span>recortando {file.name}</span>
+      <button type="button" onClick={() => onConfirm(new File(['c'], 'recortada.webp'))}>
+        confirmar recorte
+      </button>
+      <button type="button" onClick={onCancel}>
+        cancelar recorte
+      </button>
+    </div>
+  ),
+}));
+
+const uploadServiceImage = vi.fn();
 
 import { createCatalogItem, getCatalogForAdmin } from '@/shop/api/catalog.actions';
 import { getServicesForAdmin } from '@/shop/api/services.actions';
@@ -36,6 +64,7 @@ const renderPage = () => {
 
 describe('AdminProductPage (nuevo diseño)', () => {
   beforeEach(() => {
+    uploadServiceImage.mockReset();
     vi.mocked(createCatalogItem).mockReset();
     vi.mocked(createCatalogItem).mockResolvedValue({ id: '1' } as never);
     vi.mocked(getCatalogForAdmin).mockResolvedValue({
@@ -73,5 +102,43 @@ describe('AdminProductPage (nuevo diseño)', () => {
     expect(createCatalogItem).toHaveBeenCalledWith(
       expect.objectContaining({ serviceId: 'svc-1' }),
     );
+  });
+
+  it('al elegir una foto abre el recorte en vez de subirla directo', async () => {
+    const user = userEvent.setup();
+    renderPage();
+
+    const input = document.querySelector<HTMLInputElement>('input[type="file"]')!;
+    await user.upload(input, new File(['x'], 'uñas.jpg', { type: 'image/jpeg' }));
+
+    expect(await screen.findByText(/recortando uñas.jpg/)).toBeInTheDocument();
+    expect(uploadServiceImage).not.toHaveBeenCalled();
+  });
+
+  it('sube recién cuando se confirma el recorte', async () => {
+    uploadServiceImage.mockResolvedValue('https://cdn/recortada.webp');
+    const user = userEvent.setup();
+    renderPage();
+
+    const input = document.querySelector<HTMLInputElement>('input[type="file"]')!;
+    await user.upload(input, new File(['x'], 'foto.jpg', { type: 'image/jpeg' }));
+    await user.click(await screen.findByText('confirmar recorte'));
+
+    await waitFor(() => expect(uploadServiceImage).toHaveBeenCalled());
+    expect(uploadServiceImage.mock.calls[0][0].name).toBe('recortada.webp');
+  });
+
+  it('cancelar el recorte cierra el modal sin subir nada', async () => {
+    const user = userEvent.setup();
+    renderPage();
+
+    const input = document.querySelector<HTMLInputElement>('input[type="file"]')!;
+    await user.upload(input, new File(['x'], 'foto.jpg', { type: 'image/jpeg' }));
+    await user.click(await screen.findByText('cancelar recorte'));
+
+    await waitFor(() =>
+      expect(screen.queryByText('confirmar recorte')).not.toBeInTheDocument(),
+    );
+    expect(uploadServiceImage).not.toHaveBeenCalled();
   });
 });
