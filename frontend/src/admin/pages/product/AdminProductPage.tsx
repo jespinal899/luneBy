@@ -3,6 +3,7 @@ import { SaveAll, Upload, X } from 'lucide-react';
 import { Link, useNavigate, useParams } from 'react-router';
 
 import { AdminTitle } from '@/admin/components/AdminTitle';
+import { ImageCropper } from '@/admin/components/ImageCropper';
 import {
     useAdminCatalog,
     useCreateCatalogItem,
@@ -61,16 +62,32 @@ export const AdminProductPage = () => {
     const updateMutation = useUpdateCatalogItem(id ?? '');
     const mutation = isNew ? createMutation : updateMutation;
     const upload = useUploadImage();
+    const [pendingFile, setPendingFile] = useState<File | null>(null);
 
     const set = <K extends keyof CatalogItemInput>(
         field: K,
         value: CatalogItemInput[K],
     ) => setForm((prev) => ({ ...prev, [field]: value }));
 
+    // La foto elegida no se sube directo: primero pasa por el recorte, para
+    // que sea Kelin —y no el `object-cover` del navegador— quien decida qué
+    // parte del diseño queda visible.
     const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         if (!file) return;
-        upload.mutate(file, { onSuccess: (url) => set('image', url) });
+        setPendingFile(file);
+        // Permite volver a elegir la misma foto si cancela el recorte.
+        event.target.value = '';
+    };
+
+    const handleCropConfirm = (cropped: File) => {
+        upload.mutate(cropped, {
+            onSuccess: (url) => {
+                set('image', url);
+                setPendingFile(null);
+            },
+            onError: () => setPendingFile(null),
+        });
     };
 
     const handleSubmit = (event: React.SubmitEvent<HTMLFormElement>) => {
@@ -92,6 +109,15 @@ export const AdminProductPage = () => {
     }
 
     return (
+        <>
+        {pendingFile && (
+            <ImageCropper
+                file={pendingFile}
+                onConfirm={handleCropConfirm}
+                onCancel={() => setPendingFile(null)}
+                isUploading={upload.isPending}
+            />
+        )}
         <form onSubmit={handleSubmit}>
             <div className="flex items-center justify-between">
                 <AdminTitle title={title} subtitle={subtitle} />
@@ -231,10 +257,11 @@ export const AdminProductPage = () => {
                                 <p className="mt-2 text-sm font-medium text-foreground">
                                     {upload.isPending
                                         ? 'Subiendo…'
-                                        : 'Sube la foto del diseño'}
+                                        : 'Subí la foto del diseño'}
                                 </p>
                                 <p className="text-xs text-muted-foreground">
-                                    JPG, PNG o WEBP · hasta 5 MB
+                                    JPG, PNG o WEBP · hasta 5 MB · vas a
+                                    poder recortarla antes de subirla
                                 </p>
                             </label>
                         )}
@@ -277,5 +304,6 @@ export const AdminProductPage = () => {
                 </div>
             </div>
         </form>
+        </>
     );
 };
