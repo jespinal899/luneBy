@@ -81,7 +81,6 @@ export const appRouter = createBrowserRouter([
       { path: 'products', element: <AdminProductsPage /> },
       { path: 'products/:id', element: <AdminProductPage /> },
       { path: 'agendar', element: <AdminAgendarServiciosPage /> },
-      { path: 'agendar/new', element: <AdminServicioPage /> },
       { path: 'agendar/:id', element: <AdminServicioPage /> },
       { path: 'citas', element: <AdminAppointmentsPage /> },
       { path: 'horario', element: <HorarioPage /> },
