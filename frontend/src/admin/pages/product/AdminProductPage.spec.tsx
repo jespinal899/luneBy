@@ -90,7 +90,32 @@ describe('AdminProductPage (nuevo diseño)', () => {
     } as never);
   });
 
-  it('crea una entrada de catálogo eligiendo un servicio', async () => {
+  it('crea un diseño con nombre y precio propios, ligado a su servicio', async () => {
+    const user = userEvent.setup();
+    renderPage();
+
+    await user.type(screen.getByLabelText(/nombre del diseño/i), 'Soft Glam');
+
+    const select = screen.getByRole('combobox');
+    await screen.findByRole('option', { name: /manicura/i });
+    await user.selectOptions(select, 'svc-1');
+
+    const precio = screen.getByLabelText(/precio/i);
+    await user.clear(precio);
+    await user.type(precio, '450');
+
+    await user.click(screen.getByRole('button', { name: /guardar/i }));
+
+    expect(createCatalogItem).toHaveBeenCalledWith(
+      expect.objectContaining({
+        name: 'Soft Glam',
+        price: 450,
+        serviceId: 'svc-1',
+      }),
+    );
+  });
+
+  it('no deja guardar un diseño sin nombre', async () => {
     const user = userEvent.setup();
     renderPage();
 
@@ -99,9 +124,9 @@ describe('AdminProductPage (nuevo diseño)', () => {
     await user.selectOptions(select, 'svc-1');
     await user.click(screen.getByRole('button', { name: /guardar/i }));
 
-    expect(createCatalogItem).toHaveBeenCalledWith(
-      expect.objectContaining({ serviceId: 'svc-1' }),
-    );
+    // El nombre es lo que distingue un diseño de otro del mismo servicio:
+    // sin él volveríamos al problema que este cambio vino a resolver.
+    expect(createCatalogItem).not.toHaveBeenCalled();
   });
 
   it('al elegir una foto abre el recorte en vez de subirla directo', async () => {

@@ -26,6 +26,8 @@ export const getCatalogForAdmin = async (filters: ServiceFilters = {}) => {
 };
 
 export interface CatalogItemInput {
+  name: string;
+  price: number;
   serviceId: string;
   image?: string;
   description?: string;
@@ -37,6 +39,8 @@ export interface CatalogItemInput {
  * backend los limpia de verdad en vez de dejar el valor anterior.
  */
 const toBody = (input: CatalogItemInput) => ({
+  name: input.name.trim(),
+  price: input.price,
   serviceId: input.serviceId,
   isActive: input.isActive ?? true,
   description: input.description?.trim() || null,

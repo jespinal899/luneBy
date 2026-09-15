@@ -44,8 +44,12 @@ export interface CatalogItem {
   id: string;
   /** Servicio agendable al que corresponde. */
   serviceId: string;
+  /** Nombre del diseño ("Soft Glam"). */
   name: string;
+  /** Precio del diseño. */
   price: number;
+  /** Nombre del servicio al que pertenece ("Esmaltado"). */
+  serviceName: string;
   durationMin: number;
   category: string;
   slug: string;

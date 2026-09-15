@@ -31,9 +31,14 @@ export const ProductCard = ({ item }: Props) => {
             </div>
 
             <div className="flex flex-1 flex-col gap-3 p-5">
-                <h3 className="font-medium leading-snug text-brand-dark">
-                    {item.name}
-                </h3>
+                <div>
+                    <h3 className="font-medium leading-snug text-brand-dark">
+                        {item.name}
+                    </h3>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                        {item.serviceName}
+                    </p>
+                </div>
 
                 <div className="mt-auto flex items-end justify-between gap-3 border-t border-brand/10 pt-4">
                     <div>

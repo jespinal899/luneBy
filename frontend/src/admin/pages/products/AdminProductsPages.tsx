@@ -22,9 +22,9 @@ import { serviceImage } from '@/shop/lib/service-image';
 const PAGE_SIZE = 10;
 
 /**
- * Catálogo: los diseños que se ven en /shop y en #servicios. Cada entrada
- * apunta a un servicio agendable (de ahí saca nombre, precio y duración) y
- * aporta su propia foto y descripción.
+ * Catálogo: los diseños que se ven en /shop y en #servicios. Cada diseño
+ * tiene nombre, precio, foto y descripción propios, y pertenece a un servicio
+ * agendable, del que hereda la duración.
  */
 export const AdminProductsPage = () => {
     const [params] = useSearchParams();
@@ -49,7 +49,7 @@ export const AdminProductsPage = () => {
             <div className="flex items-center justify-between">
                 <AdminTitle
                     title="Catálogo"
-                    subtitle="Los diseños que ven tus clientas en la página de servicios. Cada uno apunta a un servicio agendable y hereda su nombre, precio y duración."
+                    subtitle="Los diseños que ven tus clientas en la página de servicios. Cada diseño tiene su propio nombre y precio, y pertenece a un servicio (por ejemplo, Soft Glam pertenece a Esmaltado)."
                 />
 
                 <div className="mb-10 flex justify-end gap-4">
@@ -77,7 +77,7 @@ export const AdminProductsPage = () => {
                         <TableHeader>
                             <TableRow>
                                 <TableHead>Foto</TableHead>
-                                <TableHead>Servicio</TableHead>
+                                <TableHead>Diseño</TableHead>
                                 <TableHead>Categoría</TableHead>
                                 <TableHead>Precio</TableHead>
                                 <TableHead>Estado</TableHead>
@@ -94,8 +94,13 @@ export const AdminProductsPage = () => {
                                             className="h-16 w-16 rounded-md object-cover"
                                         />
                                     </TableCell>
-                                    <TableCell className="font-medium">
-                                        {item.name}
+                                    <TableCell>
+                                        <span className="block font-medium text-foreground">
+                                            {item.name}
+                                        </span>
+                                        <span className="block text-xs text-muted-foreground">
+                                            {item.serviceName}
+                                        </span>
                                     </TableCell>
                                     <TableCell>
                                         <span className="rounded-full bg-muted px-2.5 py-1 text-xs font-medium text-foreground">

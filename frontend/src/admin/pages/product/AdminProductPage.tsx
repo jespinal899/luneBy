@@ -18,6 +18,8 @@ import type { CatalogItemInput } from '@/shop/api/catalog.actions';
 import { formatDuration, formatLps } from '@/shop/lib/format';
 
 const emptyForm: CatalogItemInput = {
+    name: '',
+    price: 0,
     serviceId: '',
     description: '',
     image: '',
@@ -51,6 +53,8 @@ export const AdminProductPage = () => {
     if (existing && existing.id !== hydratedFrom) {
         setHydratedFrom(existing.id);
         setForm({
+            name: existing.name,
+            price: existing.price,
             serviceId: existing.serviceId,
             description: existing.description ?? '',
             image: existing.image ?? '',
@@ -152,6 +156,29 @@ export const AdminProductPage = () => {
 
                         <div className="space-y-6">
                             <div>
+                                <label
+                                    htmlFor="nombre-diseno"
+                                    className="mb-2 block text-sm font-medium text-foreground"
+                                >
+                                    Nombre del diseño
+                                </label>
+                                <input
+                                    id="nombre-diseno"
+                                    type="text"
+                                    required
+                                    minLength={2}
+                                    maxLength={80}
+                                    value={form.name}
+                                    onChange={(e) => set('name', e.target.value)}
+                                    className={inputClass}
+                                    placeholder="Ej: Soft Glam"
+                                />
+                                <p className="mt-2 text-xs text-muted-foreground">
+                                    Cómo lo van a ver tus clientas en el catálogo.
+                                </p>
+                            </div>
+
+                            <div>
                                 <label className="mb-2 block text-sm font-medium text-foreground">
                                     Servicio
                                 </label>
@@ -181,6 +208,32 @@ export const AdminProductPage = () => {
                                     </Link>
                                     . De ahí se heredan el nombre, el precio y la
                                     duración.
+                                </p>
+                            </div>
+
+                            <div>
+                                <label
+                                    htmlFor="precio-diseno"
+                                    className="mb-2 block text-sm font-medium text-foreground"
+                                >
+                                    Precio (L.)
+                                </label>
+                                <input
+                                    id="precio-diseno"
+                                    type="number"
+                                    min={0}
+                                    step="1"
+                                    required
+                                    value={form.price}
+                                    onChange={(e) =>
+                                        set('price', Number.parseFloat(e.target.value) || 0)
+                                    }
+                                    className={inputClass}
+                                    placeholder="0"
+                                />
+                                <p className="mt-2 text-xs text-muted-foreground">
+                                    Este diseño puede costar distinto que otros del
+                                    mismo servicio.
                                 </p>
                             </div>
 

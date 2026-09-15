@@ -10,9 +10,12 @@ import {
 import { Service } from '../../services/entities/service.entity';
 
 /**
- * Una entrada del catálogo público: la foto de un diseño que apunta a un
- * servicio agendable. El nombre, precio y duración NO se guardan acá — se
- * heredan del servicio, para que haya un solo lugar donde cambiarlos.
+ * Un diseño del catálogo: "Soft Glam", "French", "Cat Eye"…
+ *
+ * Tiene nombre y precio propios y pertenece a un servicio agendable
+ * (Servicio 1 → N Diseños). La duración sí se hereda del servicio: es lo que
+ * usa el motor de disponibilidad para calcular los horarios libres, así que
+ * vive en un solo lugar.
  */
 @Entity({ name: 'catalog_items' })
 export class CatalogItem {
@@ -27,6 +30,14 @@ export class CatalogItem {
   })
   @JoinColumn({ name: 'serviceId' })
   service: Service;
+
+  /** Nombre del diseño, elegido por la administradora ("Soft Glam"). */
+  @Column('text')
+  name: string;
+
+  /** Precio propio del diseño. */
+  @Column('float', { default: 0 })
+  price: number;
 
   /** Foto del diseño. */
   @Column('text', { nullable: true })

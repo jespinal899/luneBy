@@ -28,6 +28,8 @@ describe('CatalogService', () => {
   const makeItem = (over: Partial<CatalogItem> = {}) =>
     ({
       id: '1',
+      name: 'Soft Glam',
+      price: 450,
       image: null,
       description: null,
       isActive: true,
@@ -62,7 +64,7 @@ describe('CatalogService', () => {
   });
 
   describe('findAll', () => {
-    it('aplana el item con los datos del servicio', async () => {
+    it('expone el nombre y precio del diseño, no los del servicio', async () => {
       qb.getMany.mockResolvedValue([makeItem()]);
 
       const res = await service.findAll({});
@@ -70,10 +72,31 @@ describe('CatalogService', () => {
       expect(res.products[0]).toMatchObject({
         id: '1',
         serviceId: 'svc-1',
-        name: 'Manicura',
-        price: 350,
+        // Propios del diseño.
+        name: 'Soft Glam',
+        price: 450,
+        // Del servicio al que pertenece.
+        serviceName: 'Manicura',
         durationMin: 45,
       });
+    });
+
+    it('varios diseños del mismo servicio conservan su identidad', async () => {
+      qb.getMany.mockResolvedValue([
+        makeItem({ id: '1', name: 'Soft Glam', price: 450 } as never),
+        makeItem({ id: '2', name: 'French', price: 380 } as never),
+      ]);
+
+      const res = await service.findAll({}, { includeHidden: true });
+
+      expect(res.products.map((p) => [p.name, p.price])).toEqual([
+        ['French', 380],
+        ['Soft Glam', 450],
+      ]);
+      // Los dos siguen apuntando al mismo servicio.
+      expect(new Set(res.products.map((p) => p.serviceName))).toEqual(
+        new Set(['Manicura']),
+      );
     });
 
     it('por defecto filtra por isActive en item y servicio', async () => {
@@ -120,13 +143,27 @@ describe('CatalogService', () => {
       );
     });
 
-    it('filtra por texto libre con ILIKE', async () => {
+    it('busca por el nombre del diseño y también por el del servicio', async () => {
       qb.getMany.mockResolvedValue([]);
 
-      await service.findAll({ q: 'uñas' });
+      await service.findAll({ q: 'glam' });
 
-      expect(qb.andWhere).toHaveBeenCalledWith('service.name ILIKE :q', {
-        q: '%uñas%',
+      expect(qb.andWhere).toHaveBeenCalledWith(
+        '(item.name ILIKE :q OR service.name ILIKE :q)',
+        { q: '%glam%' },
+      );
+    });
+
+    it('filtra por el precio del diseño, que es el que se muestra', async () => {
+      qb.getMany.mockResolvedValue([]);
+
+      await service.findAll({ minPrice: 300, maxPrice: 500 });
+
+      expect(qb.andWhere).toHaveBeenCalledWith('item.price >= :lo', {
+        lo: 300,
+      });
+      expect(qb.andWhere).toHaveBeenCalledWith('item.price <= :hi', {
+        hi: 500,
       });
     });
 
@@ -172,7 +209,7 @@ describe('CatalogService', () => {
 
       const res = await service.findOne('1');
 
-      expect(res.name).toBe('Manicura');
+      expect(res.name).toBe('Soft Glam');
     });
 
     it('lanza NotFoundException si no existe', async () => {
@@ -200,7 +237,7 @@ describe('CatalogService', () => {
         expect.objectContaining({ service: { id: 'svc-1' } }),
       );
       expect(cache.reset).toHaveBeenCalled();
-      expect(res.name).toBe('Manicura');
+      expect(res.name).toBe('Soft Glam');
     });
   });
 
@@ -213,7 +250,7 @@ describe('CatalogService', () => {
       const res = await service.update('1', { image: 'foto.jpg' } as never);
 
       expect(cache.reset).toHaveBeenCalled();
-      expect(res.name).toBe('Manicura');
+      expect(res.name).toBe('Soft Glam');
     });
 
     it('lanza NotFoundException si preload no encuentra nada', async () => {

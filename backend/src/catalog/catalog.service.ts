@@ -10,16 +10,19 @@ import { CreateCatalogItemDto, UpdateCatalogItemDto } from './dto';
 import { CatalogItem } from './entities/catalog-item.entity';
 
 /**
- * Forma con la que viaja una entrada del catálogo al frontend: los datos
- * propios de la entrada (foto, descripción) ya mezclados con los del
- * servicio (nombre, precio, duración). Aplanarlo acá evita que cada pantalla
- * tenga que saber de dónde sale cada campo.
+ * Forma con la que viaja un diseño al frontend: sus datos propios (nombre,
+ * precio, foto, descripción) más los que sigue aportando el servicio al que
+ * pertenece (duración, categoría, slug) y el nombre de ese servicio, para
+ * poder mostrarlo como "Soft Glam · Esmaltado". Aplanarlo acá evita que cada
+ * pantalla tenga que saber de dónde sale cada campo.
  */
 export interface CatalogItemView {
   id: string;
   serviceId: string;
   name: string;
   price: number;
+  /** Nombre del servicio al que pertenece ("Esmaltado"). */
+  serviceName: string;
   durationMin: number;
   category: string;
   slug: string;
@@ -47,8 +50,9 @@ export class CatalogService {
     return {
       id: item.id,
       serviceId: item.service.id,
-      name: item.service.name,
-      price: item.service.price,
+      name: item.name,
+      price: item.price,
+      serviceName: item.service.name,
       durationMin: item.service.durationMin,
       category: item.service.category,
       slug: item.service.slug,
@@ -97,11 +101,17 @@ export class CatalogService {
       qb.andWhere('service.category IN (:...categories)', { categories });
     }
 
-    if (q) qb.andWhere('service.name ILIKE :q', { q: `%${q}%` });
+    // Busca tanto por el diseño como por su servicio: "Soft Glam" encuentra
+    // el diseño, y "Esmaltado" trae todos los diseños de ese servicio.
+    if (q)
+      qb.andWhere('(item.name ILIKE :q OR service.name ILIKE :q)', {
+        q: `%${q}%`,
+      });
 
     const { lo, hi } = priceBounds({ price, minPrice, maxPrice });
-    if (lo !== undefined) qb.andWhere('service.price >= :lo', { lo });
-    if (hi !== undefined) qb.andWhere('service.price <= :hi', { hi });
+    // Por el precio del diseño, que es el que se muestra en el catálogo.
+    if (lo !== undefined) qb.andWhere('item.price >= :lo', { lo });
+    if (hi !== undefined) qb.andWhere('item.price <= :hi', { hi });
 
     const rows = await qb.getMany();
     const views = rows.map((r) => this.toView(r));
