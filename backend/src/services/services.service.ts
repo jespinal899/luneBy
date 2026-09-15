@@ -12,6 +12,8 @@ import { priceFilter } from './helpers/price-band.helper';
 
 // Los errores de constraint (nombre/slug duplicado) los traduce a 409 el
 // `DatabaseExceptionFilter` global.
+const DEFAULT_CATEGORY = 'General';
+
 @Injectable()
 export class ServicesService {
   constructor(
@@ -27,7 +29,12 @@ export class ServicesService {
   }
 
   async create(createServiceDto: CreateServiceDto) {
-    const service = this.serviceRepository.create(createServiceDto);
+    const service = this.serviceRepository.create({
+      ...createServiceDto,
+      // La columna sigue siendo NOT NULL en la base; ya no se pide en el
+      // formulario, así que se completa sola.
+      category: createServiceDto.category ?? DEFAULT_CATEGORY,
+    });
     await this.serviceRepository.save(service);
     await this.invalidate();
     return service;

@@ -12,13 +12,11 @@ import { Button } from '@/components/ui/button';
 import { formInputClass as inputClass } from '@/lib/form-styles';
 import type { ServiceInput } from '@/shop/api/services.actions';
 import { useService } from '@/shop/hooks/use-services';
-import { SERVICE_CATEGORIES } from '@/shop/lib/categories';
 
 const emptyForm: ServiceInput = {
     name: '',
     price: 0,
     durationMin: 60,
-    category: SERVICE_CATEGORIES[0],
     description: '',
     isActive: true,
 };
@@ -44,7 +42,6 @@ export const AdminServicioPage = () => {
             name: existing.name,
             price: existing.price,
             durationMin: existing.durationMin,
-            category: existing.category,
             description: existing.description ?? '',
             isActive: existing.isActive,
         });
@@ -168,23 +165,6 @@ export const AdminServicioPage = () => {
                                         />
                                     </div>
                                 </div>
-                            </div>
-
-                            <div>
-                                <label className="mb-2 block text-sm font-medium text-foreground">
-                                    Categoría
-                                </label>
-                                <select
-                                    value={form.category}
-                                    onChange={(e) => set('category', e.target.value)}
-                                    className={inputClass}
-                                >
-                                    {SERVICE_CATEGORIES.map((c) => (
-                                        <option key={c} value={c}>
-                                            {c}
-                                        </option>
-                                    ))}
-                                </select>
                             </div>
 
                             <div>

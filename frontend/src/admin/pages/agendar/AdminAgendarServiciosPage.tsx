@@ -65,7 +65,6 @@ export const AdminAgendarServiciosPage = () => {
                     <TableHeader>
                         <TableRow>
                             <TableHead>Servicio</TableHead>
-                            <TableHead>Categoría</TableHead>
                             <TableHead>Duración</TableHead>
                             <TableHead>Precio</TableHead>
                             <TableHead>Estado</TableHead>
@@ -77,11 +76,6 @@ export const AdminAgendarServiciosPage = () => {
                             <TableRow key={service.id}>
                                 <TableCell className="font-medium">
                                     {service.name}
-                                </TableCell>
-                                <TableCell>
-                                    <span className="rounded-full bg-muted px-2.5 py-1 text-xs font-medium text-foreground">
-                                        {service.category}
-                                    </span>
                                 </TableCell>
                                 <TableCell>
                                     {formatDuration(service.durationMin)}

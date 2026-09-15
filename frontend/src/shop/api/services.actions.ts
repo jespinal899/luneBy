@@ -7,8 +7,11 @@ export interface ServiceFilters {
   q?: string;
   /** Categorías separadas por coma (valores exactos: "Manicura", "Nail Art"…). */
   categorias?: string;
-  /** Solo los diseños de este servicio (lo usa el paso 1 de agendar). */
-  serviceId?: string;
+  /**
+   * Ids de servicios separados por coma. Filtra el catálogo por el servicio
+   * al que pertenece cada diseño.
+   */
+  servicios?: string;
   /** Banda de precio: "any" | "0-50" | "50-100" | "100-200" | "200+". */
   price?: string;
   /** "name" (alfabético, default) o "recent" (más nuevos primero). */
@@ -53,7 +56,6 @@ export const getServicesForAdmin = async (filters: ServiceFilters = {}) => {
 export interface ServiceInput {
   name: string;
   price: number;
-  category: string;
   durationMin: number;
   description?: string;
   isActive?: boolean;
@@ -67,7 +69,6 @@ export interface ServiceInput {
 const toBody = (input: ServiceInput) => ({
   name: input.name,
   price: input.price,
-  category: input.category,
   durationMin: input.durationMin,
   isActive: input.isActive ?? true,
   description: input.description?.trim() || null,

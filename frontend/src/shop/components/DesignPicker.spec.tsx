@@ -111,7 +111,7 @@ describe('DesignPicker', () => {
     renderPicker();
 
     expect(getCatalog).toHaveBeenCalledWith(
-      expect.objectContaining({ serviceId: 'svc-1' }),
+      expect.objectContaining({ servicios: 'svc-1' }),
     );
   });
 

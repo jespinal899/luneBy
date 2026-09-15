@@ -21,7 +21,7 @@ export const ShopPage = () => {
         page,
         limit: PAGE_SIZE,
         q: params.get('query') ?? undefined,
-        categorias: params.get('categorias') ?? undefined,
+        servicios: params.get('servicios') ?? undefined,
         price: params.get('price') ?? undefined,
     });
 

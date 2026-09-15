@@ -240,12 +240,6 @@ export const AdminProductPage = () => {
                             {selected && (
                                 <div className="flex flex-wrap gap-x-6 gap-y-1 rounded-lg bg-muted p-3 text-sm text-muted-foreground">
                                     <span>
-                                        Categoría:{' '}
-                                        <strong className="text-foreground">
-                                            {selected.category}
-                                        </strong>
-                                    </span>
-                                    <span>
                                         Precio:{' '}
                                         <strong className="text-foreground">
                                             {formatLps(selected.price)}

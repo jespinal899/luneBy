@@ -23,9 +23,15 @@ export class CreateServiceDto {
   @IsString()
   description?: string | null;
 
+  /**
+   * Agrupación heredada. Dejó de pedirse al crear un servicio: el catálogo
+   * agrupa por servicio, que es lo que la administradora sí define. Se
+   * conserva opcional para no romper a quien todavía la mande.
+   */
+  @IsOptional()
   @IsString()
   @MinLength(1)
-  category: string;
+  category?: string;
 
   @IsInt()
   @IsPositive()

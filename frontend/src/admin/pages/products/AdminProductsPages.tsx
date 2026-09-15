@@ -78,7 +78,6 @@ export const AdminProductsPage = () => {
                             <TableRow>
                                 <TableHead>Foto</TableHead>
                                 <TableHead>Diseño</TableHead>
-                                <TableHead>Categoría</TableHead>
                                 <TableHead>Precio</TableHead>
                                 <TableHead>Estado</TableHead>
                                 <TableHead className="text-right">Acciones</TableHead>
@@ -89,7 +88,7 @@ export const AdminProductsPage = () => {
                                 <TableRow key={item.id}>
                                     <TableCell>
                                         <img
-                                            src={serviceImage(item.image, item.category)}
+                                            src={serviceImage(item.image)}
                                             alt={item.name}
                                             className="h-16 w-16 rounded-md object-cover"
                                         />
@@ -100,11 +99,6 @@ export const AdminProductsPage = () => {
                                         </span>
                                         <span className="block text-xs text-muted-foreground">
                                             {item.serviceName}
-                                        </span>
-                                    </TableCell>
-                                    <TableCell>
-                                        <span className="rounded-full bg-muted px-2.5 py-1 text-xs font-medium text-foreground">
-                                            {item.category}
                                         </span>
                                     </TableCell>
                                     <TableCell>{formatLps(item.price)}</TableCell>

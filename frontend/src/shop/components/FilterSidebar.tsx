@@ -4,24 +4,31 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
-import { PRICE_BANDS, SERVICE_CATEGORIES } from '../lib/categories';
+import { useServices } from '@/shop/hooks/use-services';
+import { PRICE_BANDS } from '../lib/categories';
 
 export const FilterSidebar = () => {
     const [searchParams, setSearchParams] = useSearchParams();
 
-    const currentCategories = (searchParams.get('categorias')?.split(',') ?? []).filter(
-        Boolean,
-    );
+    // El catálogo se filtra por servicio, que es la agrupación que la
+    // administradora define desde el panel. Antes se filtraba por categoría,
+    // una lista fija en el código que ella no podía cambiar.
+    const { data } = useServices({ limit: 100 });
+    const services = data?.products ?? [];
+
+    const currentServices = (
+        searchParams.get('servicios')?.split(',') ?? []
+    ).filter(Boolean);
     const currentPrice = searchParams.get('price') || 'any';
 
-    const toggleCategory = (category: string) => {
-        const next = currentCategories.includes(category)
-            ? currentCategories.filter((c) => c !== category)
-            : [...currentCategories, category];
+    const toggleService = (id: string) => {
+        const next = currentServices.includes(id)
+            ? currentServices.filter((s) => s !== id)
+            : [...currentServices, id];
 
         searchParams.set('page', '1');
-        if (next.length) searchParams.set('categorias', next.join(','));
-        else searchParams.delete('categorias');
+        if (next.length) searchParams.set('servicios', next.join(','));
+        else searchParams.delete('servicios');
         setSearchParams(searchParams);
     };
 
@@ -37,19 +44,21 @@ export const FilterSidebar = () => {
             <h3 className="mb-4 text-lg font-semibold">Filtros</h3>
 
             <div className="space-y-4">
-                <h4 className="font-medium">Categorías</h4>
+                <h4 className="font-medium">Servicios</h4>
                 <div className="grid grid-cols-2 gap-2">
-                    {SERVICE_CATEGORIES.map((category) => (
+                    {services.map((service) => (
                         <Button
-                            key={category}
+                            key={service.id}
                             variant={
-                                currentCategories.includes(category) ? 'default' : 'outline'
+                                currentServices.includes(service.id)
+                                    ? 'default'
+                                    : 'outline'
                             }
                             size="sm"
                             className="h-8"
-                            onClick={() => toggleCategory(category)}
+                            onClick={() => toggleService(service.id)}
                         >
-                            {category}
+                            {service.name}
                         </Button>
                     ))}
                 </div>

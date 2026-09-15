@@ -104,20 +104,36 @@ describe('CatalogService', () => {
     it('filtra los diseños por servicio cuando se pide', async () => {
       qb.getMany.mockResolvedValue([]);
 
-      await service.findAll({ serviceId: 'svc-1' });
+      await service.findAll({ servicios: 'svc-1' });
 
-      expect(qb.andWhere).toHaveBeenCalledWith('service.id = :serviceId', {
-        serviceId: 'svc-1',
-      });
+      expect(qb.andWhere).toHaveBeenCalledWith(
+        'service.id IN (:...serviceIds)',
+        {
+          serviceIds: ['svc-1'],
+        },
+      );
     });
 
-    it('sin serviceId no filtra por servicio', async () => {
+    it('acepta varios servicios a la vez, para el panel de filtros', async () => {
+      qb.getMany.mockResolvedValue([]);
+
+      await service.findAll({ servicios: 'svc-1,svc-2' });
+
+      expect(qb.andWhere).toHaveBeenCalledWith(
+        'service.id IN (:...serviceIds)',
+        {
+          serviceIds: ['svc-1', 'svc-2'],
+        },
+      );
+    });
+
+    it('sin servicios no filtra por servicio', async () => {
       qb.getMany.mockResolvedValue([]);
 
       await service.findAll({});
 
       expect(qb.andWhere).not.toHaveBeenCalledWith(
-        'service.id = :serviceId',
+        'service.id IN (:...serviceIds)',
         expect.anything(),
       );
     });

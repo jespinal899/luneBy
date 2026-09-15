@@ -77,7 +77,7 @@ export class CatalogService {
       limit = 12,
       q,
       categorias,
-      serviceId,
+      servicios,
       price,
       minPrice,
       maxPrice,
@@ -102,7 +102,13 @@ export class CatalogService {
       qb.andWhere('service.category IN (:...categories)', { categories });
     }
 
-    if (serviceId) qb.andWhere('service.id = :serviceId', { serviceId });
+    const serviceIds = servicios
+      ?.split(',')
+      .map((s) => s.trim())
+      .filter(Boolean);
+    if (serviceIds?.length) {
+      qb.andWhere('service.id IN (:...serviceIds)', { serviceIds });
+    }
 
     // Busca tanto por el diseño como por su servicio: "Soft Glam" encuentra
     // el diseño, y "Esmaltado" trae todos los diseños de ese servicio.

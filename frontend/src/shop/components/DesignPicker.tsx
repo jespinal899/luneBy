@@ -21,7 +21,7 @@ import { formatLps } from '@/shop/lib/format';
 export const DesignPicker = ({ service }: { service: Service }) => {
   const quote = useQuote();
   const { data, isLoading } = useCatalog({
-    serviceId: service.id,
+    servicios: service.id,
     // Son los diseños de un solo servicio: no hace falta paginar.
     limit: 50,
   });

@@ -1,14 +1,3 @@
-/** Categorías reales de los servicios (coinciden con los valores del backend). */
-export const SERVICE_CATEGORIES = [
-  'Manicura',
-  'Pedicura',
-  'Semipermanente',
-  'Nail Art',
-  'Diseño',
-  'Extensiones',
-  'Acrilico',
-] as const;
-
 export const PRICE_BANDS = [
   { value: 'any', label: 'Cualquier precio' },
   { value: '0-300', label: 'Hasta L. 300' },

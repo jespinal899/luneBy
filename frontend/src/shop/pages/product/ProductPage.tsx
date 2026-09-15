@@ -12,9 +12,14 @@ export const ProductPage = () => {
     const { idSlug } = useParams();
     const { data: item, isLoading, isError } = useCatalogItem(idSlug);
 
-    const { data: related } = useCatalog({ limit: 8 });
+    // Otros diseños del mismo servicio: es lo que de verdad le sirve a quien
+    // está mirando un Soft Glam y quiere ver las otras opciones de Esmaltado.
+    const { data: related } = useCatalog({
+        servicios: item?.serviceId,
+        limit: 8,
+    });
     const relatedItems = (related?.products ?? []).filter(
-        (i) => i.id !== item?.id && i.category === item?.category,
+        (i) => i.id !== item?.id,
     );
 
     if (isLoading) {
@@ -49,7 +54,7 @@ export const ProductPage = () => {
             <div className="mt-6 grid gap-10 md:grid-cols-2">
                 <div className="overflow-hidden rounded-2xl bg-muted">
                     <img
-                        src={serviceImage(item.image, item.category)}
+                        src={serviceImage(item.image)}
                         alt={item.name}
                         className="aspect-square w-full object-cover"
                     />
@@ -57,7 +62,7 @@ export const ProductPage = () => {
 
                 <div className="flex flex-col">
                     <p className="text-xs uppercase tracking-wide text-muted-foreground">
-                        {item.category}
+                        {item.serviceName}
                     </p>
                     <h1 className="mt-2 font-montserrat text-3xl tracking-tight">
                         {item.name}

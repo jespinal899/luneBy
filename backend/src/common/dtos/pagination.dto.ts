@@ -1,12 +1,5 @@
 import { Type } from 'class-transformer';
-import {
-  IsIn,
-  IsOptional,
-  IsPositive,
-  IsString,
-  IsUUID,
-  Min,
-} from 'class-validator';
+import { IsIn, IsOptional, IsPositive, IsString, Min } from 'class-validator';
 
 /**
  * Parámetros de paginación y filtrado que comparten los listados.
@@ -34,12 +27,13 @@ export class PaginationDto {
   categorias?: string;
 
   /**
-   * Solo los diseños de este servicio. Lo usa el agendamiento para mostrar,
-   * al elegir "Esmaltado", los diseños que le pertenecen.
+   * Ids de servicios separados por coma. Filtra el catálogo por el servicio
+   * al que pertenece cada diseño: lo usa el panel de filtros de /shop y, con
+   * un solo id, el paso de elegir diseño al agendar.
    */
   @IsOptional()
-  @IsUUID()
-  serviceId?: string;
+  @IsString()
+  servicios?: string;
 
   /** Banda de precio: "any" | "0-50" | "50-100" | "100-200" | "200+" */
   @IsOptional()
