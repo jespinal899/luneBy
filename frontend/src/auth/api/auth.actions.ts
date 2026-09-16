@@ -57,3 +57,40 @@ export const changePasswordRequest = async (payload: ChangePasswordPayload) => {
   );
   return data;
 };
+
+// --- Recuperación de contraseña ---
+
+/**
+ * Paso 1: pide el código.
+ *
+ * Responde lo mismo exista o no el correo, a propósito: si respondiera
+ * distinto, el formulario serviría para averiguar quién tiene cuenta.
+ */
+export const forgotPasswordRequest = async (email: string) => {
+  const { data } = await http.post<{ message: string }>(
+    '/auth/forgot-password',
+    { email },
+  );
+  return data;
+};
+
+/** Paso 2: comprueba el código y devuelve el comprobante del paso 3. */
+export const verifyResetCodeRequest = async (email: string, code: string) => {
+  const { data } = await http.post<{ resetToken: string }>(
+    '/auth/verify-reset-code',
+    { email, code },
+  );
+  return data;
+};
+
+/** Paso 3: guarda la contraseña nueva. */
+export const resetPasswordRequest = async (
+  resetToken: string,
+  newPassword: string,
+) => {
+  const { data } = await http.post<{ message: string }>('/auth/reset-password', {
+    resetToken,
+    newPassword,
+  });
+  return data;
+};

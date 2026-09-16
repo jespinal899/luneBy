@@ -67,12 +67,12 @@ export const LoginPage = () => {
                             <div className="grid gap-2">
                                 <div className="flex items-center">
                                     <Label htmlFor="password">Contraseña</Label>
-                                    <a
-                                        href="#"
+                                    <Link
+                                        to="/auth/recuperar"
                                         className="ml-auto text-sm underline-offset-4 hover:underline"
                                     >
                                         ¿Olvidaste tu contraseña?
-                                    </a>
+                                    </Link>
                                 </div>
                                 <Input
                                     id="password"

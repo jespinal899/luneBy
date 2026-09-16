@@ -3,6 +3,7 @@ import { createBrowserRouter, Navigate } from 'react-router';
 
 import { ProtectedRoute } from './auth/components/ProtectedRoute';
 import { LoginPage } from './auth/layouts/pages/login/LoginPage';
+import { RecuperarPage } from './auth/layouts/pages/recuperar/RecuperarPage';
 import { RegisterPage } from './auth/layouts/pages/register/RegisterPage';
 import { AdminAgendarServiciosPage } from './admin/pages/agendar/AdminAgendarServiciosPage';
 import { AdminServicioPage } from './admin/pages/agendar/AdminServicioPage';
@@ -65,6 +66,7 @@ export const appRouter = createBrowserRouter([
     children: [
       { index: true, element: <Navigate to="/auth/login" /> },
       { path: 'login', element: <LoginPage /> },
+      { path: 'recuperar', element: <RecuperarPage /> },
       { path: 'register', element: <RegisterPage /> },
     ],
   },
