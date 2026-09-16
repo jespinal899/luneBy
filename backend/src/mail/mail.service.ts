@@ -4,6 +4,10 @@ import { ConfigService } from '@nestjs/config';
 import { Appointment } from '../appointments/entities';
 import { MAIL_SENDER, MailSender } from './interfaces/mail-sender.interface';
 import { buildNewAppointmentEmail } from './templates/new-appointment.template';
+import {
+  buildGoogleAccountEmail,
+  buildPasswordResetEmail,
+} from './templates/password-reset.template';
 
 /**
  * API de correo a nivel de negocio: sabe QUÉ enviar (usa las plantillas),
@@ -27,6 +31,18 @@ export class MailService {
     );
 
     await this.sender.send({ to: adminEmail, subject, html });
+  }
+
+  /** Envía el código de recuperación a quien lo pidió. */
+  async sendPasswordResetCode(to: string, code: string, minutes: number) {
+    const { subject, html } = buildPasswordResetEmail(code, minutes);
+    await this.sender.send({ to, subject, html });
+  }
+
+  /** Avisa que esa cuenta entra con Google y no tiene contraseña propia. */
+  async sendGoogleAccountNotice(to: string) {
+    const { subject, html } = buildGoogleAccountEmail();
+    await this.sender.send({ to, subject, html });
   }
 
   /**

@@ -4,18 +4,27 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { MailModule } from '../mail/mail.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
+import { PasswordReset } from './entities/password-reset.entity';
 import { User } from './entities/user.entity';
+import { PasswordResetService } from './password-reset.service';
 import { googleOAuthProvider } from './google-oauth.provider';
 import { JwtStrategy } from './strategies/jwt.strategy';
 
 @Module({
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, googleOAuthProvider],
+  providers: [
+    AuthService,
+    PasswordResetService,
+    JwtStrategy,
+    googleOAuthProvider,
+  ],
   imports: [
     ConfigModule,
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User, PasswordReset]),
+    MailModule,
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({
       imports: [ConfigModule],
@@ -28,6 +37,13 @@ import { JwtStrategy } from './strategies/jwt.strategy';
       }),
     }),
   ],
-  exports: [AuthService, TypeOrmModule, JwtStrategy, PassportModule, JwtModule],
+  exports: [
+    AuthService,
+    PasswordResetService,
+    TypeOrmModule,
+    JwtStrategy,
+    PassportModule,
+    JwtModule,
+  ],
 })
 export class AuthModule {}

@@ -1,6 +1,7 @@
 import { Test } from '@nestjs/testing';
 
 import { AuthController } from './auth.controller';
+import { PasswordResetService } from './password-reset.service';
 import { AuthService } from './auth.service';
 
 describe('AuthController', () => {
@@ -15,11 +16,20 @@ describe('AuthController', () => {
     changePassword: jest.fn(),
   };
 
+  const passwordReset = {
+    requestCode: jest.fn(),
+    verifyCode: jest.fn(),
+    resetPassword: jest.fn(),
+  };
+
   beforeEach(async () => {
     jest.clearAllMocks();
     const moduleRef = await Test.createTestingModule({
       controllers: [AuthController],
-      providers: [{ provide: AuthService, useValue: service }],
+      providers: [
+        { provide: AuthService, useValue: service },
+        { provide: PasswordResetService, useValue: passwordReset },
+      ],
     }).compile();
     controller = moduleRef.get(AuthController);
   });
