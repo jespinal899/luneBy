@@ -23,11 +23,11 @@ interface SidebarProps {
 
 const menuItems = [
     { icon: Home, label: 'Dashboard', to: '/admin' },
-    { icon: Scissors, label: 'Servicios', to: '/admin/products' },
+    { icon: LayoutTemplate, label: 'Portada', to: '/admin/contenido' },
     { icon: CalendarCheck, label: 'Agendar', to: '/admin/agendar' },
+    { icon: Scissors, label: 'Servicios', to: '/admin/products' },
     { icon: CalendarDays, label: 'Citas', to: '/admin/citas' },
     { icon: CalendarClock, label: 'Horario', to: '/admin/horario' },
-    { icon: LayoutTemplate, label: 'Portada', to: '/admin/contenido' },
 ];
 
 /** Avatar del usuario en el sidebar: abre un menú con cuenta, inicio y logout. */
@@ -148,8 +148,8 @@ export const AdminSidebar: React.FC<SidebarProps> = ({
                             <Link
                                 to={to}
                                 className={`group flex items-center space-x-3 rounded-lg px-3 py-2 transition-all duration-200 ${isActiveRoute(to)
-                                        ? 'border-r-2 border-primary bg-primary/10 text-primary'
-                                        : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                                    ? 'border-r-2 border-primary bg-primary/10 text-primary'
+                                    : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                                     }`}
                             >
                                 <Icon size={20} className="flex-shrink-0" />
