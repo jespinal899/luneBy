@@ -1,0 +1,794 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Luné by Kelin: plataforma de catálogo, cotización y agenda de citas para un estudio de uñas. Qué resuelve, cómo está construida y cómo se usa.">
+<meta name="author" content="Jorge Ariel Espinal">
+<title>Luné by Kelin</title>
+<style>
+  :root {
+    --ground:      #fbfbfd;
+    --surface:     #ffffff;
+    --surface-alt: #f3f1f6;
+    --ink:         #1c1a22;
+    --ink-soft:    #56525f;
+    --ink-faint:   #8a8593;
+    --line:        #e3e0e9;
+    --brand:       #5b2a86;
+    --brand-deep:  #3d1c5c;
+    --brand-wash:  #f0e9f6;
+    --rose:        #a8436b;
+    --ok:          #1f7a5c;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground:      #131218;
+      --surface:     #1b1922;
+      --surface-alt: #232030;
+      --ink:         #f2f0f5;
+      --ink-soft:    #b6b1c0;
+      --ink-faint:   #8a8593;
+      --line:        #322e3d;
+      --brand:       #c29bdf;
+      --brand-deep:  #d9c2ec;
+      --brand-wash:  #2a2036;
+      --rose:        #e08bab;
+      --ok:          #5ec79f;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground:      #131218;
+    --surface:     #1b1922;
+    --surface-alt: #232030;
+    --ink:         #f2f0f5;
+    --ink-soft:    #b6b1c0;
+    --ink-faint:   #8a8593;
+    --line:        #322e3d;
+    --brand:       #c29bdf;
+    --brand-deep:  #d9c2ec;
+    --brand-wash:  #2a2036;
+    --rose:        #e08bab;
+    --ok:          #5ec79f;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { -webkit-text-size-adjust: 100%; }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font: 400 17px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+  }
+
+  img, svg { max-width: 100%; }
+
+  a { color: var(--brand); }
+  a:focus-visible, .btn:focus-visible {
+    outline: 2px solid var(--brand);
+    outline-offset: 3px;
+    border-radius: 3px;
+  }
+
+  .wrap {
+    max-width: 47rem;
+    margin: 0 auto;
+    padding-inline: 20px;
+  }
+
+  h1, h2, h3 {
+    font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
+    font-weight: 400;
+    text-wrap: balance;
+    letter-spacing: -0.01em;
+  }
+
+  h1 { font-size: clamp(2.1rem, 7vw, 3.4rem); line-height: 1.08; margin: 0; }
+  h2 { font-size: clamp(1.5rem, 4.2vw, 2rem); line-height: 1.2; margin: 0; }
+  h3 { font-size: 1.12rem; line-height: 1.35; margin: 0; }
+
+  p { margin: 0; }
+
+  .eyebrow {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--brand);
+    margin: 0;
+  }
+
+  /* ---------- Portada ---------- */
+
+  header.hero {
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
+    padding-block: clamp(3rem, 9vw, 5.5rem) clamp(2.5rem, 7vw, 4rem);
+  }
+
+  .hero-grid { display: flex; flex-direction: column; gap: 1.6rem; }
+
+  .lede {
+    font-size: clamp(1.05rem, 2.6vw, 1.3rem);
+    line-height: 1.55;
+    color: var(--ink-soft);
+    max-width: 34rem;
+  }
+
+  .actions { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+
+  .btn {
+    display: inline-block;
+    padding: 0.7rem 1.35rem;
+    border-radius: 999px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-decoration: none;
+    border: 1px solid var(--brand);
+  }
+  .btn-solid { background: var(--brand); color: #fff; }
+  :root[data-theme="dark"] .btn-solid,
+  .btn-solid { color: #fff; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .btn-solid { color: #1b1922; }
+  }
+  :root[data-theme="dark"] .btn-solid { color: #1b1922; }
+  .btn-ghost { color: var(--brand); background: transparent; }
+
+  .facts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(7.5rem, 1fr));
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 0.8rem;
+  }
+  .fact { background: var(--surface); padding: 0.9rem 1rem; }
+  .fact b {
+    display: block;
+    font: 600 1.35rem/1.1 Georgia, serif;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink);
+  }
+  .fact span {
+    display: block;
+    font-size: 0.74rem;
+    letter-spacing: 0.05em;
+    color: var(--ink-faint);
+    margin-top: 0.2rem;
+  }
+
+  /* ---------- Secciones ---------- */
+
+  main { padding-block: clamp(2.5rem, 7vw, 4.5rem); }
+
+  section { padding-block: clamp(1.8rem, 5vw, 3rem); }
+  section + section { border-top: 1px solid var(--line); }
+
+  .sec-head { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1.4rem; }
+
+  section p + p { margin-top: 0.9rem; }
+  section > p, section > .stack > p { color: var(--ink-soft); }
+  section p strong { color: var(--ink); font-weight: 600; }
+
+  .stack { display: flex; flex-direction: column; gap: 1.5rem; }
+
+  ul.plain { margin: 0; padding-left: 1.15rem; color: var(--ink-soft); }
+  ul.plain li { margin-block: 0.45rem; }
+  ul.plain li strong { color: var(--ink); font-weight: 600; }
+
+  /* ---------- Funcionalidades ---------- */
+
+  .feats { display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: 1.6rem 2rem; }
+  .feat h3 { margin-bottom: 0.3rem; }
+  .feat p { font-size: 0.95rem; color: var(--ink-soft); }
+  .feat .tag {
+    display: inline-block;
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--rose);
+    font-weight: 700;
+    margin-bottom: 0.35rem;
+  }
+
+  /* ---------- Figuras ---------- */
+
+  figure {
+    margin: 0;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 1.1rem;
+  }
+  .scroll-x { overflow-x: auto; }
+  figcaption {
+    font-size: 0.83rem;
+    color: var(--ink-faint);
+    margin-top: 0.8rem;
+    line-height: 1.5;
+  }
+  .svg-t { font: 500 11px -apple-system, "Segoe UI", Roboto, sans-serif; }
+  .svg-t-sm { font: 500 9.5px -apple-system, "Segoe UI", Roboto, sans-serif; }
+  .svg-t-b { font: 700 11px -apple-system, "Segoe UI", Roboto, sans-serif; }
+
+  /* ---------- Tecnologías ---------- */
+
+  .tech { display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); gap: 1.4rem; }
+  .tech-col h3 { font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--brand); font-family: inherit; font-weight: 700; margin-bottom: 0.55rem; }
+  .tech-col ul { list-style: none; margin: 0; padding: 0; }
+  .tech-col li { font-size: 0.92rem; color: var(--ink-soft); padding-block: 0.22rem; border-bottom: 1px dotted var(--line); }
+  .tech-col li:last-child { border-bottom: 0; }
+
+  /* ---------- Manual ---------- */
+
+  ol.steps { list-style: none; counter-reset: paso; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 1.5rem; }
+  ol.steps > li { counter-increment: paso; display: grid; grid-template-columns: 2.4rem 1fr; gap: 0 1rem; }
+  ol.steps > li::before {
+    content: counter(paso, decimal-leading-zero);
+    font: 600 0.95rem/2.4rem Georgia, serif;
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+    color: var(--brand);
+    background: var(--brand-wash);
+    border-radius: 50%;
+    width: 2.4rem;
+    height: 2.4rem;
+  }
+  ol.steps h3 { align-self: center; }
+  ol.steps p { grid-column: 2; font-size: 0.95rem; color: var(--ink-soft); margin-top: 0.3rem; }
+
+  .note {
+    border-left: 3px solid var(--brand);
+    background: var(--brand-wash);
+    padding: 0.85rem 1.1rem;
+    border-radius: 0 8px 8px 0;
+    font-size: 0.92rem;
+    color: var(--ink-soft);
+  }
+
+  /* ---------- Personas ---------- */
+
+  .who { display: grid; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); gap: 1.5rem; }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 1.4rem; }
+  .card h3 { margin-bottom: 0.55rem; }
+  .card p { font-size: 0.94rem; color: var(--ink-soft); }
+  .card p + p { margin-top: 0.7rem; }
+  .quote { font-family: Georgia, serif; font-style: italic; font-size: 1.05rem; color: var(--ink); line-height: 1.5; }
+
+  dl.meta { margin: 0.9rem 0 0; font-size: 0.9rem; }
+  dl.meta div { display: flex; gap: 0.6rem; padding-block: 0.25rem; border-top: 1px solid var(--line); }
+  dl.meta dt { color: var(--ink-faint); min-width: 6.5rem; }
+  dl.meta dd { margin: 0; color: var(--ink-soft); }
+
+  /* ---------- Pie ---------- */
+
+  footer {
+    background: var(--surface-alt);
+    border-top: 1px solid var(--line);
+    padding-block: 2.5rem 3rem;
+  }
+  .verify {
+    background: var(--surface);
+    border: 1px dashed var(--brand);
+    border-radius: 10px;
+    padding: 1rem 1.2rem;
+    margin-bottom: 1.5rem;
+  }
+  .verify span { display: block; font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 0.35rem; }
+  .verify code {
+    font: 700 1.05rem/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    color: var(--brand);
+    letter-spacing: 0.04em;
+    word-break: break-all;
+  }
+  .foot-links { display: flex; flex-wrap: wrap; gap: 1.2rem; font-size: 0.92rem; }
+  .colofon { font-size: 0.82rem; color: var(--ink-faint); margin-top: 1.4rem; line-height: 1.6; }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap hero-grid">
+    <p class="eyebrow">Estudio de uñas · Honduras</p>
+    <h1>Luné by Kelin</h1>
+    <p class="lede">
+      El catálogo, la cotización y la agenda de un estudio de uñas, en un solo
+      lugar. Las clientas reservan solas a cualquier hora; Kelin deja de
+      administrar su negocio por WhatsApp.
+    </p>
+    <div class="actions">
+      <a class="btn btn-solid" href="https://www.jespinal03.casa">Ver el sitio en vivo</a>
+      <a class="btn btn-ghost" href="https://github.com/jespinal899/luneBy">Código en GitHub</a>
+    </div>
+    <div class="facts">
+      <div class="fact"><b>400</b><span>pruebas automáticas</span></div>
+      <div class="fact"><b>10</b><span>tablas con RLS</span></div>
+      <div class="fact"><b>24/7</b><span>agenda abierta</span></div>
+      <div class="fact"><b>0</b><span>dobles reservas</span></div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section id="problema">
+    <div class="sec-head">
+      <p class="eyebrow">01 · El problema</p>
+      <h2>Una agenda que vivía en WhatsApp</h2>
+    </div>
+    <p>
+      Kelin atiende su estudio de uñas sola. Antes de esta plataforma, cada
+      cita nacía de una conversación: la clienta escribía por WhatsApp,
+      preguntaba qué diseños había, cuánto costaba un acrílico con nail art y
+      qué días quedaban libres. Kelin respondía entre clienta y clienta, con
+      las manos ocupadas, revisando una libreta.
+    </p>
+    <p>
+      Ese flujo tiene tres costos que no se ven en la libreta. El primero es
+      el <strong>tiempo muerto</strong>: contestar veinte veces la misma
+      pregunta sobre precios es trabajo no facturable. El segundo son las
+      <strong>reservas dobles</strong>, inevitables cuando dos conversaciones
+      paralelas piden el mismo sábado a las diez y la confirmación llega con
+      horas de diferencia. El tercero es el más caro y el más difícil de
+      medir: la clienta que escribe a las once de la noche, no recibe
+      respuesta hasta la mañana siguiente, y para entonces ya reservó en otro
+      lado.
+    </p>
+    <p>
+      A eso se suma que el catálogo no existía como tal. Los diseños vivían
+      en fotos sueltas de Instagram, sin precio visible y sin forma de saber
+      cuánto dura el servicio, así que cada cotización era un cálculo manual
+      que Kelin rehacía cada vez.
+    </p>
+  </section>
+
+  <section id="solucion">
+    <div class="sec-head">
+      <p class="eyebrow">02 · La solución</p>
+      <h2>Que la clienta se reserve sola, sin poder equivocarse</h2>
+    </div>
+    <div class="stack">
+      <p>
+        Luné by Kelin es una aplicación web donde la clienta recorre el
+        catálogo real del estudio, arma su cotización con los servicios y
+        diseños que quiere, ve el precio y la duración totales antes de
+        comprometerse, y elige un horario entre los que <em>de verdad</em>
+        están libres. Kelin confirma desde su panel y la clienta recibe un
+        correo de confirmación.
+      </p>
+      <p>
+        La pieza que sostiene todo es el cálculo de disponibilidad. Los
+        horarios que se muestran no son una lista fija: salen de las reglas
+        de atención que Kelin define por día de la semana, menos las citas ya
+        tomadas, menos los días u horas que bloqueó, y descartando las horas
+        que ya pasaron —medidas en la hora del salón, no en la del servidor,
+        que vive en otro huso—. Además la base de datos tiene una restricción
+        de exclusión que hace <strong>físicamente imposible</strong> guardar
+        dos citas superpuestas, incluso si dos clientas confirman en el mismo
+        segundo.
+      </p>
+
+      <figure>
+        <div class="scroll-x">
+          <svg viewBox="0 0 700 150" width="700" height="150" role="img" aria-label="Flujo de reserva: explorar el catálogo, armar la cotización, elegir fecha y hora, confirmar, y recibir el correo">
+            <g class="svg-t" fill="var(--ink)" text-anchor="middle">
+              <rect x="6" y="38" width="118" height="58" rx="9" fill="var(--brand-wash)" stroke="var(--brand)"/>
+              <text x="65" y="63">Explorar</text><text x="65" y="79" class="svg-t-sm" fill="var(--ink-soft)">catálogo</text>
+
+              <rect x="148" y="38" width="118" height="58" rx="9" fill="var(--brand-wash)" stroke="var(--brand)"/>
+              <text x="207" y="63">Cotizar</text><text x="207" y="79" class="svg-t-sm" fill="var(--ink-soft)">precio y duración</text>
+
+              <rect x="290" y="38" width="118" height="58" rx="9" fill="var(--brand-wash)" stroke="var(--brand)"/>
+              <text x="349" y="63">Elegir hora</text><text x="349" y="79" class="svg-t-sm" fill="var(--ink-soft)">solo libres</text>
+
+              <rect x="432" y="38" width="118" height="58" rx="9" fill="var(--surface-alt)" stroke="var(--rose)"/>
+              <text x="491" y="63">Kelin confirma</text><text x="491" y="79" class="svg-t-sm" fill="var(--ink-soft)">desde el panel</text>
+
+              <rect x="574" y="38" width="118" height="58" rx="9" fill="var(--surface-alt)" stroke="var(--ok)"/>
+              <text x="633" y="63">Correo</text><text x="633" y="79" class="svg-t-sm" fill="var(--ink-soft)">a la clienta</text>
+            </g>
+            <g stroke="var(--ink-faint)" stroke-width="1.5" fill="none">
+              <path d="M124 67 L144 67"/><path d="M266 67 L286 67"/>
+              <path d="M408 67 L428 67"/><path d="M550 67 L570 67"/>
+            </g>
+            <g fill="var(--ink-faint)">
+              <path d="M144 67 l-6 -3.5 v7 z"/><path d="M286 67 l-6 -3.5 v7 z"/>
+              <path d="M428 67 l-6 -3.5 v7 z"/><path d="M570 67 l-6 -3.5 v7 z"/>
+            </g>
+            <text x="6" y="122" class="svg-t-sm" fill="var(--ink-faint)">La clienta hace los tres primeros pasos sola, a cualquier hora.</text>
+          </svg>
+        </div>
+        <figcaption>
+          Flujo completo de una reserva. Los tres primeros pasos no requieren
+          a Kelin: ahí es donde se recupera el tiempo que antes se iba en
+          responder mensajes.
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section id="funcionalidades">
+    <div class="sec-head">
+      <p class="eyebrow">03 · Funcionalidades</p>
+      <h2>Qué hace, de los dos lados del mostrador</h2>
+    </div>
+    <div class="feats">
+      <div class="feat">
+        <span class="tag">Clienta</span>
+        <h3>Catálogo con filtros</h3>
+        <p>Diseños con foto, precio y duración, filtrables por servicio y por
+        banda de precio. Los filtros viven en la URL, así que un enlace
+        compartido abre exactamente lo mismo.</p>
+      </div>
+      <div class="feat">
+        <span class="tag">Clienta</span>
+        <h3>Cotización acumulativa</h3>
+        <p>Varios servicios en una sola cita, cada uno con su diseño opcional.
+        El precio del diseño se suma al del servicio, nunca lo reemplaza, y el
+        total se ve antes de reservar. Sobrevive a recargar la página.</p>
+      </div>
+      <div class="feat">
+        <span class="tag">Clienta</span>
+        <h3>Horarios reales</h3>
+        <p>Solo se ofrecen tramos que entran completos en el horario de
+        atención, no chocan con otra cita ni con un bloqueo, y todavía no
+        pasaron.</p>
+      </div>
+      <div class="feat">
+        <span class="tag">Clienta</span>
+        <h3>Mis citas y cancelación</h3>
+        <p>Historial propio y cancelación con un aviso que dice qué cita es y
+        pide el motivo. El motivo es opcional y le llega a Kelin, que así sabe
+        por qué se liberó el horario.</p>
+      </div>
+      <div class="feat">
+        <span class="tag">Kelin</span>
+        <h3>Agenda y estados</h3>
+        <p>Todas las citas filtrables por fecha y estado. Confirmar una cita
+        le manda a la clienta un correo de bienvenida con la fecha acordada.</p>
+      </div>
+      <div class="feat">
+        <span class="tag">Kelin</span>
+        <h3>Catálogo editable</h3>
+        <p>Alta de servicios y diseños con foto, recorte incluido antes de
+        subir. Ocultar un diseño no lo borra: desaparece del sitio y queda
+        para después.</p>
+      </div>
+      <div class="feat">
+        <span class="tag">Kelin</span>
+        <h3>Horario y bloqueos</h3>
+        <p>Franjas de atención por día de la semana y cierre de días
+        completos desde un calendario. La disponibilidad se recalcula sola.</p>
+      </div>
+      <div class="feat">
+        <span class="tag">Kelin</span>
+        <h3>Portada sin programador</h3>
+        <p>El texto y la foto principal del sitio se editan desde el panel,
+        sin esperar un despliegue.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="arquitectura">
+    <div class="sec-head">
+      <p class="eyebrow">04 · Arquitectura</p>
+      <h2>Tres piezas desplegables y tres servicios externos</h2>
+    </div>
+    <div class="stack">
+      <p>
+        El sistema se reparte en un frontend estático, una API y una base de
+        datos gestionada. La API es la única que habla con la base: el
+        navegador nunca recibe credenciales de Postgres, y la autorización
+        real la hace el backend verificando el token en cada petición.
+      </p>
+
+      <figure>
+        <div class="scroll-x">
+          <svg viewBox="0 0 700 330" width="700" height="330" role="img" aria-label="Diagrama de contenedores: navegador con React, API NestJS en Render, Postgres y Storage en Supabase, más Google OAuth y Resend">
+            <rect x="6" y="14" width="300" height="76" rx="10" fill="var(--brand-wash)" stroke="var(--brand)"/>
+            <text x="20" y="38" class="svg-t-b" fill="var(--brand)">NAVEGADOR</text>
+            <text x="20" y="58" class="svg-t" fill="var(--ink)">React 19 · Vite · TanStack Query</text>
+            <text x="20" y="76" class="svg-t-sm" fill="var(--ink-soft)">desplegado en Vercel</text>
+
+            <rect x="6" y="128" width="300" height="76" rx="10" fill="var(--surface-alt)" stroke="var(--rose)"/>
+            <text x="20" y="152" class="svg-t-b" fill="var(--rose)">API REST</text>
+            <text x="20" y="172" class="svg-t" fill="var(--ink)">NestJS 10 · TypeORM · JWT</text>
+            <text x="20" y="190" class="svg-t-sm" fill="var(--ink-soft)">Docker en Render</text>
+
+            <rect x="6" y="242" width="300" height="76" rx="10" fill="var(--surface-alt)" stroke="var(--ok)"/>
+            <text x="20" y="266" class="svg-t-b" fill="var(--ok)">SUPABASE</text>
+            <text x="20" y="286" class="svg-t" fill="var(--ink)">Postgres con RLS · Storage</text>
+            <text x="20" y="304" class="svg-t-sm" fill="var(--ink-soft)">10 tablas · 22 índices</text>
+
+            <g stroke="var(--ink-faint)" stroke-width="1.5" fill="none">
+              <path d="M156 90 L156 124"/><path d="M156 204 L156 238"/>
+            </g>
+            <g fill="var(--ink-faint)">
+              <path d="M156 128 l-3.5 -6 h7 z"/><path d="M156 242 l-3.5 -6 h7 z"/>
+            </g>
+            <text x="166" y="112" class="svg-t-sm" fill="var(--ink-soft)">REST JSON · Bearer JWT</text>
+            <text x="166" y="226" class="svg-t-sm" fill="var(--ink-soft)">TypeORM · pooler</text>
+
+            <rect x="400" y="60" width="290" height="58" rx="10" fill="var(--surface)" stroke="var(--line)"/>
+            <text x="416" y="84" class="svg-t-b" fill="var(--ink-soft)">GOOGLE OAUTH</text>
+            <text x="416" y="103" class="svg-t-sm" fill="var(--ink-soft)">verificación del id_token</text>
+
+            <rect x="400" y="146" width="290" height="58" rx="10" fill="var(--surface)" stroke="var(--line)"/>
+            <text x="416" y="170" class="svg-t-b" fill="var(--ink-soft)">RESEND</text>
+            <text x="416" y="189" class="svg-t-sm" fill="var(--ink-soft)">correo transaccional</text>
+
+            <rect x="400" y="232" width="290" height="58" rx="10" fill="var(--surface)" stroke="var(--line)"/>
+            <text x="416" y="256" class="svg-t-b" fill="var(--ink-soft)">SHARP</text>
+            <text x="416" y="275" class="svg-t-sm" fill="var(--ink-soft)">optimiza la foto antes de guardarla</text>
+
+            <g stroke="var(--ink-faint)" stroke-width="1.2" stroke-dasharray="4 3" fill="none">
+              <path d="M306 160 L396 92"/><path d="M306 168 L396 172"/><path d="M306 180 L396 258"/>
+            </g>
+          </svg>
+        </div>
+        <figcaption>
+          Diagrama de contenedores. Las tres cajas de la derecha son servicios
+          de terceros: se hablan solo desde la API, nunca desde el navegador.
+        </figcaption>
+      </figure>
+
+      <p>
+        La base de datos no confía en la API como única defensa. Seis de las
+        diez tablas llevan políticas de acceso a nivel de fila (RLS): una
+        clienta solo alcanza sus propias citas aunque alguien consultara la
+        base directamente. Las tablas con datos sensibles —usuarios y claves
+        de idempotencia, que guardan tokens de sesión— no exponen ninguna
+        política pública.
+      </p>
+
+      <figure>
+        <div class="scroll-x">
+          <svg viewBox="0 0 700 260" width="700" height="260" role="img" aria-label="Modelo de datos: users y services apuntan a appointments, appointments a appointment_items, y catalog_items a services">
+            <g class="svg-t" fill="var(--ink)">
+              <rect x="10" y="22" width="150" height="44" rx="7" fill="var(--surface-alt)" stroke="var(--line)"/>
+              <text x="24" y="42">users</text><text x="24" y="58" class="svg-t-sm" fill="var(--ink-faint)">RLS · 2 políticas</text>
+
+              <rect x="10" y="176" width="150" height="44" rx="7" fill="var(--surface-alt)" stroke="var(--line)"/>
+              <text x="24" y="196">services</text><text x="24" y="212" class="svg-t-sm" fill="var(--ink-faint)">servicio agendable</text>
+
+              <rect x="262" y="99" width="176" height="52" rx="7" fill="var(--brand-wash)" stroke="var(--brand)"/>
+              <text x="278" y="121" class="svg-t-b" fill="var(--brand)">appointments</text>
+              <text x="278" y="139" class="svg-t-sm" fill="var(--ink-soft)">exclusión: sin solapes</text>
+
+              <rect x="520" y="22" width="170" height="44" rx="7" fill="var(--surface-alt)" stroke="var(--line)"/>
+              <text x="534" y="42">appointment_items</text><text x="534" y="58" class="svg-t-sm" fill="var(--ink-faint)">precio congelado</text>
+
+              <rect x="520" y="176" width="170" height="44" rx="7" fill="var(--surface-alt)" stroke="var(--line)"/>
+              <text x="534" y="196">catalog_items</text><text x="534" y="212" class="svg-t-sm" fill="var(--ink-faint)">el diseño, con su foto</text>
+            </g>
+            <g stroke="var(--ink-faint)" stroke-width="1.4" fill="none">
+              <path d="M160 44 C 215 44, 215 112, 258 112"/>
+              <path d="M160 198 C 215 198, 215 138, 258 138"/>
+              <path d="M438 118 C 480 118, 480 44, 516 44"/>
+              <path d="M690 198 C 700 198, 700 240, 605 240 L 605 226"/>
+              <path d="M160 206 C 340 250, 470 250, 605 240" stroke-dasharray="4 3"/>
+            </g>
+            <g class="svg-t-sm" fill="var(--ink-faint)">
+              <text x="176" y="80">reserva</text>
+              <text x="176" y="164">agenda</text>
+              <text x="448" y="80">líneas</text>
+              <text x="330" y="256">un diseño pertenece a un servicio</text>
+            </g>
+          </svg>
+        </div>
+        <figcaption>
+          Núcleo del modelo. Cada línea de la cita guarda el nombre y el
+          precio congelados al reservar: si mañana sube el precio, la cita
+          vieja sigue valiendo lo que se cotizó.
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section id="tecnologias">
+    <div class="sec-head">
+      <p class="eyebrow">05 · Tecnologías</p>
+      <h2>Con qué está hecho</h2>
+    </div>
+    <div class="stack">
+      <div class="tech">
+        <div class="tech-col">
+          <h3>Frontend</h3>
+          <ul>
+            <li>React 19 + TypeScript</li>
+            <li>Vite</li>
+            <li>React Router (router de datos)</li>
+            <li>TanStack Query</li>
+            <li>Tailwind CSS v4 + Base UI</li>
+            <li>Vitest + Testing Library</li>
+          </ul>
+        </div>
+        <div class="tech-col">
+          <h3>Backend</h3>
+          <ul>
+            <li>NestJS 10 + TypeScript</li>
+            <li>TypeORM</li>
+            <li>PostgreSQL (Supabase)</li>
+            <li>JWT + Passport + Google OAuth</li>
+            <li>Sharp (imágenes)</li>
+            <li>Jest + Supertest</li>
+          </ul>
+        </div>
+        <div class="tech-col">
+          <h3>Infraestructura</h3>
+          <ul>
+            <li>Vercel (frontend)</li>
+            <li>Render + Docker (API)</li>
+            <li>Supabase Storage</li>
+            <li>Resend (correo)</li>
+            <li>GitHub Actions (CI/CD)</li>
+            <li>SonarCloud + gitleaks</li>
+          </ul>
+        </div>
+      </div>
+      <p>
+        El repositorio es un monorepo con <code>frontend/</code>,
+        <code>backend/</code> y <code>supabase/migrations/</code>. Cada push
+        dispara una tubería que escanea secretos en todo el historial, corre
+        lint y verificación de tipos, ejecuta las pruebas unitarias de ambos
+        lados y una suite de integración contra un Postgres real con las
+        migraciones aplicadas, analiza calidad y cobertura en SonarCloud, y
+        recién entonces despliega. Un commit con las pruebas en rojo no llega
+        a producción.
+      </p>
+    </div>
+  </section>
+
+  <section id="manual">
+    <div class="sec-head">
+      <p class="eyebrow">06 · Manual de uso</p>
+      <h2>Reservar una cita, paso a paso</h2>
+    </div>
+    <div class="stack">
+      <ol class="steps">
+        <li>
+          <h3>Abrí el catálogo</h3>
+          <p>Desde <em>Servicios</em> en el menú. Cada tarjeta muestra la foto
+          del diseño, el precio total y cuánto dura. Usá los filtros de la
+          izquierda para acotar por servicio o por rango de precio.</p>
+        </li>
+        <li>
+          <h3>Elegí un diseño</h3>
+          <p>Al abrirlo vas a ver la descripción y otros diseños del mismo
+          servicio. <em>Cotizar</em> lo agrega a tu cotización sin compromiso;
+          <em>Agendar este servicio</em> te lleva directo al formulario con el
+          diseño ya cargado.</p>
+        </li>
+        <li>
+          <h3>Armá tu cotización</h3>
+          <p>Podés sumar varios servicios a la misma cita. El panel lateral va
+          mostrando el total y la duración acumulada, que es la que se usa
+          después para buscar un hueco lo bastante largo.</p>
+        </li>
+        <li>
+          <h3>Elegí fecha y hora</h3>
+          <p>Al poner la fecha aparecen solo los horarios libres para esa
+          duración. Si no aparece ninguno, el día está lleno o cerrado: probá
+          con otra fecha.</p>
+        </li>
+        <li>
+          <h3>Iniciá sesión y confirmá</h3>
+          <p>Con correo y contraseña o con Google. Al confirmar, la cita queda
+          <em>pendiente</em> y pasás a <em>Mis citas</em>. Kelin recibe el
+          aviso al instante.</p>
+        </li>
+        <li>
+          <h3>Esperá la confirmación</h3>
+          <p>Cuando Kelin la acepta, la cita pasa a <em>confirmada</em> y te
+          llega un correo con la fecha y la hora acordadas, además del detalle
+          de lo que reservaste.</p>
+        </li>
+        <li>
+          <h3>Si no podés venir, cancelá</h3>
+          <p>Desde <em>Mis citas</em>. Se te va a pedir confirmación y,
+          opcionalmente, el motivo. Cancelar libera el horario para otra
+          clienta, así que hacerlo a tiempo ayuda.</p>
+        </li>
+      </ol>
+
+      <div class="note">
+        <strong>Para la administradora:</strong> el panel está en
+        <code>/admin</code> y solo lo abre una cuenta con rol de
+        administradora. Desde ahí se gestionan servicios, catálogo, horario
+        semanal, días cerrados, la portada del sitio y la agenda completa.
+        Conviene definir primero el horario de atención: sin franjas cargadas
+        para un día, ese día no ofrece ningún turno.
+      </div>
+    </div>
+  </section>
+
+  <section id="cliente">
+    <div class="sec-head">
+      <p class="eyebrow">07 · El cliente</p>
+      <h2>Para quién se construyó</h2>
+    </div>
+    <div class="who">
+      <div class="card">
+        <h3>Kelin — estudio de uñas</h3>
+        <p>Manicura profesional en Honduras. Trabaja sola: atiende, cobra,
+        compra insumos y, hasta ahora, también hacía de recepcionista entre
+        clienta y clienta.</p>
+        <p>El requisito que definió el proyecto fue que ella pudiera cambiar
+        precios, diseños, fotos, horarios y hasta el texto de la portada
+        <strong>sin depender de nadie</strong>. Por eso casi nada está fijo en
+        el código: lo que el sitio muestra sale de la base de datos, y lo que
+        hay en la base lo edita ella.</p>
+      </div>
+      <div class="card">
+        <p class="quote">“Que la clienta vea el precio antes de escribirme, y
+        que yo no tenga que revisar la libreta con las manos ocupadas.”</p>
+        <p>Ese pedido, dicho así, ordenó las prioridades: precios y duraciones
+        visibles en el catálogo, disponibilidad calculada de verdad, y un
+        panel que se usa desde el teléfono.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="autor">
+    <div class="sec-head">
+      <p class="eyebrow">08 · El autor</p>
+      <h2>Quién lo hizo</h2>
+    </div>
+    <div class="card">
+      <h3>Jorge Ariel Espinal</h3>
+      <p>
+        Desarrollo full stack. Diseñé y construí la plataforma completa:
+        modelo de datos y migraciones, API en NestJS, interfaz en React, panel
+        de administración, integración con Google, Supabase y Resend, y la
+        tubería de integración y despliegue continuos.
+      </p>
+      <p>
+        El proyecto se llevó con las prácticas que sostienen un sistema que
+        alguien va a usar de verdad: principios SOLID aplicados donde
+        resolvían un problema concreto —el aviso por correo desacoplado de la
+        reserva mediante eventos, el proveedor de correo detrás de una
+        interfaz—, código documentado en español explicando el <em>porqué</em>
+        de cada decisión, pruebas unitarias y de integración, control de
+        versiones con commits convencionales, y análisis estático continuo.
+      </p>
+      <dl class="meta">
+        <div><dt>Repositorio</dt><dd><a href="https://github.com/jespinal899/luneBy">github.com/jespinal899/luneBy</a></dd></div>
+        <div><dt>Producto</dt><dd><a href="https://www.jespinal03.casa">www.jespinal03.casa</a></dd></div>
+        <div><dt>Arquitectura</dt><dd>Documentada con modelo C4 y decisiones en ADR</dd></div>
+      </dl>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="verify">
+      <span>Código de verificación · prueba de autoría</span>
+      <code>LEARN-CAP-F997E70D</code>
+    </div>
+    <div class="foot-links">
+      <a href="https://www.jespinal03.casa">Producto en vivo</a>
+      <a href="https://github.com/jespinal899/luneBy">Repositorio</a>
+      <a href="https://www.jespinal03.casa/shop">Catálogo</a>
+      <a href="https://www.jespinal03.casa/shop/agendar">Agendar una cita</a>
+    </div>
+    <p class="colofon">
+      Luné by Kelin · Jorge Ariel Espinal. Esta página es un único archivo
+      HTML autocontenido: todo el CSS es inline y los tres diagramas son SVG
+      incrustado. No carga hojas de estilo, tipografías ni scripts de
+      terceros, y no ejecuta JavaScript.
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>
