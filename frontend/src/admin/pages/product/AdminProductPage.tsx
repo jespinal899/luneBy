@@ -179,10 +179,14 @@ export const AdminProductPage = () => {
                             </div>
 
                             <div>
-                                <label className="mb-2 block text-sm font-medium text-foreground">
+                                <label
+                                    htmlFor="diseno-servicio"
+                                    className="mb-2 block text-sm font-medium text-foreground"
+                                >
                                     Servicio
                                 </label>
                                 <select
+                                    id="diseno-servicio"
                                     required
                                     value={form.serviceId}
                                     onChange={(e) => set('serviceId', e.target.value)}
@@ -255,10 +259,14 @@ export const AdminProductPage = () => {
                             )}
 
                             <div>
-                                <label className="mb-2 block text-sm font-medium text-foreground">
+                                <label
+                                    htmlFor="diseno-descripcion"
+                                    className="mb-2 block text-sm font-medium text-foreground"
+                                >
                                     Descripción
                                 </label>
                                 <textarea
+                                    id="diseno-descripcion"
                                     value={form.description}
                                     onChange={(e) => set('description', e.target.value)}
                                     rows={5}
@@ -331,7 +339,10 @@ export const AdminProductPage = () => {
                             Visibilidad
                         </h2>
 
-                        <label className="flex items-center justify-between rounded-lg bg-muted p-3">
+                        <label
+                            htmlFor="diseno-visible"
+                            className="flex items-center justify-between rounded-lg bg-muted p-3"
+                        >
                             <div>
                                 <p className="text-sm font-medium text-foreground">
                                     Visible en el catálogo
@@ -341,6 +352,7 @@ export const AdminProductPage = () => {
                                 </p>
                             </div>
                             <input
+                                id="diseno-visible"
                                 type="checkbox"
                                 checked={form.isActive}
                                 onChange={(e) => set('isActive', e.target.checked)}

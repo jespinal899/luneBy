@@ -246,10 +246,14 @@ export const AgendarPage = () => {
                         <StepHeading number={2} title="Fecha y hora" />
                         <div className="mt-5 space-y-6">
                         <div className="max-w-xs">
-                            <label className="mb-2 block text-sm font-medium text-brand-dark">
+                            <label
+                                htmlFor="agendar-fecha"
+                                className="mb-2 block text-sm font-medium text-brand-dark"
+                            >
                                 Fecha
                             </label>
                             <input
+                                id="agendar-fecha"
                                 type="date"
                                 min={today}
                                 value={date}
@@ -262,24 +266,33 @@ export const AgendarPage = () => {
                         </div>
 
                         <div>
-                            <label className="mb-2 block text-sm font-medium text-brand-dark">
+                            <p
+                                id="agendar-horarios"
+                                className="mb-2 block text-sm font-medium text-brand-dark"
+                            >
                                 Horarios disponibles
-                            </label>
-                            <SlotPicker
-                                needsChoice={quote.count === 0 || !date}
-                                isLoading={loadingSlots}
-                                isError={slotsError}
-                                slots={slots}
-                                selected={slot}
-                                onSelect={setSlot}
-                            />
+                            </p>
+                            <div role="group" aria-labelledby="agendar-horarios">
+                                <SlotPicker
+                                    needsChoice={quote.count === 0 || !date}
+                                    isLoading={loadingSlots}
+                                    isError={slotsError}
+                                    slots={slots}
+                                    selected={slot}
+                                    onSelect={setSlot}
+                                />
+                            </div>
                         </div>
 
                         <div>
-                            <label className="mb-2 block text-sm font-medium text-brand-dark">
+                            <label
+                                htmlFor="agendar-notas"
+                                className="mb-2 block text-sm font-medium text-brand-dark"
+                            >
                                 Notas (opcional)
                             </label>
                             <textarea
+                                id="agendar-notas"
                                 rows={3}
                                 value={notes}
                                 onChange={(e) => setNotes(e.target.value)}

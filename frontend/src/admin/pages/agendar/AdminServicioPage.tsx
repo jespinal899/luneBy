@@ -105,10 +105,14 @@ export const AdminServicioPage = () => {
 
                         <div className="space-y-6">
                             <div>
-                                <label className="mb-2 block text-sm font-medium text-foreground">
+                                <label
+                                    htmlFor="servicio-nombre"
+                                    className="mb-2 block text-sm font-medium text-foreground"
+                                >
                                     Nombre del servicio
                                 </label>
                                 <input
+                                    id="servicio-nombre"
                                     type="text"
                                     required
                                     value={form.name}
@@ -120,7 +124,10 @@ export const AdminServicioPage = () => {
 
                             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                                 <div>
-                                    <label className="mb-2 block text-sm font-medium text-foreground">
+                                    <label
+                                        htmlFor="servicio-precio"
+                                        className="mb-2 block text-sm font-medium text-foreground"
+                                    >
                                         Precio (L.)
                                     </label>
                                     <div className="relative">
@@ -128,6 +135,7 @@ export const AdminServicioPage = () => {
                                             L.
                                         </span>
                                         <input
+                                            id="servicio-precio"
                                             type="number"
                                             min={0}
                                             step="1"
@@ -143,12 +151,16 @@ export const AdminServicioPage = () => {
                                 </div>
 
                                 <div>
-                                    <label className="mb-2 block text-sm font-medium text-foreground">
+                                    <label
+                                        htmlFor="servicio-duracion"
+                                        className="mb-2 block text-sm font-medium text-foreground"
+                                    >
                                         Duración (minutos)
                                     </label>
                                     <div className="relative">
                                         <Clock className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                                         <input
+                                            id="servicio-duracion"
                                             type="number"
                                             min={5}
                                             step={5}
@@ -168,10 +180,14 @@ export const AdminServicioPage = () => {
                             </div>
 
                             <div>
-                                <label className="mb-2 block text-sm font-medium text-foreground">
+                                <label
+                                    htmlFor="servicio-descripcion"
+                                    className="mb-2 block text-sm font-medium text-foreground"
+                                >
                                     Descripción
                                 </label>
                                 <textarea
+                                    id="servicio-descripcion"
                                     value={form.description}
                                     onChange={(e) => set('description', e.target.value)}
                                     rows={5}
@@ -189,7 +205,10 @@ export const AdminServicioPage = () => {
                             Disponibilidad
                         </h2>
 
-                        <label className="flex items-center justify-between rounded-lg bg-muted p-3">
+                        <label
+                            htmlFor="servicio-activo"
+                            className="flex items-center justify-between rounded-lg bg-muted p-3"
+                        >
                             <div>
                                 <p className="text-sm font-medium text-foreground">
                                     Disponible para agendar
@@ -199,6 +218,7 @@ export const AdminServicioPage = () => {
                                 </p>
                             </div>
                             <input
+                                id="servicio-activo"
                                 type="checkbox"
                                 checked={form.isActive}
                                 onChange={(e) => set('isActive', e.target.checked)}

@@ -149,10 +149,14 @@ export const RegisterPage = () => {
                     </div>
                 </CardContent>
             </Card>
-            <div className="text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 hover:[&_a]:text-primary">
+            {/* Todavía no hay páginas de términos ni de políticas: mientras no
+                existan se mencionan como texto. Un <a href="#"> las anunciaba
+                como enlaces y no llevaba a ninguna parte — con teclado o lector
+                de pantalla eso es una promesa rota, no un detalle visual. */}
+            <div className="text-balance text-center text-xs text-muted-foreground [&_span]:underline [&_span]:underline-offset-4">
                 Haciendo click, estás de acuerdo con{' '}
-                <a href="#">términos y condiciones</a> y{' '}
-                <a href="#">políticas de uso</a>.
+                <span>términos y condiciones</span> y{' '}
+                <span>políticas de uso</span>.
             </div>
         </div>
     );

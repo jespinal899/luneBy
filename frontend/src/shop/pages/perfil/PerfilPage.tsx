@@ -104,10 +104,14 @@ export const PerfilPage = () => {
 
         <div className="mt-5 space-y-4">
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-brand-dark">
+            <label
+              htmlFor="perfil-nombre"
+              className="mb-1.5 block text-sm font-medium text-brand-dark"
+            >
               Nombre
             </label>
             <input
+              id="perfil-nombre"
               className={inputClass}
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
@@ -116,10 +120,14 @@ export const PerfilPage = () => {
             />
           </div>
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-brand-dark">
+            <label
+              htmlFor="perfil-telefono"
+              className="mb-1.5 block text-sm font-medium text-brand-dark"
+            >
               Teléfono
             </label>
             <input
+              id="perfil-telefono"
               className={inputClass}
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
@@ -127,10 +135,14 @@ export const PerfilPage = () => {
             />
           </div>
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-brand-dark/50">
+            <label
+              htmlFor="perfil-correo"
+              className="mb-1.5 block text-sm font-medium text-brand-dark/50"
+            >
               Correo
             </label>
             <input
+              id="perfil-correo"
               className={`${inputClass} cursor-not-allowed bg-muted/50`}
               value={user.email}
               disabled
