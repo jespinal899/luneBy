@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 
 import { Appointment } from '../appointments/entities';
 import { MAIL_SENDER, MailSender } from './interfaces/mail-sender.interface';
+import { buildAppointmentConfirmedEmail } from './templates/appointment-confirmed.template';
 import { buildNewAppointmentEmail } from './templates/new-appointment.template';
 import {
   buildGoogleAccountEmail,
@@ -31,6 +32,21 @@ export class MailService {
     );
 
     await this.sender.send({ to: adminEmail, subject, html });
+  }
+
+  /**
+   * Avisa a la clienta que su cita quedó confirmada.
+   *
+   * Sin correo en la cuenta no hay a dónde mandarlo (puede pasar en datos
+   * viejos); se sale en silencio en vez de reventar el cambio de estado, que
+   * ya quedó guardado.
+   */
+  async sendAppointmentConfirmed(appointment: Appointment) {
+    const to = appointment.user?.email;
+    if (!to) return;
+
+    const { subject, html } = buildAppointmentConfirmedEmail(appointment);
+    await this.sender.send({ to, subject, html });
   }
 
   /** Envía el código de recuperación a quien lo pidió. */

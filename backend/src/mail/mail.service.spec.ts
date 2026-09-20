@@ -71,4 +71,34 @@ describe('MailService', () => {
     );
     expect(message.html).not.toContain('otro.vercel.app');
   });
+
+  describe('sendAppointmentConfirmed', () => {
+    const confirmada = {
+      ...appointment,
+      user: {
+        fullName: 'Valentina Ríos',
+        email: 'valentina@example.com',
+      } as never,
+    };
+
+    it('le escribe a la clienta, no a la administradora', async () => {
+      await buildService().sendAppointmentConfirmed(confirmada);
+
+      const [message] = (sender.send as jest.Mock).mock.calls[0];
+      expect(message.to).toBe('valentina@example.com');
+      expect(message.subject).toContain('confirmada');
+      expect(message.html).toContain('Valentina');
+    });
+
+    // Puede pasar en datos viejos: sin correo no hay a dónde mandarlo, y el
+    // cambio de estado ya quedó guardado.
+    it('sin correo en la cuenta no intenta enviar', async () => {
+      await buildService().sendAppointmentConfirmed({
+        ...confirmada,
+        user: { fullName: 'Sin correo' } as never,
+      });
+
+      expect(sender.send).not.toHaveBeenCalled();
+    });
+  });
 });
