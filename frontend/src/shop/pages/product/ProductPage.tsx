@@ -87,7 +87,14 @@ export const ProductPage = () => {
                             size="lg"
                             className="h-11 px-6"
                             render={
-                                <Link to={`/shop/agendar?serviceId=${item.serviceId}`} />
+                                // Va el diseño además del servicio: quien llega
+                                // desde el catálogo eligió un Soft Glam, no un
+                                // "Esmaltado" a secas. El servicio viaja igual
+                                // para que la línea aparezca al instante,
+                                // mientras se carga el diseño.
+                                <Link
+                                    to={`/shop/agendar?serviceId=${item.serviceId}&diseno=${item.id}`}
+                                />
                             }
                         >
                             <CalendarCheck className="h-4 w-4" />

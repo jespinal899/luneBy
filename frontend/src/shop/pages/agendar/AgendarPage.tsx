@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { CalendarCheck, Check, Clock, Plus, X } from 'lucide-react';
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router';
 
@@ -7,7 +7,10 @@ import { useAuth } from '@/auth/context/use-auth';
 import { AuthSwitch } from '@/components/Custom/AuthSwitch';
 import { Button } from '@/components/ui/button';
 import { formInputClass as inputClass } from '@/lib/form-styles';
-import { toQuoteItem } from '@/quote/quote-context';
+import {
+    catalogItemToQuoteItem,
+    toQuoteItem,
+} from '@/quote/quote-context';
 import { useQuote } from '@/quote/use-quote';
 import {
     useAvailability,
@@ -15,6 +18,7 @@ import {
 } from '@/shop/hooks/use-appointments';
 import { DesignPicker } from '@/shop/components/DesignPicker';
 import { SlotPicker } from '@/shop/components/SlotPicker';
+import { useCatalogItem } from '@/shop/hooks/use-catalog';
 import { useServices } from '@/shop/hooks/use-services';
 import { formatDuration, formatLps } from '@/shop/lib/format';
 
@@ -40,15 +44,37 @@ export const AgendarPage = () => {
 
     const quote = useQuote();
 
-    // Enlace /shop/agendar?serviceId=… (desde el detalle de un diseño) → lo
-    // añade a la cotización.
+    // Llegar desde el catálogo: ?serviceId=… precarga el servicio y ?diseno=…
+    // el diseño concreto que se estaba mirando.
     const preselectId = params.get('serviceId');
-    const { add, isInQuote } = quote;
+    const designId = params.get('diseno');
+    const { data: design } = useCatalogItem(designId ?? undefined);
+    const { add, choose, isInQuote } = quote;
+
+    // Se aplica una sola vez por id: sin este pestillo el efecto volvería a
+    // imponer lo que venía en la URL cada vez que la cotización cambia, y
+    // pisaría el diseño que la clienta acabe de elegir a mano más abajo.
+    const applied = useRef<string | null>(null);
+
     useEffect(() => {
         if (!preselectId || !servicesData) return;
+        if (applied.current === preselectId) return;
         const svc = servicesData.products.find((s) => s.id === preselectId);
-        if (svc && !isInQuote(svc.id)) add(toQuoteItem(svc));
+        if (!svc) return;
+        applied.current = preselectId;
+        if (!isInQuote(svc.id)) add(toQuoteItem(svc));
     }, [preselectId, servicesData, add, isInQuote]);
+
+    // El diseño manda sobre el servicio a secas: si la línea ya estaba (la
+    // acaba de poner el efecto de arriba, o venía de antes), se reemplaza para
+    // que quede con su nombre, su precio total y marcada en el selector.
+    useEffect(() => {
+        if (!design || applied.current === design.id) return;
+        applied.current = design.id;
+        const line = catalogItemToQuoteItem(design);
+        if (isInQuote(design.serviceId)) choose(line);
+        else add(line);
+    }, [design, add, choose, isInQuote]);
 
     const [date, setDate] = useState('');
     const [slot, setSlot] = useState('');
