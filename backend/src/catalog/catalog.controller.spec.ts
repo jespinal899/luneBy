@@ -1,4 +1,5 @@
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { PassportModule } from '@nestjs/passport';
 import { Test } from '@nestjs/testing';
 
 import { CatalogController } from './catalog.controller';
@@ -18,6 +19,10 @@ describe('CatalogController', () => {
   beforeEach(async () => {
     jest.clearAllMocks();
     const moduleRef = await Test.createTestingModule({
+      // `@Auth()` evalua `AuthGuard()` al instanciar el controller: sin la
+      // estrategia registrada, Nest avisa por consola en cada spec. Los tests
+      // llaman a los metodos directo, asi que el guard nunca llega a correr.
+      imports: [PassportModule.register({ defaultStrategy: 'jwt' })],
       controllers: [CatalogController],
       providers: [
         { provide: CatalogService, useValue: service },

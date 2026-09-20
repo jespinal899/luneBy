@@ -1,4 +1,5 @@
 import { BadRequestException } from '@nestjs/common';
+import { PassportModule } from '@nestjs/passport';
 import { Test } from '@nestjs/testing';
 
 import { FilesController } from './files.controller';
@@ -15,6 +16,10 @@ describe('FilesController', () => {
   beforeEach(async () => {
     jest.clearAllMocks();
     const moduleRef = await Test.createTestingModule({
+      // `@Auth()` evalua `AuthGuard()` al instanciar el controller: sin la
+      // estrategia registrada, Nest avisa por consola en cada spec. Los tests
+      // llaman a los metodos directo, asi que el guard nunca llega a correr.
+      imports: [PassportModule.register({ defaultStrategy: 'jwt' })],
       controllers: [FilesController],
       providers: [{ provide: FilesService, useValue: service }],
     }).compile();
