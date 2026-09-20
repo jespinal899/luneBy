@@ -6,6 +6,7 @@ import {
     useAdminCatalog,
     useDeleteCatalogItem,
 } from '@/admin/hooks/use-catalog-admin';
+import { AsyncState } from '@/components/Custom/AsyncState';
 import { CustomPagination } from '@/components/Custom/CustomPagination';
 import { Button } from '@/components/ui/button';
 import {
@@ -60,18 +61,19 @@ export const AdminProductsPage = () => {
                 </div>
             </div>
 
-            {isLoading ? (
-                <p className="py-16 text-center text-muted-foreground">Cargando catálogo…</p>
-            ) : isError ? (
-                <p className="py-16 text-center text-destructive">
-                    No se pudo cargar el catálogo.
-                </p>
-            ) : data?.products.length === 0 ? (
-                <p className="py-16 text-center text-muted-foreground">
-                    Todavía no hay diseños en el catálogo. Creá el primero con
-                    “Nuevo diseño”.
-                </p>
-            ) : (
+            <AsyncState
+                isLoading={isLoading}
+                isError={isError}
+                isEmpty={data?.products.length === 0}
+                loadingText="Cargando catálogo…"
+                errorText="No se pudo cargar el catálogo."
+                emptyState={
+                    <p className="py-16 text-center text-muted-foreground">
+                        Todavía no hay diseños en el catálogo. Creá el primero
+                        con “Nuevo diseño”.
+                    </p>
+                }
+            >
                 <>
                     <Table className="mb-10 border border-border bg-card shadow-xs">
                         <TableHeader>
@@ -159,7 +161,7 @@ export const AdminProductsPage = () => {
                         <CustomPagination totalPages={data.pages} />
                     )}
                 </>
-            )}
+            </AsyncState>
         </>
     );
 };

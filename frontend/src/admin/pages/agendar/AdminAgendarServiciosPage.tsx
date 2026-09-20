@@ -4,6 +4,7 @@ import { Link } from 'react-router';
 import { AdminTitle } from '@/admin/components/AdminTitle';
 import { useAdminServices } from '@/admin/hooks/use-admin-services';
 import { useDeleteService } from '@/admin/hooks/use-service-mutations';
+import { AsyncState } from '@/components/Custom/AsyncState';
 import { Button } from '@/components/ui/button';
 import {
     Table,
@@ -50,17 +51,19 @@ export const AdminAgendarServiciosPage = () => {
                 </div>
             </div>
 
-            {isLoading ? (
-                <p className="py-16 text-center text-muted-foreground">Cargando servicios…</p>
-            ) : isError ? (
-                <p className="py-16 text-center text-destructive">
-                    No se pudieron cargar los servicios.
-                </p>
-            ) : data?.products.length === 0 ? (
-                <p className="py-16 text-center text-muted-foreground">
-                    Todavía no hay servicios. Creá el primero con “Nuevo servicio”.
-                </p>
-            ) : (
+            <AsyncState
+                isLoading={isLoading}
+                isError={isError}
+                isEmpty={data?.products.length === 0}
+                loadingText="Cargando servicios…"
+                errorText="No se pudieron cargar los servicios."
+                emptyState={
+                    <p className="py-16 text-center text-muted-foreground">
+                        Todavía no hay servicios. Creá el primero con “Nuevo
+                        servicio”.
+                    </p>
+                }
+            >
                 <Table className="mb-10 border border-border bg-card shadow-xs">
                     <TableHeader>
                         <TableRow>
@@ -128,7 +131,7 @@ export const AdminAgendarServiciosPage = () => {
                         ))}
                     </TableBody>
                 </Table>
-            )}
+            </AsyncState>
         </>
     );
 };

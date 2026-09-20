@@ -1,6 +1,7 @@
 import { Link } from 'react-router';
 
 import type { AppointmentStatus } from '@/api/types';
+import { AsyncState } from '@/components/Custom/AsyncState';
 import { Button } from '@/components/ui/button';
 import { useCancelAppointment, useMyAppointments } from '@/shop/hooks/use-appointments';
 import { formatLps } from '@/shop/lib/format';
@@ -25,20 +26,26 @@ export const MyAppointmentsPage = () => {
                 </Button>
             </div>
 
-            {isLoading ? (
-                <p className="py-16 text-center text-muted-foreground">Cargando…</p>
-            ) : isError ? (
-                <p className="py-16 text-center text-destructive">
-                    No se pudieron cargar tus citas.
-                </p>
-            ) : (data?.length ?? 0) === 0 ? (
-                <div className="py-16 text-center">
-                    <p className="text-muted-foreground">Aún no tienes citas.</p>
-                    <Button className="mt-4" render={<Link to="/shop/agendar" />}>
-                        Agendar mi primera cita
-                    </Button>
-                </div>
-            ) : (
+            <AsyncState
+                isLoading={isLoading}
+                isError={isError}
+                isEmpty={(data?.length ?? 0) === 0}
+                loadingText="Cargando…"
+                errorText="No se pudieron cargar tus citas."
+                emptyState={
+                    <div className="py-16 text-center">
+                        <p className="text-muted-foreground">
+                            Aún no tienes citas.
+                        </p>
+                        <Button
+                            className="mt-4"
+                            render={<Link to="/shop/agendar" />}
+                        >
+                            Agendar mi primera cita
+                        </Button>
+                    </div>
+                }
+            >
                 <ul className="mt-8 space-y-4">
                     {data?.map((appt) => {
                         const canCancel =
@@ -87,7 +94,7 @@ export const MyAppointmentsPage = () => {
                         );
                     })}
                 </ul>
-            )}
+            </AsyncState>
         </div>
     );
 };

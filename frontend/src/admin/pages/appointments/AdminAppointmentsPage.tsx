@@ -6,6 +6,7 @@ import {
     useUpdateAppointmentStatus,
 } from '@/admin/hooks/use-admin-appointments';
 import type { AppointmentStatus } from '@/api/types';
+import { AsyncState } from '@/components/Custom/AsyncState';
 import { Button } from '@/components/ui/button';
 import { formatLps } from '@/shop/lib/format';
 import {
@@ -88,17 +89,18 @@ export const AdminAppointmentsPage = () => {
                 )}
             </div>
 
-            {isLoading ? (
-                <p className="py-16 text-center text-muted-foreground">Cargando…</p>
-            ) : isError ? (
-                <p className="py-16 text-center text-destructive">
-                    No se pudo cargar la agenda.
-                </p>
-            ) : (data?.length ?? 0) === 0 ? (
-                <p className="py-16 text-center text-muted-foreground">
-                    No hay citas con esos filtros.
-                </p>
-            ) : (
+            <AsyncState
+                isLoading={isLoading}
+                isError={isError}
+                isEmpty={(data?.length ?? 0) === 0}
+                loadingText="Cargando…"
+                errorText="No se pudo cargar la agenda."
+                emptyState={
+                    <p className="py-16 text-center text-muted-foreground">
+                        No hay citas con esos filtros.
+                    </p>
+                }
+            >
                 <Table className="border border-border bg-card shadow-xs">
                     <TableHeader>
                         <TableRow>
@@ -180,7 +182,7 @@ export const AdminAppointmentsPage = () => {
                         ))}
                     </TableBody>
                 </Table>
-            )}
+            </AsyncState>
         </>
     );
 };

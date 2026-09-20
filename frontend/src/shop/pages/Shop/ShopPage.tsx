@@ -3,6 +3,7 @@ import { Filter, Grid, List } from 'lucide-react';
 import { useSearchParams } from 'react-router';
 
 import { Button } from '@/components/ui/button';
+import { AsyncState } from '@/components/Custom/AsyncState';
 import { CustomPagination } from '@/components/Custom/CustomPagination';
 import { FilterSidebar } from '@/shop/components/FilterSidebar';
 import { ProductsGrid } from '@/shop/components/ProductsGrid';
@@ -107,24 +108,19 @@ export const ShopPage = () => {
                     )}
 
                     <div className="flex-1">
-                        {isLoading ? (
-                            <p className="py-16 text-center text-muted-foreground">
-                                Cargando servicios…
-                            </p>
-                        ) : isError ? (
-                            <p className="py-16 text-center text-destructive">
-                                No se pudo cargar el catálogo.
-                            </p>
-                        ) : (
-                            <>
-                                <ProductsGrid items={items} viewMode={viewMode} />
-                                {data && data.pages > 1 && (
-                                    <div className="mt-12">
-                                        <CustomPagination totalPages={data.pages} />
-                                    </div>
-                                )}
-                            </>
-                        )}
+                        <AsyncState
+                            isLoading={isLoading}
+                            isError={isError}
+                            loadingText="Cargando servicios…"
+                            errorText="No se pudo cargar el catálogo."
+                        >
+                            <ProductsGrid items={items} viewMode={viewMode} />
+                            {data && data.pages > 1 && (
+                                <div className="mt-12">
+                                    <CustomPagination totalPages={data.pages} />
+                                </div>
+                            )}
+                        </AsyncState>
                     </div>
                 </div>
             </div>

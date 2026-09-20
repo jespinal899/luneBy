@@ -5,6 +5,7 @@ import { Calculator, Menu, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
+import { AuthSwitch } from '@/components/Custom/AuthSwitch';
 import { CustomLogo } from '@/components/Custom/CustomLogo';
 import { UserMenu } from '@/auth/components/UserMenu';
 import { useAuth } from '@/auth/context/use-auth';
@@ -146,25 +147,30 @@ export const CustomHeader = () => {
               autenticada viera por un instante que no lo estaba. Se reserva
               el espacio hasta saberlo.
             */}
-            {status === 'checking' ? (
-              <div
-                aria-hidden
-                className="hidden h-9 w-28 animate-pulse rounded-full bg-brand/10 lg:block"
-              />
-            ) : status === 'authenticated' ? (
-              <div className="hidden lg:block">
-                <UserMenu />
-              </div>
-            ) : (
-              <Button
-                render={<Link to="/auth/login" />}
-                variant="outline"
-                size="sm"
-                className="hidden h-9 rounded-full border-brand/25 px-5 text-brand-dark hover:bg-brand/5 lg:inline-flex"
-              >
-                Iniciar sesión
-              </Button>
-            )}
+            <AuthSwitch
+              status={status}
+              checking={
+                <div
+                  aria-hidden
+                  className="hidden h-9 w-28 animate-pulse rounded-full bg-brand/10 lg:block"
+                />
+              }
+              authenticated={
+                <div className="hidden lg:block">
+                  <UserMenu />
+                </div>
+              }
+              anonymous={
+                <Button
+                  render={<Link to="/auth/login" />}
+                  variant="outline"
+                  size="sm"
+                  className="hidden h-9 rounded-full border-brand/25 px-5 text-brand-dark hover:bg-brand/5 lg:inline-flex"
+                >
+                  Iniciar sesión
+                </Button>
+              }
+            />
           </div>
         </div>
       </div>

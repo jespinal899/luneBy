@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { CalendarCheck, Check, Clock, Plus, X } from 'lucide-react';
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router';
 
 import { apiErrorMessage } from '@/api/errors';
 import { useAuth } from '@/auth/context/use-auth';
+import { AuthSwitch } from '@/components/Custom/AuthSwitch';
 import { Button } from '@/components/ui/button';
 import { formInputClass as inputClass } from '@/lib/form-styles';
 import { toQuoteItem } from '@/quote/quote-context';
@@ -15,6 +16,83 @@ import {
 import { DesignPicker } from '@/shop/components/DesignPicker';
 import { useServices } from '@/shop/hooks/use-services';
 import { formatDuration, formatLps } from '@/shop/lib/format';
+
+/** Caja punteada de los avisos del bloque de horarios. */
+const SlotNotice = ({ children }: { children: ReactNode }) => (
+    <p className="rounded-xl border border-dashed border-brand/20 px-4 py-6 text-center text-sm text-muted-foreground">
+        {children}
+    </p>
+);
+
+interface SlotPickerProps {
+    /** Todavía falta elegir servicio o fecha: no hay nada que consultar. */
+    needsChoice: boolean;
+    isLoading: boolean;
+    isError: boolean;
+    slots: string[] | undefined;
+    selected: string;
+    onSelect: (slot: string) => void;
+}
+
+/**
+ * Los cinco estados del selector de horarios. Con retornos tempranos el orden
+ * se lee de corrido: primero lo que falta elegir, después la consulta y solo
+ * al final los horarios. "No hay horarios ese día" no es lo mismo que "no se
+ * pudieron cargar", y antes eso vivía en una cadena de ternarios anidados.
+ */
+const SlotPicker = ({
+    needsChoice,
+    isLoading,
+    isError,
+    slots,
+    selected,
+    onSelect,
+}: SlotPickerProps) => {
+    if (needsChoice) {
+        return (
+            <SlotNotice>
+                Elige al menos un servicio y una fecha para ver los horarios.
+            </SlotNotice>
+        );
+    }
+
+    if (isLoading) return <SlotNotice>Buscando horarios…</SlotNotice>;
+
+    if (isError) {
+        return (
+            <p className="text-sm text-destructive">
+                No se pudieron cargar los horarios.
+            </p>
+        );
+    }
+
+    if ((slots?.length ?? 0) === 0) {
+        return (
+            <SlotNotice>
+                No hay horarios libres ese día. Prueba con otra fecha.
+            </SlotNotice>
+        );
+    }
+
+    return (
+        <div className="grid grid-cols-3 gap-2 sm:grid-cols-5">
+            {slots?.map((s) => (
+                <button
+                    key={s}
+                    type="button"
+                    onClick={() => onSelect(s)}
+                    className={`rounded-lg border py-2.5 text-sm font-medium transition-all ${
+                        selected === s
+                            ? 'border-brand bg-brand text-brand-foreground'
+                            : 'border-brand/15 text-brand-dark hover:border-brand/40 hover:bg-brand/5'
+                    }`}
+                >
+                    {s}
+                </button>
+            ))}
+        </div>
+    );
+};
 
 /** Encabezado numerado de cada paso del formulario de reserva. */
 const StepHeading = ({ number, title }: { number: number; title: string }) => (
@@ -187,42 +265,14 @@ export const AgendarPage = () => {
                             <label className="mb-2 block text-sm font-medium text-brand-dark">
                                 Horarios disponibles
                             </label>
-                            {quote.count === 0 || !date ? (
-                                <p className="rounded-xl border border-dashed border-brand/20 px-4 py-6 text-center text-sm text-muted-foreground">
-                                    Elige al menos un servicio y una fecha para ver
-                                    los horarios.
-                                </p>
-                            ) : loadingSlots ? (
-                                <p className="rounded-xl border border-dashed border-brand/20 px-4 py-6 text-center text-sm text-muted-foreground">
-                                    Buscando horarios…
-                                </p>
-                            ) : slotsError ? (
-                                <p className="text-sm text-destructive">
-                                    No se pudieron cargar los horarios.
-                                </p>
-                            ) : (slots?.length ?? 0) === 0 ? (
-                                <p className="rounded-xl border border-dashed border-brand/20 px-4 py-6 text-center text-sm text-muted-foreground">
-                                    No hay horarios libres ese día. Prueba con otra
-                                    fecha.
-                                </p>
-                            ) : (
-                                <div className="grid grid-cols-3 gap-2 sm:grid-cols-5">
-                                    {slots?.map((s) => (
-                                        <button
-                                            key={s}
-                                            type="button"
-                                            onClick={() => setSlot(s)}
-                                            className={`rounded-lg border py-2.5 text-sm font-medium transition-all ${
-                                                slot === s
-                                                    ? 'border-brand bg-brand text-brand-foreground'
-                                                    : 'border-brand/15 text-brand-dark hover:border-brand/40 hover:bg-brand/5'
-                                            }`}
-                                        >
-                                            {s}
-                                        </button>
-                                    ))}
-                                </div>
-                            )}
+                            <SlotPicker
+                                needsChoice={quote.count === 0 || !date}
+                                isLoading={loadingSlots}
+                                isError={slotsError}
+                                slots={slots}
+                                selected={slot}
+                                onSelect={setSlot}
+                            />
                         </div>
 
                         <div>
@@ -313,35 +363,42 @@ export const AgendarPage = () => {
                         {/* Mientras se revalida el token no se sabe si hay
                             sesión: ofrecer "Inicia sesión" ahí le decía a una
                             clienta ya autenticada que no lo estaba. */}
-                        {status === 'checking' ? (
-                            <div
-                                aria-hidden
-                                className="h-9 w-full animate-pulse rounded-md bg-muted"
-                            />
-                        ) : status === 'authenticated' ? (
-                            <Button
-                                className="w-full"
-                                disabled={!canConfirm || createAppt.isPending}
-                                onClick={handleConfirm}
-                            >
-                                <CalendarCheck className="h-4 w-4" />
-                                {createAppt.isPending
-                                    ? 'Agendando…'
-                                    : 'Agendar con esta cotización'}
-                            </Button>
-                        ) : (
-                            <Button
-                                className="w-full"
-                                render={
-                                    <Link
-                                        to="/auth/login"
-                                        state={{ from: loginFrom }}
-                                    />
-                                }
-                            >
-                                Inicia sesión para agendar
-                            </Button>
-                        )}
+                        <AuthSwitch
+                            status={status}
+                            checking={
+                                <div
+                                    aria-hidden
+                                    className="h-9 w-full animate-pulse rounded-md bg-muted"
+                                />
+                            }
+                            authenticated={
+                                <Button
+                                    className="w-full"
+                                    disabled={
+                                        !canConfirm || createAppt.isPending
+                                    }
+                                    onClick={handleConfirm}
+                                >
+                                    <CalendarCheck className="h-4 w-4" />
+                                    {createAppt.isPending
+                                        ? 'Agendando…'
+                                        : 'Agendar con esta cotización'}
+                                </Button>
+                            }
+                            anonymous={
+                                <Button
+                                    className="w-full"
+                                    render={
+                                        <Link
+                                            to="/auth/login"
+                                            state={{ from: loginFrom }}
+                                        />
+                                    }
+                                >
+                                    Inicia sesión para agendar
+                                </Button>
+                            }
+                        />
                     </div>
                 </div>
             </div>

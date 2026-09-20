@@ -4,6 +4,7 @@ import { Dialog } from '@base-ui/react/dialog';
 import { LogOut, Search, Sparkles, X } from 'lucide-react';
 
 import { useAuth } from '@/auth/context/use-auth';
+import { AuthSwitch } from '@/components/Custom/AuthSwitch';
 import { CustomLogo } from '@/components/Custom/CustomLogo';
 import { Button } from '@/components/ui/button';
 
@@ -94,13 +95,16 @@ export const MobileNav = ({ open, onClose, links }: Props) => {
           <div className="border-t border-brand/10 p-4">
             {/* Ver el mismo parpadeo que en el encabezado: mientras se
                 revalida el token no se ofrece iniciar sesión. */}
-            {status === 'checking' ? (
-              <div aria-hidden className="space-y-2">
-                <div className="h-9 w-full animate-pulse rounded-full bg-brand/10" />
-                <div className="h-9 w-full animate-pulse rounded-full bg-brand/10" />
-              </div>
-            ) : status === 'authenticated' ? (
-              <div className="space-y-3">
+            <AuthSwitch
+              status={status}
+              checking={
+                <div aria-hidden className="space-y-2">
+                  <div className="h-9 w-full animate-pulse rounded-full bg-brand/10" />
+                  <div className="h-9 w-full animate-pulse rounded-full bg-brand/10" />
+                </div>
+              }
+              authenticated={
+                <div className="space-y-3">
                 {user?.fullName && (
                   <p className="px-1 text-sm text-brand-dark/60">
                     {user.fullName}
@@ -123,9 +127,10 @@ export const MobileNav = ({ open, onClose, links }: Props) => {
                   <LogOut className="h-4 w-4" />
                   Cerrar sesión
                 </Button>
-              </div>
-            ) : (
-              <div className="space-y-2">
+                </div>
+              }
+              anonymous={
+                <div className="space-y-2">
                 <Button
                   render={<Link to="/auth/login" onClick={onClose} />}
                   className="w-full rounded-full bg-brand text-brand-foreground hover:bg-brand-dark"
@@ -139,8 +144,9 @@ export const MobileNav = ({ open, onClose, links }: Props) => {
                 >
                   Crear cuenta
                 </Button>
-              </div>
-            )}
+                </div>
+              }
+            />
           </div>
         </Dialog.Popup>
       </Dialog.Portal>

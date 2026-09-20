@@ -14,13 +14,16 @@ export class TimeOffService {
   ) {}
 
   listTimeOff(from?: string, to?: string) {
-    const where =
-      from && to
-        ? { date: Between(from, to) }
-        : from
-          ? { date: MoreThanOrEqual(from) }
-          : {};
-    return this.timeOffRepository.find({ where, order: { date: 'ASC' } });
+    // Sin `from` no se filtra por fecha: `to` a solas no acota nada útil.
+    const byDate = () => {
+      if (!from) return {};
+      return to ? { date: Between(from, to) } : { date: MoreThanOrEqual(from) };
+    };
+
+    return this.timeOffRepository.find({
+      where: byDate(),
+      order: { date: 'ASC' },
+    });
   }
 
   /** Cierra un día completo. Si ya estaba cerrado, devuelve el registro. */
