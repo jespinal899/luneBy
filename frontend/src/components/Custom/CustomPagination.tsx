@@ -32,16 +32,18 @@ export const CustomPagination = ({ totalPages }: Props) => {
                 Anteriores
             </Button>
 
-            {Array.from({ length: totalPages }).map((_, index) => (
-                <Button
-                    key={index}
-                    variant={page === index + 1 ? 'default' : 'outline'}
-                    size="sm"
-                    onClick={() => handlePageChange(index + 1)}
-                >
-                    {index + 1}
-                </Button>
-            ))}
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                (pageNumber) => (
+                    <Button
+                        key={pageNumber}
+                        variant={page === pageNumber ? 'default' : 'outline'}
+                        size="sm"
+                        onClick={() => handlePageChange(pageNumber)}
+                    >
+                        {pageNumber}
+                    </Button>
+                ),
+            )}
 
             <Button
                 variant="outline"

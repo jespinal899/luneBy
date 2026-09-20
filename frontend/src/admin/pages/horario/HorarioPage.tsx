@@ -171,12 +171,16 @@ const ClosedDays = () => {
       cursor.getMonth() + 1,
       0,
     ).getDate();
-    const out: (string | null)[] = Array.from(
+    // Cada celda lleva su propia clave: los días usan su fecha, y los huecos
+    // previos al día 1 una etiqueta propia. Antes se usaba la posición, que no
+    // identifica nada cuando el mes cambia de largo o de día de arranque.
+    const out: { key: string; date: string | null }[] = Array.from(
       { length: first.getDay() },
-      () => null,
+      (_, i) => ({ key: `hueco-${i}`, date: null }),
     );
     for (let day = 1; day <= daysInMonth; day++) {
-      out.push(iso(new Date(cursor.getFullYear(), cursor.getMonth(), day)));
+      const date = iso(new Date(cursor.getFullYear(), cursor.getMonth(), day));
+      out.push({ key: date, date });
     }
     return out;
   }, [cursor]);
@@ -235,13 +239,13 @@ const ClosedDays = () => {
           ))}
         </div>
         <div className="mt-1 grid grid-cols-7 gap-1">
-          {cells.map((dateStr, i) => {
-            if (!dateStr) return <span key={i} />;
+          {cells.map(({ key, date: dateStr }) => {
+            if (!dateStr) return <span key={key} />;
             const isPast = dateStr < todayIso;
             const isClosed = closedByDate.has(dateStr);
             return (
               <button
-                key={dateStr}
+                key={key}
                 type="button"
                 disabled={isPast}
                 onClick={() => toggle(dateStr)}

@@ -5,8 +5,8 @@ interface Props {
 /** Placeholder animado del catálogo mientras carga `/services`. */
 export const ProductsGridSkeleton = ({ count = 6 }: Props) => (
   <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-    {Array.from({ length: count }).map((_, i) => (
-      <div key={i} className="animate-pulse">
+    {Array.from({ length: count }, (_, i) => `placeholder-${i}`).map((id) => (
+      <div key={id} className="animate-pulse">
         <div className="aspect-square w-full rounded-lg bg-muted" />
         <div className="space-y-2 px-4 pt-6">
           <div className="h-3.5 w-3/4 rounded bg-muted" />

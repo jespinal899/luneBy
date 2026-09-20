@@ -23,10 +23,17 @@ const pgError = (code: string, constraint?: string) => {
 describe('DatabaseExceptionFilter', () => {
   const filter = new DatabaseExceptionFilter();
 
-  it('unique_violation -> 409', () => {
+  // Un caso por código de Postgres: el mapeo es una tabla, y como tabla se
+  // lee mejor que como cinco pruebas que solo cambian en dos valores.
+  it.each([
+    ['23505', 'unique_violation', 409],
+    ['23P01', 'exclusion_violation', 409],
+    ['23503', 'foreign_key_violation', 400],
+    ['99999', 'código desconocido', 500],
+  ])('%s (%s) -> %i', (code, _nombre, esperado) => {
     const { host, res } = mockHost();
-    filter.catch(pgError('23505'), host);
-    expect(res.status).toHaveBeenCalledWith(409);
+    filter.catch(pgError(code as string), host);
+    expect(res.status).toHaveBeenCalledWith(esperado);
   });
 
   it('usa el mensaje específico del constraint', () => {
@@ -35,23 +42,5 @@ describe('DatabaseExceptionFilter', () => {
     expect(res.json).toHaveBeenCalledWith(
       expect.objectContaining({ message: 'Ese correo ya está registrado' }),
     );
-  });
-
-  it('exclusion_violation -> 409', () => {
-    const { host, res } = mockHost();
-    filter.catch(pgError('23P01'), host);
-    expect(res.status).toHaveBeenCalledWith(409);
-  });
-
-  it('foreign_key_violation -> 400', () => {
-    const { host, res } = mockHost();
-    filter.catch(pgError('23503'), host);
-    expect(res.status).toHaveBeenCalledWith(400);
-  });
-
-  it('código desconocido -> 500', () => {
-    const { host, res } = mockHost();
-    filter.catch(pgError('99999'), host);
-    expect(res.status).toHaveBeenCalledWith(500);
   });
 });
