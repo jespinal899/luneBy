@@ -8,6 +8,20 @@ Generados con `supabase db dump` contra el proyecto en la nube (`fxlttpayjkkbfom
 - `data_2026-09-11.sql` — datos reales de `services`, `availability_rules`,
   `appointments` y `appointment_items`.
 
+## Resumen del modelo (`docs/db-export.json`)
+
+Además de los dumps SQL, `docs/db-export.json` guarda un resumen legible del
+modelo: tablas, columnas con su tipo y PK, índices, llaves foráneas,
+políticas RLS y cuántas filas tiene cada tabla. Se regenera con:
+
+```bash
+DATABASE_URL="postgresql://postgres:<clave>@<host>:5432/postgres"   node scripts/export-db-snapshot.mjs
+```
+
+El script solo lee: consulta los catálogos de Postgres y cuenta filas, sin
+sacar ningún dato de las tablas. Hay que rehacerlo después de cada migración
+que cambie el esquema, o el archivo describe una base que ya no existe.
+
 ## Por qué `users` e `idempotency_keys` no están en `data_*.sql`
 
 Se excluyeron a propósito (`supabase db dump --data-only -x public.users -x
