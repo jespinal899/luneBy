@@ -36,7 +36,11 @@ export const getMyAppointments = async () => {
   return data;
 };
 
-export const cancelAppointment = async (id: string) => {
-  const { data } = await http.patch<Appointment>(`/appointments/${id}/cancel`);
+/** El motivo es opcional: se manda solo si la clienta escribió algo. */
+export const cancelAppointment = async (id: string, reason?: string) => {
+  const { data } = await http.patch<Appointment>(
+    `/appointments/${id}/cancel`,
+    reason ? { reason } : {},
+  );
   return data;
 };

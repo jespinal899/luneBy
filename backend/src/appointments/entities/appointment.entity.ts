@@ -43,6 +43,13 @@ export class Appointment {
   @Column('text', { nullable: true })
   notes: string;
 
+  /**
+   * Motivo que escribió la clienta al cancelar. Opcional: nulo si no dijo
+   * nada, si la cita sigue viva o si la canceló la administradora.
+   */
+  @Column('text', { name: 'cancellationReason', nullable: true })
+  cancellationReason: string | null;
+
   /** Precio total congelado al reservar (base + estilos). */
   @Column('float', { name: 'priceAtBooking', nullable: true })
   priceAtBooking: number;

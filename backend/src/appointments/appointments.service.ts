@@ -273,8 +273,15 @@ export class AppointmentsService {
     return appointment;
   }
 
-  /** Cancela una cita, solo si pertenece al usuario que lo pide. */
-  async cancelOwn(id: string, user: User) {
+  /**
+   * Cancela una cita, solo si pertenece al usuario que lo pide.
+   *
+   * El motivo es opcional y queda guardado para que la administradora sepa
+   * por qué se liberó el horario. Se normaliza a null cuando viene vacío o
+   * en blanco: así "no dijo nada" es un solo valor en la base, y no compite
+   * con una cadena vacía que significaría lo mismo.
+   */
+  async cancelOwn(id: string, user: User, reason?: string) {
     const appointment = await this.findOne(id);
     if (appointment.user.id !== user.id)
       throw new BadRequestException(
@@ -282,6 +289,7 @@ export class AppointmentsService {
       );
 
     appointment.status = AppointmentStatus.cancelled;
+    appointment.cancellationReason = reason?.trim() || null;
     return this.appointmentRepository.save(appointment);
   }
 }

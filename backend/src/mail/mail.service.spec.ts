@@ -15,6 +15,7 @@ describe('MailService', () => {
     endTime: '19:00',
     status: AppointmentStatus.pending,
     notes: null,
+    cancellationReason: null,
     priceAtBooking: 450,
     durationMin: 60,
     service: { name: 'Manicura rusa' } as never,

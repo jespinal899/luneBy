@@ -143,6 +143,13 @@ export const AdminAppointmentsPage = () => {
                                     >
                                         {STATUS_LABEL[appt.status]}
                                     </span>
+                                    {/* El hueco en la agenda se explica solo
+                                        si se sabe por qué se liberó. */}
+                                    {appt.cancellationReason && (
+                                        <span className="mt-1 block max-w-48 text-xs italic text-muted-foreground">
+                                            “{appt.cancellationReason}”
+                                        </span>
+                                    )}
                                 </TableCell>
                                 <TableCell className="space-x-1 text-right">
                                     {appt.status === 'pending' && (

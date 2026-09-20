@@ -20,6 +20,7 @@ import { AppointmentsAdminService } from './appointments-admin.service';
 import { AppointmentsService } from './appointments.service';
 import {
   AvailabilityQueryDto,
+  CancelAppointmentDto,
   CreateAppointmentDto,
   CreateTimeOffDto,
   UpdateAppointmentStatusDto,
@@ -68,12 +69,22 @@ export class AppointmentsController {
     return this.appointmentsService.findMine(user);
   }
 
-  /** Cancela una cita propia. */
+  /**
+   * Cancela una cita propia, con el motivo si la clienta quiso darlo.
+   *
+   * El cuerpo es opcional: un cliente que todavía no mande nada sigue
+   * cancelando igual (importa durante el despliegue, porque el frontend y la
+   * API no se actualizan en el mismo instante).
+   */
   @Patch(':id/cancel')
   @Auth()
   @ApiBearerAuth()
-  cancelOwn(@Param('id', ParseUUIDPipe) id: string, @GetUser() user: User) {
-    return this.appointmentsService.cancelOwn(id, user);
+  cancelOwn(
+    @Param('id', ParseUUIDPipe) id: string,
+    @GetUser() user: User,
+    @Body() dto: CancelAppointmentDto = {},
+  ) {
+    return this.appointmentsService.cancelOwn(id, user, dto?.reason);
   }
 
   /** Horario semanal vigente, para mostrar en el sitio (footer, contacto). */

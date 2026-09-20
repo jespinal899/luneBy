@@ -48,7 +48,8 @@ export const useCreateAppointment = () => {
 export const useCancelAppointment = () => {
   const invalidate = useInvalidateAppointments();
   return useMutation({
-    mutationFn: (id: string) => cancelAppointment(id),
+    mutationFn: ({ id, reason }: { id: string; reason?: string }) =>
+      cancelAppointment(id, reason),
     onSuccess: invalidate,
   });
 };

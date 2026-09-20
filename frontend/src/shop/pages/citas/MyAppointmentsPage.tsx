@@ -1,8 +1,10 @@
+import { useState } from 'react';
 import { Link } from 'react-router';
 
-import type { AppointmentStatus } from '@/api/types';
+import type { Appointment, AppointmentStatus } from '@/api/types';
 import { AsyncState } from '@/components/Custom/AsyncState';
 import { Button } from '@/components/ui/button';
+import { CancelAppointmentDialog } from '@/shop/components/CancelAppointmentDialog';
 import { useCancelAppointment, useMyAppointments } from '@/shop/hooks/use-appointments';
 import { formatLps } from '@/shop/lib/format';
 
@@ -16,6 +18,19 @@ const STATUS: Record<AppointmentStatus, { label: string; className: string }> = 
 export const MyAppointmentsPage = () => {
     const { data, isLoading, isError } = useMyAppointments();
     const cancel = useCancelAppointment();
+
+    // Qué cita está esperando confirmación. Guardar la cita entera (y no solo
+    // su id) deja que el diálogo muestre de cuál se trata: con varias en
+    // pantalla, confirmar a ciegas es fácil de hacer sobre la equivocada.
+    const [toCancel, setToCancel] = useState<Appointment | null>(null);
+
+    const confirmCancel = (reason: string) => {
+        if (!toCancel) return;
+        cancel.mutate(
+            { id: toCancel.id, reason: reason.trim() || undefined },
+            { onSuccess: () => setToCancel(null) },
+        );
+    };
 
     return (
         <div className="container mx-auto px-4 py-12 lg:px-8">
@@ -81,11 +96,7 @@ export const MyAppointmentsPage = () => {
                                         variant="outline"
                                         size="sm"
                                         disabled={cancel.isPending}
-                                        onClick={() => {
-                                            if (window.confirm('¿Cancelar esta cita?')) {
-                                                cancel.mutate(appt.id);
-                                            }
-                                        }}
+                                        onClick={() => setToCancel(appt)}
                                     >
                                         Cancelar
                                     </Button>
@@ -95,6 +106,16 @@ export const MyAppointmentsPage = () => {
                     })}
                 </ul>
             </AsyncState>
+
+            {/* La clave reinicia el motivo escrito al cambiar de cita, sin
+                tener que limpiarlo a mano desde un efecto. */}
+            <CancelAppointmentDialog
+                key={toCancel?.id ?? 'ninguna'}
+                appointment={toCancel}
+                isPending={cancel.isPending}
+                onConfirm={confirmCancel}
+                onClose={() => setToCancel(null)}
+            />
         </div>
     );
 };

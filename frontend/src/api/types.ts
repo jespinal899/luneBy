@@ -98,6 +98,8 @@ export interface Appointment {
   endTime: string; // HH:mm
   status: AppointmentStatus;
   notes: string | null;
+  /** Motivo que dio la clienta al cancelar. Null si no dijo nada. */
+  cancellationReason?: string | null;
   /** Precio total congelado al reservar (suma de servicios; puede faltar en citas antiguas). */
   priceAtBooking: number | null;
   /** Duración total en minutos. */
