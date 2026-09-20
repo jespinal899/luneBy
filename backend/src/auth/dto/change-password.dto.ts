@@ -1,15 +1,11 @@
-import { IsString, Matches, MaxLength, MinLength } from 'class-validator';
+import { IsString } from 'class-validator';
+
+import { IsStrongPassword } from './is-strong-password.decorator';
 
 export class ChangePasswordDto {
   @IsString()
   currentPassword: string;
 
-  @IsString()
-  @MinLength(6)
-  @MaxLength(50)
-  @Matches(/(?:(?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
-    message:
-      'La contraseña debe tener una mayúscula, una minúscula y un número',
-  })
+  @IsStrongPassword()
   newPassword: string;
 }

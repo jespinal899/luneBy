@@ -1,24 +1,13 @@
-import {
-  IsEmail,
-  IsOptional,
-  IsString,
-  Matches,
-  MaxLength,
-  MinLength,
-} from 'class-validator';
+import { IsEmail, IsOptional, IsString, MinLength } from 'class-validator';
+
+import { IsStrongPassword } from './is-strong-password.decorator';
 
 export class CreateUserDto {
   @IsString()
   @IsEmail()
   email: string;
 
-  @IsString()
-  @MinLength(6)
-  @MaxLength(50)
-  @Matches(/(?:(?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
-    message:
-      'La contraseña debe tener una mayúscula, una minúscula y un número',
-  })
+  @IsStrongPassword()
   password: string;
 
   @IsString()
