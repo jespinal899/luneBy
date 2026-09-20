@@ -93,7 +93,16 @@ export const AgendarPage = () => {
         isError: slotsError,
     } = useAvailability(date || undefined, primaryId, extraMinutes);
 
-    const createAppt = useCreateAppointment();
+    const createAppt = useCreateAppointment({
+        onCreated: () => {
+            // Primero navegar y después limpiar: la cita ya está creada, así
+            // que llevar a la clienta a verla es lo que no puede fallar. Al
+            // revés, cualquier tropiezo al limpiar la dejaría en el
+            // formulario vacío, sin saber si reservó o no.
+            navigate('/mis-citas');
+            quote.clear();
+        },
+    });
 
     const canConfirm = Boolean(quote.count > 0 && date && slot);
     const loginFrom = `${location.pathname}${location.search}`;
@@ -109,12 +118,6 @@ export const AgendarPage = () => {
                 date,
                 startTime: slot,
                 notes: notes.trim() || undefined,
-            },
-            {
-                onSuccess: () => {
-                    quote.clear();
-                    navigate('/mis-citas');
-                },
             },
         );
     };

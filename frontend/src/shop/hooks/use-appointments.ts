@@ -37,11 +37,25 @@ const useInvalidateAppointments = () => {
   };
 };
 
-export const useCreateAppointment = () => {
+/**
+ * Reserva una cita.
+ *
+ * `onCreated` corre dentro del `onSuccess` del hook y no en el de cada
+ * llamada a `mutate`: react-query descarta los callbacks por llamada si el
+ * componente que los pasó se desmontó mientras la petición viajaba. Perder
+ * ese callback significa que la cita queda creada pero la clienta se queda
+ * mirando el formulario, sin enterarse.
+ */
+export const useCreateAppointment = (options?: { onCreated?: () => void }) => {
   const invalidate = useInvalidateAppointments();
+  const onCreated = options?.onCreated;
+
   return useMutation({
     mutationFn: (input: CreateAppointmentInput) => createAppointment(input),
-    onSuccess: invalidate,
+    onSuccess: () => {
+      invalidate();
+      onCreated?.();
+    },
   });
 };
 
