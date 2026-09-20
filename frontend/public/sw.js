@@ -17,7 +17,7 @@
 //   - CON internet requerido: cualquier dato real (servicios, catálogo,
 //     login, crear/ver citas) — todo lo que pasa por /api.
 
-const CACHE_NAME = 'fiados-v3';
+const CACHE_NAME = 'fiados-v4';
 
 // Núcleo del app shell: lo mínimo para que la app arranque aunque no haya
 // nada más en caché todavía. El resto (JS/CSS con hash, imágenes) se cachea
@@ -31,7 +31,12 @@ self.addEventListener('install', (event) => {
   event.waitUntil(
     caches
       .open(CACHE_NAME)
-      .then((cache) => cache.addAll(APP_SHELL))
+      // Uno por uno y sin cortar: `addAll` es atómico, así que un solo
+      // archivo que falle dejaba el service worker instalado SIN nada en
+      // caché — y entonces el fallback de navegación no tenía a qué caer.
+      .then((cache) =>
+        Promise.allSettled(APP_SHELL.map((url) => cache.add(url))),
+      )
       .then(() => self.skipWaiting()),
   );
 });
@@ -56,22 +61,51 @@ async function cacheFirst(request) {
   const cached = await caches.match(request);
   if (cached) return cached;
 
-  const response = await fetch(request);
-  if (response.ok) {
-    const cache = await caches.open(CACHE_NAME);
-    cache.put(request, response.clone());
+  try {
+    const response = await fetch(request);
+    if (response.ok) {
+      const cache = await caches.open(CACHE_NAME);
+      cache.put(request, response.clone());
+    }
+    return response;
+  } catch (error) {
+    // Sin esto la promesa quedaba sin capturar y el navegador registraba un
+    // "Uncaught (in promise) TypeError: Failed to fetch" por cada recurso
+    // que no cargara. Devolver una respuesta de error deja que la página
+    // siga su curso y falle solo ese recurso.
+    return new Response('', { status: 504, statusText: 'Sin conexión' });
   }
-  return response;
 }
 
-/** Network first: intenta la red; si falla (offline), cae al shell cacheado. */
+/**
+ * Network first: intenta la red y, de paso, refresca el shell guardado para
+ * que la próxima vez sin conexión no se sirva uno viejo.
+ */
 async function networkFirstNavigation(request) {
   try {
-    return await fetch(request);
+    const response = await fetch(request);
+    if (response.ok) {
+      const cache = await caches.open(CACHE_NAME);
+      cache.put('/index.html', response.clone());
+    }
+    return response;
   } catch {
-    const cached = await caches.match('/index.html');
+    // Cae al shell: primero el guardado, y si tampoco está, cualquier
+    // navegación cacheada sirve — con la app cargada, el router resuelve la
+    // ruta del lado del cliente.
+    const cached =
+      (await caches.match('/index.html')) || (await caches.match('/'));
     if (cached) return cached;
-    throw new Error('Sin conexión y sin app shell en caché');
+
+    // Antes se lanzaba un Error acá, y eso convertía la navegación en un
+    // "network error response": el navegador mostraba su página de error en
+    // vez de algo explicable.
+    return new Response(
+      '<!doctype html><meta charset="utf-8"><title>Sin conexión</title>' +
+        '<p style="font-family:sans-serif;padding:2rem">Sin conexión. ' +
+        'Vuelve a intentarlo cuando tengas internet.</p>',
+      { status: 503, headers: { 'Content-Type': 'text/html; charset=utf-8' } },
+    );
   }
 }
 
