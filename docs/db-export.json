@@ -1,10 +1,10 @@
 {
-  "generado_at": "2026-09-13T21:49:16.537Z",
+  "generado_at": "2026-09-20T22:00:58.385Z",
   "motor": "postgres",
   "tablas": [
     {
       "nombre": "appointment_items",
-      "filas": 28,
+      "filas": 7,
       "columnas": [
         {
           "nombre": "id",
@@ -41,16 +41,27 @@
           "tipo": "timestamp with time zone",
           "pk": false,
           "nulo": false
+        },
+        {
+          "nombre": "catalogItemId",
+          "tipo": "uuid",
+          "pk": false,
+          "nulo": true
         }
       ],
       "indices": [
         "appointment_items_pkey",
-        "idx_appointment_items_appointment"
+        "idx_appointment_items_appointment",
+        "idx_appointment_items_catalog_item"
       ],
       "relaciones": [
         {
           "columna": "appointmentId",
           "referencia": "appointments.id"
+        },
+        {
+          "columna": "catalogItemId",
+          "referencia": "catalog_items.id"
         },
         {
           "columna": "serviceId",
@@ -63,7 +74,7 @@
     },
     {
       "nombre": "appointments",
-      "filas": 16,
+      "filas": 7,
       "columnas": [
         {
           "nombre": "id",
@@ -130,6 +141,12 @@
           "tipo": "integer",
           "pk": false,
           "nulo": false
+        },
+        {
+          "nombre": "cancellationReason",
+          "tipo": "text",
+          "pk": false,
+          "nulo": true
         }
       ],
       "indices": [
@@ -201,7 +218,7 @@
     },
     {
       "nombre": "catalog_items",
-      "filas": 1,
+      "filas": 2,
       "columnas": [
         {
           "nombre": "id",
@@ -238,11 +255,24 @@
           "tipo": "timestamp with time zone",
           "pk": false,
           "nulo": false
+        },
+        {
+          "nombre": "name",
+          "tipo": "text",
+          "pk": false,
+          "nulo": false
+        },
+        {
+          "nombre": "price",
+          "tipo": "double precision",
+          "pk": false,
+          "nulo": false
         }
       ],
       "indices": [
         "idx_catalog_items_service",
-        "pk_catalog_items"
+        "pk_catalog_items",
+        "uq_catalog_items_servicio_nombre"
       ],
       "relaciones": [
         {
@@ -256,7 +286,7 @@
     },
     {
       "nombre": "idempotency_keys",
-      "filas": 156,
+      "filas": 195,
       "columnas": [
         {
           "nombre": "key",
@@ -315,8 +345,73 @@
       "politicas_rls": []
     },
     {
-      "nombre": "services",
+      "nombre": "password_resets",
       "filas": 7,
+      "columnas": [
+        {
+          "nombre": "id",
+          "tipo": "uuid",
+          "pk": true,
+          "nulo": false
+        },
+        {
+          "nombre": "userId",
+          "tipo": "uuid",
+          "pk": false,
+          "nulo": false
+        },
+        {
+          "nombre": "codeHash",
+          "tipo": "text",
+          "pk": false,
+          "nulo": false
+        },
+        {
+          "nombre": "expiresAt",
+          "tipo": "timestamp with time zone",
+          "pk": false,
+          "nulo": false
+        },
+        {
+          "nombre": "attempts",
+          "tipo": "integer",
+          "pk": false,
+          "nulo": false
+        },
+        {
+          "nombre": "verifiedAt",
+          "tipo": "timestamp with time zone",
+          "pk": false,
+          "nulo": true
+        },
+        {
+          "nombre": "usedAt",
+          "tipo": "timestamp with time zone",
+          "pk": false,
+          "nulo": true
+        },
+        {
+          "nombre": "createdAt",
+          "tipo": "timestamp with time zone",
+          "pk": false,
+          "nulo": false
+        }
+      ],
+      "indices": [
+        "idx_password_resets_user",
+        "password_resets_pkey"
+      ],
+      "relaciones": [
+        {
+          "columna": "userId",
+          "referencia": "users.id"
+        }
+      ],
+      "politicas_rls": []
+    },
+    {
+      "nombre": "services",
+      "filas": 2,
       "columnas": [
         {
           "nombre": "id",
@@ -387,6 +482,37 @@
       "relaciones": [],
       "politicas_rls": [
         "catalogo_publico_select"
+      ]
+    },
+    {
+      "nombre": "site_content",
+      "filas": 1,
+      "columnas": [
+        {
+          "nombre": "key",
+          "tipo": "text",
+          "pk": true,
+          "nulo": false
+        },
+        {
+          "nombre": "value",
+          "tipo": "jsonb",
+          "pk": false,
+          "nulo": false
+        },
+        {
+          "nombre": "updatedAt",
+          "tipo": "timestamp with time zone",
+          "pk": false,
+          "nulo": false
+        }
+      ],
+      "indices": [
+        "site_content_pkey"
+      ],
+      "relaciones": [],
+      "politicas_rls": [
+        "site_content_lectura_publica"
       ]
     },
     {
