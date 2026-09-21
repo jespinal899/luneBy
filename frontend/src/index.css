@@ -39,6 +39,7 @@ html {
   --color-brand-dark: var(--brand-dark);
   --color-brand-foreground: var(--brand-foreground);
   --color-cream: var(--cream);
+  --color-gold: var(--gold);
   --color-input: var(--input);
   --color-border: var(--border);
   --color-destructive: var(--destructive);
@@ -92,13 +93,18 @@ html {
      simple vista aunque la marca cambie de matiz. */
   --success: oklch(0.52 0.11 160);
   --warning: oklch(0.56 0.12 75);
-  --border: oklch(0.9 0.014 300);
-  --input: oklch(0.9 0.014 300);
-  --ring: oklch(0.52 0.13 300);
-  --brand: oklch(0.56 0.12 300);
-  --brand-dark: oklch(0.44 0.11 300);
-  --brand-foreground: oklch(0.99 0.005 300);
-  --cream: #faf9f7;
+  --border: oklch(0.9 0.016 88);
+  --input: oklch(0.9 0.016 88);
+  --ring: oklch(0.55 0.1 78);
+  /* Paleta cálida. El amarillo vive en las superficies (`cream`) y en los
+     acentos (`gold`), que es donde un tono claro luce; las acciones usan
+     `brand`, un ámbar profundo, porque texto claro sobre amarillo tenue no
+     llega al contraste mínimo legible. */
+  --brand: oklch(0.55 0.1 78);
+  --brand-dark: oklch(0.33 0.045 65);
+  --brand-foreground: oklch(0.99 0.008 95);
+  --cream: oklch(0.975 0.024 95);
+  --gold: oklch(0.87 0.1 92);
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
