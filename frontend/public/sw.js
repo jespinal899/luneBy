@@ -68,7 +68,7 @@ async function cacheFirst(request) {
       cache.put(request, response.clone());
     }
     return response;
-  } catch (error) {
+  } catch {
     // Sin esto la promesa quedaba sin capturar y el navegador registraba un
     // "Uncaught (in promise) TypeError: Failed to fetch" por cada recurso
     // que no cargara. Devolver una respuesta de error deja que la página

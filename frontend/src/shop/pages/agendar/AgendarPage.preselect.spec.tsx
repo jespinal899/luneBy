@@ -1,5 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -133,6 +134,24 @@ describe('AgendarPage · precarga desde el catálogo', () => {
         renderAgendar('/shop/agendar');
 
         await screen.findByRole('heading', { name: 'Agendar cita' });
+        expect(screen.getByTestId('cotizacion')).toBeEmptyDOMElement();
+    });
+
+    // Lo precargado es una sugerencia, no una imposición: si la clienta
+    // cambió de idea al llegar, tiene que poder sacarlo.
+    it('se puede quitar el servicio precargado, y no vuelve solo', async () => {
+        const user = userEvent.setup();
+        renderAgendar('/shop/agendar?serviceId=svc-1&diseno=dis-1');
+
+        const cotizacion = await screen.findByTestId('cotizacion');
+        await within(cotizacion).findByText(/Soft Glam/);
+
+        // La tarjeta del paso 1, no el botón de quitar de la cotización: solo
+        // la tarjeta muestra la duración junto al nombre.
+        await user.click(
+            screen.getByRole('button', { name: /Esmaltado.*45 min/ }),
+        );
+
         expect(screen.getByTestId('cotizacion')).toBeEmptyDOMElement();
     });
 

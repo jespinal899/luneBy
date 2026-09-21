@@ -51,30 +51,31 @@ export const AgendarPage = () => {
     const { data: design } = useCatalogItem(designId ?? undefined);
     const { add, choose, isInQuote } = quote;
 
-    // Se aplica una sola vez por id: sin este pestillo el efecto volvería a
-    // imponer lo que venía en la URL cada vez que la cotización cambia, y
-    // pisaría el diseño que la clienta acabe de elegir a mano más abajo.
-    const applied = useRef<string | null>(null);
+    // Cada id de la URL se aplica una sola vez, y lo precargado queda como
+    // una sugerencia: la clienta puede quitarlo y no vuelve solo.
+    //
+    // Es un conjunto y no un único valor a propósito: con uno solo, aplicar
+    // el diseño borraba la marca del servicio, y entonces sacar el servicio
+    // a mano lo volvía a agregar en el acto — no se dejaba deseleccionar.
+    const applied = useRef(new Set<string>());
 
     useEffect(() => {
         if (!preselectId || !servicesData) return;
-        if (applied.current === preselectId) return;
+        if (applied.current.has(preselectId)) return;
         const svc = servicesData.products.find((s) => s.id === preselectId);
         if (!svc) return;
-        applied.current = preselectId;
+        applied.current.add(preselectId);
         if (!isInQuote(svc.id)) add(toQuoteItem(svc));
     }, [preselectId, servicesData, add, isInQuote]);
 
-    // El diseño manda sobre el servicio a secas: si la línea ya estaba (la
-    // acaba de poner el efecto de arriba, o venía de antes), se reemplaza para
-    // que quede con su nombre, su precio total y marcada en el selector.
+    // El diseño manda sobre el servicio a secas: `choose` deja la línea con
+    // su nombre, su precio total y marcada en el selector, esté o no ya el
+    // servicio en la cotización.
     useEffect(() => {
-        if (!design || applied.current === design.id) return;
-        applied.current = design.id;
-        const line = catalogItemToQuoteItem(design);
-        if (isInQuote(design.serviceId)) choose(line);
-        else add(line);
-    }, [design, add, choose, isInQuote]);
+        if (!design || applied.current.has(design.id)) return;
+        applied.current.add(design.id);
+        choose(catalogItemToQuoteItem(design));
+    }, [design, choose]);
 
     const [date, setDate] = useState('');
     const [slot, setSlot] = useState('');

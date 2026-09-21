@@ -22,13 +22,21 @@ const reducer = (state: QuoteItem[], action: Action): QuoteItem[] => {
       return state.some((i) => i.serviceId === action.item.serviceId)
         ? state
         : [...state, action.item];
-    // Cambiar el diseño elegido de un servicio que ya está en la cotización.
-    // `add` no sirve para esto: ignora a propósito lo que ya está, para que
-    // agregar dos veces desde el catálogo no duplique la línea.
-    case 'choose':
-      return state.map((i) =>
-        i.serviceId === action.item.serviceId ? action.item : i,
-      );
+    // Deja esta línea como la del servicio: reemplaza la que hubiera y, si
+    // no había ninguna, la agrega.
+    //
+    // Que también agregue es lo que lo hace seguro de llamar sin consultar
+    // antes si el servicio ya estaba. Esa consulta leía estado que podía ir
+    // un paso atrás, y entonces se caía en `add` — que ignora a propósito lo
+    // que ya está — y el diseño elegido se perdía en silencio.
+    case 'choose': {
+      const existe = state.some((i) => i.serviceId === action.item.serviceId);
+      return existe
+        ? state.map((i) =>
+            i.serviceId === action.item.serviceId ? action.item : i,
+          )
+        : [...state, action.item];
+    }
     case 'remove':
       return state.filter((i) => i.serviceId !== action.serviceId);
     case 'clear':

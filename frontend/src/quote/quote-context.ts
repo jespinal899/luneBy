@@ -52,7 +52,11 @@ export interface QuoteContextValue {
   count: number;
   isInQuote: (serviceId: string) => boolean;
   add: (item: QuoteItem) => void;
-  /** Reemplaza la línea de ese servicio: sirve para cambiar el diseño. */
+  /**
+   * Deja esta línea como la de su servicio: reemplaza la que hubiera y, si
+   * no había, la agrega. Sirve para elegir o cambiar el diseño sin tener
+   * que consultar antes si el servicio ya estaba.
+   */
   choose: (item: QuoteItem) => void;
   remove: (serviceId: string) => void;
   toggle: (item: QuoteItem) => void;
