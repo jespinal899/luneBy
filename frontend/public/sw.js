@@ -17,7 +17,13 @@
 //   - CON internet requerido: cualquier dato real (servicios, catálogo,
 //     login, crear/ver citas) — todo lo que pasa por /api.
 
-const CACHE_NAME = 'fiados-v4';
+// Subir esta versión es lo que hace que los navegadores suelten lo viejo:
+// `activate` borra toda caché cuyo nombre no sea este. Hay que subirla al
+// cambiar algo que se sirve con el mismo nombre de archivo —los iconos, el
+// manifest—, porque `cacheFirst` no vuelve a pedirlo si ya lo tiene.
+//
+// El prefijo decía "fiados", arrastrado de otro proyecto.
+const CACHE_NAME = 'luneby-v5';
 
 // Núcleo del app shell: lo mínimo para que la app arranque aunque no haya
 // nada más en caché todavía. El resto (JS/CSS con hash, imágenes) se cachea

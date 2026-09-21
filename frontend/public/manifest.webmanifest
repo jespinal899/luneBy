@@ -40,5 +40,23 @@
       "type": "image/png",
       "purpose": "maskable"
     }
+  ],
+  "id": "/",
+  "shortcuts": [
+    {
+      "name": "Agendar una cita",
+      "short_name": "Agendar",
+      "url": "/shop/agendar"
+    },
+    {
+      "name": "Mis citas",
+      "short_name": "Mis citas",
+      "url": "/mis-citas"
+    },
+    {
+      "name": "Ver el catálogo",
+      "short_name": "Catálogo",
+      "url": "/shop"
+    }
   ]
 }
