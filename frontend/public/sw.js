@@ -22,7 +22,7 @@ const CACHE_NAME = 'fiados-v4';
 // Núcleo del app shell: lo mínimo para que la app arranque aunque no haya
 // nada más en caché todavía. El resto (JS/CSS con hash, imágenes) se cachea
 // solo, la primera vez que se piden (ver `cacheFirst` más abajo).
-const APP_SHELL = ['/index.html', '/manifest.webmanifest', '/favicon.svg'];
+const APP_SHELL = ['/index.html', '/manifest.webmanifest', '/favicon.png'];
 
 const isApiRequest = (url) =>
   url.pathname.startsWith('/api/') || url.hostname !== self.location.hostname;

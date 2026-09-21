@@ -6,14 +6,14 @@
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#ede6ff",
-  "theme_color": "#863bff",
+  "background_color": "#faf9f7",
+  "theme_color": "#3d1132",
   "lang": "es",
   "icons": [
     {
-      "src": "/favicon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
+      "src": "/favicon.png",
+      "sizes": "48x48",
+      "type": "image/png",
       "purpose": "any"
     },
     {
