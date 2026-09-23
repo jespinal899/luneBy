@@ -9,11 +9,11 @@ export const salon = {
   name: 'Luné by Kelin',
   tagline: 'Estudio profesional de uñas',
   address: 'Choloma, Cortés, Honduras',
-  phone: '+504 2525-2525',
+  phone: '+504 8882-6758',
   /** Solo dígitos, con código de país — para el enlace wa.me. */
-  whatsapp: '50425252525',
+  whatsapp: '50488826758',
   email: 'hola@lunebykelin.com',
-  instagram: 'lune.bykelin',
+  instagram: 'lunebykelin',
 } as const;
 
 export const whatsappLink = (message?: string) =>
