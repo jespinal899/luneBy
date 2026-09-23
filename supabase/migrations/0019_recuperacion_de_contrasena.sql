@@ -25,7 +25,7 @@ create table if not exists public.password_resets (
   "verifiedAt" timestamptz,
   "usedAt"    timestamptz,
   "createdAt" timestamptz not null default now()
-);x|
+);
 
 -- Al pedir un código se buscan los vigentes de esa cuenta para invalidarlos.
 create index if not exists idx_password_resets_user
